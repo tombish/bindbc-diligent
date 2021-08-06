@@ -1,0 +1,32 @@
+name "bindbc-diligent"
+description "A configurable set of dynamic and static D bindings, to Diligent Engine, a modern cross-platform graphics library and rendering framework. Compatible with @nogc, nothrow, and BetterC. "
+homepage ""
+authors "Thomas Bishop"
+license "Boost"
+
+targetType "staticLibrary"
+targetPath "lib"
+targetName "BindBC_Diligent"
+
+configuration "dynamic" {
+    versions "BindDiligent_Dynamic"
+    dependency "bindbc-loader" version="~>1.0.0"
+}
+
+configuration "dynamicBC" {
+    versions "BindDiligent_Dynamic"
+    dependency "bindbc-loader" version="~>1.0.0"
+    subConfiguration "bindbc-loader" "yesBC"
+    dflags "-betterC"
+}
+
+configuration "static" {
+    versions "BindDiligent_Static"
+    excludedSourceFiles "source/bindbc/diligent/binddynamic.d"
+}
+
+configuration "staticBC" {
+    dflags "-betterC"
+    versions "BindDiligent_Static"
+    excludedSourceFiles "source/bindbc/diligent/binddynamic.d"
+}
