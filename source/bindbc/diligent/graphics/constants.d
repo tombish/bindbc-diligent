@@ -1,0 +1,60 @@
+/*
+ *  Copyright 2021 Thomas Bishop
+ *  Distributed under the Boost Software License, Version 1.0
+ *  See accompanying file LICENSE or https://www.boost.org/LICENSE_1_0.txt
+ *  Modified source based on DiligentCore/Graphics/GraphicsEngine/interface/Constants.h
+ *  The original licence follows this statement
+ */
+
+/*
+ *  Copyright 2019-2021 Diligent Graphics LLC
+ *  Copyright 2015-2019 Egor Yusov
+ *  
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *  
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *  
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ *  In no event and under no legal theory, whether in tort (including negligence), 
+ *  contract, or otherwise, unless required by applicable law (such as deliberate 
+ *  and grossly negligent acts) or agreed to in writing, shall any Contributor be
+ *  liable for any damages, including any direct, indirect, special, incidental, 
+ *  or consequential damages of any character arising as a result of this License or 
+ *  out of the use or inability to use the software (including but not limited to damages 
+ *  for loss of goodwill, work stoppage, computer failure or malfunction, or any and 
+ *  all other commercial damages or losses), even if such Contributor has been advised 
+ *  of the possibility of such damages.
+ */
+ 
+module bindbc.diligent.graphics.constants;
+
+/// The maximum number of input buffer slots.
+/// D3D11_IA_VERTEX_INPUT_RESOURCE_SLOT_COUNT == 32
+enum DILIGENT_MAX_BUFFER_SLOTS = 32;
+
+/// The maximum number of simultaneous render targets.
+enum DILIGENT_MAX_RENDER_TARGETS = 8;
+
+/// The maximum number of viewports.
+enum DILIGENT_MAX_VIEWPORTS = 16;
+
+/// The maximum number of resource signatures that one pipeline can use
+enum DILIGENT_MAX_RESOURCE_SIGNATURES = 8;
+
+/// The maximim number of queues in graphics adapter description.
+enum DILIGENT_MAX_ADAPTER_QUEUES = 16;
+
+enum uint MAX_BUFFER_SLOTS          = DILIGENT_MAX_BUFFER_SLOTS;
+enum uint MAX_RENDER_TARGETS        = DILIGENT_MAX_RENDER_TARGETS;
+enum uint MAX_VIEWPORTS             = DILIGENT_MAX_VIEWPORTS;
+enum uint MAX_RESOURCE_SIGNATURES   = DILIGENT_MAX_RESOURCE_SIGNATURES;
+enum uint MAX_ADAPTER_QUEUES        = DILIGENT_MAX_ADAPTER_QUEUES;
+enum uint DEFAULT_ADAPTER_ID        = 0xFFFFFFFFU;
+enum ubyte DEFAULT_QUEUE_ID         = 0xFF;

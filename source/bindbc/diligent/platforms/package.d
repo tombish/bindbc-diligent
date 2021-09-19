@@ -4,10 +4,8 @@
  *  See accompanying file LICENSE or https://www.boost.org/LICENSE_1_0.txt
  */
  
-module bindbc.diligent;
+module bindbc.diligent.platforms;
 
 public {
-    import bindbc.diligent.graphics;
-    import bindbc.diligent.platforms;
-    import bindbc.diligent.primitives;
+    import bindbc.diligent.platforms.nativewindow;
 }
