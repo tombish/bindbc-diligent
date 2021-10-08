@@ -2,20 +2,17 @@
  *  Copyright 2021 Thomas Bishop
  *  Distributed under the Boost Software License, Version 1.0
  *  See accompanying file LICENSE or https://www.boost.org/LICENSE_1_0.txt
- *  Modified source based on DiligentCore/Platforms/interface/NativeWindow.h
- *  The original licence follows this statement
  */
-
+ 
 /*
  *  Copyright 2019-2021 Diligent Graphics LLC
- *  Copyright 2015-2019 Egor Yusov
- *  
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- *  
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- *  
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -32,35 +29,10 @@
  *  all other commercial damages or losses), even if such Contributor has been advised 
  *  of the possibility of such damages.
  */
- 
-module bindbc.diligent.platforms.nativewindow;
 
-version(windows) {
-    import bindbc.diligent.platforms.windows.nativewindow;
-    alias NativeWindow = Win32NativeWindow ;
-}
+module bindbc.diligent.platforms.apple.tvosnativewindow;
 
-version(Android) {
-    import bindbc.diligent.platforms.android.nativewindow;
-    alias NativeWindow = AndroidNativeWindow;
-}
-
-version(linux) {
-    import bindbc.diligent.platforms.linux.nativewindow;
-    alias NativeWindow = LinuxNativeWindow;
-}
-
-version(OSX) {
-   import bindbc.diligent.platforms.apple.macosnativewindow;
-   alias NativeWindow = MacOSNativeWindow;
-}
-
-version(iOS) {
-   import bindbc.diligent.platforms.apple.iosnativewindow;
-    alias NativeWindow = IOSNativeWindow;
-}
-
-version(TVOS) {
-   import bindbc.diligent.platforms.apple.tvosnativewindow;
-    alias NativeWindow = TVOSNativeWindow;
+struct TVOSNativeWindow
+{
+    void* pCALayer = null;
 }

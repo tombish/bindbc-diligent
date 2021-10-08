@@ -40,4 +40,4 @@ struct LinuxNativeWindow
     uint WindowId = 0;
     void* pDisplay = null;
     void* pXCBConnection = null;
-};
+}
