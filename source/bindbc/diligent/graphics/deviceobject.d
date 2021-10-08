@@ -42,7 +42,6 @@ public import bindbc.diligent.graphics.graphicstypes;
 static const INTERFACE_ID IID_DeviceObject = 
     INTERFACE_ID(0x5b4cca0b, 0x5075, 0x4230, [0x97, 0x59, 0xf4, 0x87, 0x69, 0xee, 0x55, 0x2]);
 
-
 struct IDeviceObjectMethods
 {
      /// Returns the object description

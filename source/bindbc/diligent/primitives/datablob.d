@@ -2,7 +2,7 @@
  *  Copyright 2021 Thomas Bishop
  *  Distributed under the Boost Software License, Version 1.0
  *  See accompanying file LICENSE or https://www.boost.org/LICENSE_1_0.txt
- *  Modified source based on DiligentCore/Primitives/interface/DebugOutput.h
+ *  Modified source based on DiligentCore/primitives/interface/DataBlob.h
  *  The original licence follows this statement
  */
 
@@ -33,42 +33,40 @@
  *  of the possibility of such damages.
  */
 
-module bindbc.diligent.primitives.debugoutput;
+/// \file
+/// Defines Diligent::IDataBlob interface
 
-/// Describes debug message severity
-enum DEBUG_MESSAGE_SEVERITY
+import bindbc.diligent.primitives.object;
+
+// {F578FF0D-ABD2-4514-9D32-7CB454D4A73B}
+static const struct INTERFACE_ID IID_DataBlob =
+    {0xf578ff0d, 0xabd2, 0x4514, {0x9d, 0x32, 0x7c, 0xb4, 0x54, 0xd4, 0xa7, 0x3b}};
+
+#define DILIGENT_INTERFACE_NAME IDataBlob
+
+#define IDataBlobInclusiveMethods \
+    IObjectInclusiveMethods;      \
+    IDataBlobMethods DataBlob
+
+/// Base interface for a file stream
+DILIGENT_BEGIN_INTERFACE(IDataBlob, IObject)
 {
-    /// Information message
-    DEBUG_MESSAGE_SEVERITY_INFO = 0,
+    /// Sets the size of the internal data buffer
+    VIRTUAL void METHOD(Resize)(THIS_
+                                size_t NewSize) PURE;
 
-    /// Warning message
-    DEBUG_MESSAGE_SEVERITY_WARNING,
+    /// Returns the size of the internal data buffer
+    VIRTUAL size_t METHOD(GetSize)(THIS) CONST PURE;
 
-    /// Error, with potential recovery
-    DEBUG_MESSAGE_SEVERITY_ERROR,
+    /// Returns the pointer to the internal data buffer
+    VIRTUAL void* METHOD(GetDataPtr)(THIS) PURE;
 
-    /// Fatal error - recovery is not possible
-    DEBUG_MESSAGE_SEVERITY_FATAL_ERROR
-}
+    /// Returns const pointer to the internal data buffer
+    VIRTUAL const void* METHOD(GetConstDataPtr)(THIS) CONST PURE;
+};
+DILIGENT_END_INTERFACE
 
-
-/// Type of the debug message callback function
-
-/// \param [in] Severity - Message severity
-/// \param [in] Message - Debug message
-/// \param [in] Function - Name of the function or nullptr
-/// \param [in] Function - File name or nullptr
-/// \param [in] Line - Line number
-alias DebugMessageCallbackType = void function(DEBUG_MESSAGE_SEVERITY Severity,
-                                               const(char)* Message,
-                                               const(char)* Function,
-                                               const(char)* File,
-                                               int Line);
-extern DebugMessageCallbackType DebugMessageCallback;
-
-
-/// Sets the debug message callback function
-
-/// \note This function needs to be called for every executable module that
-///       wants to use the callback.
-void SetDebugMessageCallback(DebugMessageCallbackType DbgMessageCallback);
+#    define IDataBlob_Resize(This, ...)      CALL_IFACE_METHOD(DataBlob, Resize,          This, __VA_ARGS__)
+#    define IDataBlob_GetSize(This)          CALL_IFACE_METHOD(DataBlob, GetSize,         This)
+#    define IDataBlob_GetDataPtr(This)       CALL_IFACE_METHOD(DataBlob, GetDataPtr,      This)
+#    define IDataBlob_GetConstDataPtr(This)  CALL_IFACE_METHOD(DataBlob, GetConstDataPtr, This)

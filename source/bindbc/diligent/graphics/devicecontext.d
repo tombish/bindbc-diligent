@@ -40,9 +40,9 @@ import bindbc.diligent.primitives.object;
 import bindbc.diligent.graphics.graphicstypes;
 import bindbc.diligent.graphics.constants;
 import bindbc.diligent.graphics.buffer;
+import bindbc.diligent.graphics.inputlayout;
+import bindbc.diligent.graphics.shader;
 
-#include "InputLayout.h"
-#include "Shader.h"
 #include "Texture.h"
 #include "Sampler.h"
 #include "ResourceMapping.h"
