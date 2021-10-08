@@ -14,5 +14,7 @@ public {
     import bindbc.diligent.graphics.devicecontext;
     import bindbc.diligent.graphics.deviceobject;
     import bindbc.diligent.graphics.graphicstypes;
-    import bindbc.diligent.graphics.renderdevice;  
+    import bindbc.diligent.graphics.inputlayout;
+    import bindbc.diligent.graphics.renderdevice;
+    import bindbc.diligent.graphics.shader;
 }

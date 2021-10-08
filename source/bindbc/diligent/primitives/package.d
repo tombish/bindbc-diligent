@@ -8,7 +8,9 @@ module bindbc.diligent.primitives;
 
 public {
     import bindbc.diligent.primitives.debugoutput;
+    import bindbc.diligent.primitives.filestream;
     import bindbc.diligent.primitives.interfaceid;
+    import bindbc.diligent.primitives.memoryallocator;
     import bindbc.diligent.primitives.object;
     import bindbc.diligent.primitives.referencecounters;
 }
