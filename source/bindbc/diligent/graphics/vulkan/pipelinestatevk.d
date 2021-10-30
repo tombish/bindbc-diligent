@@ -2,10 +2,8 @@
  *  Copyright 2021 Thomas Bishop
  *  Distributed under the Boost Software License, Version 1.0
  *  See accompanying file LICENSE or https://www.boost.org/LICENSE_1_0.txt
- *  Modified source based on DiligentCore/Primitives/interface/MemoryAllocator.h
- *  The original licence follows this statement
  */
-
+ 
 /*
  *  Copyright 2019-2021 Diligent Graphics LLC
  *  Copyright 2015-2019 Egor Yusov
@@ -33,28 +31,43 @@
  *  of the possibility of such damages.
  */
 
-module bindbc.diligent.primitives.memoryallocator;
+module bindbc.diligent.graphics.vulkan.pipelinestatevk;
 
-struct IMemoryAllocatorMethods
+/// \file
+/// Definition of the Diligent::IPipeplineStateVk interface
+
+#include "../../GraphicsEngine/interface/PipelineState.h"
+#include "RenderPassVk.h"
+
+// {2FEA0868-0932-412A-9F0A-7CEA7E61B5E0}
+static const INTERFACE_ID IID_PipelineStateVk =
+    {0x2fea0868, 0x932, 0x412a, {0x9f, 0xa, 0x7c, 0xea, 0x7e, 0x61, 0xb5, 0xe0}};
+
+#define DILIGENT_INTERFACE_NAME IPipelineStateVk
+#include "../../../Primitives/interface/DefineInterfaceHelperMacros.h"
+
+#define IPipelineStateVkInclusiveMethods \
+    IPipelineStateInclusiveMethods;      \
+    IPipelineStateVkMethods PipelineStateVk
+
+/// Exposes Vulkan-specific functionality of a pipeline state object.
+DILIGENT_BEGIN_INTERFACE(IPipelineStateVk, IPipelineState)
 {
-    void* function(IMemoryAllocator*, size_t Size, const(char)* dbgDescription, const(char)* dbgFileName, const int dbgLineNumber) Allocate;
-    void function(IMemoryAllocator*, void* Ptr) Free;
-}
+    /// Returns a pointer to the internal render pass object.
+    VIRTUAL IRenderPassVk*GetRenderPass(THIS) CONST PURE;
 
-struct IMemoryAllocatorVtbl
-{
-    IMemoryAllocatorMethods MemoryAllocator;
-}
+    /// Returns a Vulkan handle of the internal pipeline state object.
+    VIRTUAL VkPipelineGetVkPipeline(THIS) CONST PURE;
+};
+DILIGENT_END_INTERFACE
 
-struct IMemoryAllocator
-{
-    IMemoryAllocatorVtbl* pVtbl;
-}
+#include "../../../Primitives/interface/UndefInterfaceHelperMacros.h"
 
-void* IMemoryAllocator_Allocate(IMemoryAllocator* memAllocator, size_t size, const(char)* dbgDescription, const(char)* dbgFileName, const int dbgLineNumber) {
-    return memAllocator.pVtbl.MemoryAllocator.Allocate(memAllocator, size, dbgDescription, dbgFileName, dbgLineNumber);
-}
+#if DILIGENT_C_INTERFACE
 
-void IMemoryAllocator_Free(IMemoryAllocator* memAllocator, void* ptr) {
-    return memAllocator.pVtbl.MemoryAllocator.Free(memAllocator, ptr);
-}
+#    define IPipelineStateVk_GetRenderPass(This) CALL_IFACE_METHOD(PipelineStateVk, GetRenderPass, This)
+#    define IPipelineStateVk_GetVkPipeline(This) CALL_IFACE_METHOD(PipelineStateVk, GetVkPipeline, This)
+
+#endif
+
+

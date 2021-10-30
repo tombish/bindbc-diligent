@@ -2,10 +2,8 @@
  *  Copyright 2021 Thomas Bishop
  *  Distributed under the Boost Software License, Version 1.0
  *  See accompanying file LICENSE or https://www.boost.org/LICENSE_1_0.txt
- *  Modified source based on DiligentCore/Primitives/interface/MemoryAllocator.h
- *  The original licence follows this statement
  */
-
+ 
 /*
  *  Copyright 2019-2021 Diligent Graphics LLC
  *  Copyright 2015-2019 Egor Yusov
@@ -33,28 +31,46 @@
  *  of the possibility of such damages.
  */
 
-module bindbc.diligent.primitives.memoryallocator;
+module bindbc.diligent.graphics.opengl.fencegl;
 
-struct IMemoryAllocatorMethods
+/// \file
+/// Definition of the Diligent::IFenceGL interface
+
+#include "../../GraphicsEngine/interface/Fence.h"
+
+// {8FEACBDA-89D6-4509-88E6-D55DD06220C5}
+static const INTERFACE_ID IID_FenceGL =
+    {0x8feacbda, 0x89d6, 0x4509, {0x88, 0xe6, 0xd5, 0x5d, 0xd0, 0x62, 0x20, 0xc5}};
+
+#define DILIGENT_INTERFACE_NAME IFenceGL
+#include "../../../Primitives/interface/DefineInterfaceHelperMacros.h"
+
+#define IFenceGLInclusiveMethods \
+    IFenceInclusiveMethods
+//IFenceGLMethods FenceGL
+
+#if DILIGENT_CPP_INTERFACE
+
+/// Exposes OpenGL-specific functionality of a fence object.
+DILIGENT_BEGIN_INTERFACE(IFenceGL, IFence){};
+DILIGENT_END_INTERFACE
+
+#endif
+
+#include "../../../Primitives/interface/UndefInterfaceHelperMacros.h"
+
+#if DILIGENT_C_INTERFACE
+
+struct IFenceGLVtbl
 {
-    void* function(IMemoryAllocator*, size_t Size, const(char)* dbgDescription, const(char)* dbgFileName, const int dbgLineNumber) Allocate;
-    void function(IMemoryAllocator*, void* Ptr) Free;
-}
+    IFenceGLInclusiveMethods;
+};
 
-struct IMemoryAllocatorVtbl
+typedef struct IFenceGL
 {
-    IMemoryAllocatorMethods MemoryAllocator;
-}
+    struct IFenceGLVtbl* pVtbl;
+} IFenceGL;
 
-struct IMemoryAllocator
-{
-    IMemoryAllocatorVtbl* pVtbl;
-}
+#endif
 
-void* IMemoryAllocator_Allocate(IMemoryAllocator* memAllocator, size_t size, const(char)* dbgDescription, const(char)* dbgFileName, const int dbgLineNumber) {
-    return memAllocator.pVtbl.MemoryAllocator.Allocate(memAllocator, size, dbgDescription, dbgFileName, dbgLineNumber);
-}
 
-void IMemoryAllocator_Free(IMemoryAllocator* memAllocator, void* ptr) {
-    return memAllocator.pVtbl.MemoryAllocator.Free(memAllocator, ptr);
-}

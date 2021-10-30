@@ -2,10 +2,8 @@
  *  Copyright 2021 Thomas Bishop
  *  Distributed under the Boost Software License, Version 1.0
  *  See accompanying file LICENSE or https://www.boost.org/LICENSE_1_0.txt
- *  Modified source based on DiligentCore/Primitives/interface/MemoryAllocator.h
- *  The original licence follows this statement
  */
-
+ 
 /*
  *  Copyright 2019-2021 Diligent Graphics LLC
  *  Copyright 2015-2019 Egor Yusov
@@ -33,28 +31,38 @@
  *  of the possibility of such damages.
  */
 
-module bindbc.diligent.primitives.memoryallocator;
+module bindbc.diligent.graphics.vulkan.samplervk;
 
-struct IMemoryAllocatorMethods
+/// \file
+/// Definition of the Diligent::ISamplerVk interface
+
+#include "../../GraphicsEngine/interface/Sampler.h"
+
+// {87C21E88-8A9F-4AD2-9A1E-D5EC140415EA}
+static const INTERFACE_ID IID_SamplerVk =
+    {0x87c21e88, 0x8a9f, 0x4ad2, {0x9a, 0x1e, 0xd5, 0xec, 0x14, 0x4, 0x15, 0xea}};
+
+#define DILIGENT_INTERFACE_NAME ISamplerVk
+#include "../../../Primitives/interface/DefineInterfaceHelperMacros.h"
+
+#define ISamplerVkInclusiveMethods \
+    ISamplerInclusiveMethods;      \
+    ISamplerVkMethods SamplerVk
+
+/// Exposes Vulkan-specific functionality of a sampler object.
+DILIGENT_BEGIN_INTERFACE(ISamplerVk, ISampler)
 {
-    void* function(IMemoryAllocator*, size_t Size, const(char)* dbgDescription, const(char)* dbgFileName, const int dbgLineNumber) Allocate;
-    void function(IMemoryAllocator*, void* Ptr) Free;
-}
+    /// Returns a Vulkan handle of the internal sampler object.
+    VIRTUAL VkSamplerGetVkSampler() CONST PURE;
+};
+DILIGENT_END_INTERFACE
 
-struct IMemoryAllocatorVtbl
-{
-    IMemoryAllocatorMethods MemoryAllocator;
-}
+#include "../../../Primitives/interface/UndefInterfaceHelperMacros.h"
 
-struct IMemoryAllocator
-{
-    IMemoryAllocatorVtbl* pVtbl;
-}
+#if DILIGENT_C_INTERFACE
 
-void* IMemoryAllocator_Allocate(IMemoryAllocator* memAllocator, size_t size, const(char)* dbgDescription, const(char)* dbgFileName, const int dbgLineNumber) {
-    return memAllocator.pVtbl.MemoryAllocator.Allocate(memAllocator, size, dbgDescription, dbgFileName, dbgLineNumber);
-}
+#    define ISamplerVk_GetVkSampler(This) CALL_IFACE_METHOD(SamplerVk, GetVkSampler, This)
 
-void IMemoryAllocator_Free(IMemoryAllocator* memAllocator, void* ptr) {
-    return memAllocator.pVtbl.MemoryAllocator.Free(memAllocator, ptr);
-}
+#endif
+
+

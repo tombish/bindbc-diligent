@@ -2,10 +2,8 @@
  *  Copyright 2021 Thomas Bishop
  *  Distributed under the Boost Software License, Version 1.0
  *  See accompanying file LICENSE or https://www.boost.org/LICENSE_1_0.txt
- *  Modified source based on DiligentCore/Primitives/interface/MemoryAllocator.h
- *  The original licence follows this statement
  */
-
+ 
 /*
  *  Copyright 2019-2021 Diligent Graphics LLC
  *  Copyright 2015-2019 Egor Yusov
@@ -33,28 +31,33 @@
  *  of the possibility of such damages.
  */
 
-module bindbc.diligent.primitives.memoryallocator;
+module bindbc.diligent.graphics.d3d12.bottomlevelasd3d12;
 
-struct IMemoryAllocatorMethods
+/// \file
+/// Definition of the Diligent::IBottomLevelASD3D12 interface
+
+import bindbc.diligent.graphics.bottomlevelas;
+import bindbc.diligent.graphics.devicecontext;
+
+// {610228AF-F161-4B12-A00E-71E6E3BB97FE}
+static const INTERFACE_ID IID_BottomLevelASD3D12 =
+    INTERFACE_ID(0x610228af, 0xf161, 0x4b12, [0xa0, 0xe, 0x71, 0xe6, 0xe3, 0xbb, 0x97, 0xfe]);
+
+/// Exposes Direct3D12-specific functionality of a bottom-level acceleration structure object.
+struct IBottomLevelASD3D12Methods
 {
-    void* function(IMemoryAllocator*, size_t Size, const(char)* dbgDescription, const(char)* dbgFileName, const int dbgLineNumber) Allocate;
-    void function(IMemoryAllocator*, void* Ptr) Free;
+    /// Returns ID3D12Resource interface of the internal D3D12 acceleration structure object.
+
+    /// The method does *NOT* increment the reference counter of the returned object,
+    /// so Release() must not be called.
+    ID3D12Resource** GetD3D12BLAS(IBottomLevelASD3D12*);
 }
 
-struct IMemoryAllocatorVtbl
-{
-    IMemoryAllocatorMethods MemoryAllocator;
-}
+struct IBottomLevelASD3D12Vtbl { IBottomLevelASD3D12Methods BottomLevelASD3D12; }
+struct IBottomLevelASD3D12 { IBottomLevelASD3D12Vtbl* pVtbl; }
 
-struct IMemoryAllocator
-{
-    IMemoryAllocatorVtbl* pVtbl;
-}
+// #    define IBottomLevelASD3D12_GetD3D12BLAS(This)  CALL_IFACE_METHOD(BottomLevelASD3D12, GetD3D12BLAS, This)
 
-void* IMemoryAllocator_Allocate(IMemoryAllocator* memAllocator, size_t size, const(char)* dbgDescription, const(char)* dbgFileName, const int dbgLineNumber) {
-    return memAllocator.pVtbl.MemoryAllocator.Allocate(memAllocator, size, dbgDescription, dbgFileName, dbgLineNumber);
-}
-
-void IMemoryAllocator_Free(IMemoryAllocator* memAllocator, void* ptr) {
-    return memAllocator.pVtbl.MemoryAllocator.Free(memAllocator, ptr);
+ID3D12Resource** IBottomLevelASD3D12_GetD3D12BLAS(IBottomLevelASD3D12* bottomLevelAS) {
+    return bottomLevelAS.pVtbl.BottomLevelASD3D12.GetD3D12BLAS(bottomLevelAS);
 }

@@ -2,10 +2,8 @@
  *  Copyright 2021 Thomas Bishop
  *  Distributed under the Boost Software License, Version 1.0
  *  See accompanying file LICENSE or https://www.boost.org/LICENSE_1_0.txt
- *  Modified source based on DiligentCore/Primitives/interface/MemoryAllocator.h
- *  The original licence follows this statement
  */
-
+ 
 /*
  *  Copyright 2019-2021 Diligent Graphics LLC
  *  Copyright 2015-2019 Egor Yusov
@@ -33,28 +31,38 @@
  *  of the possibility of such damages.
  */
 
-module bindbc.diligent.primitives.memoryallocator;
+module bindbc.diligent.graphics.vulkan.framebuffervk;
 
-struct IMemoryAllocatorMethods
+/// \file
+/// Definition of the Diligent::IFramebufferVk interface
+
+#include "../../GraphicsEngine/interface/Framebuffer.h"
+
+// {846BE360-D89B-41AD-B089-7F2439ADCE3A}
+static const INTERFACE_ID IID_FramebufferVk =
+    {0x846be360, 0xd89b, 0x41ad, {0xb0, 0x89, 0x7f, 0x24, 0x39, 0xad, 0xce, 0x3a}};
+
+#define DILIGENT_INTERFACE_NAME IFramebufferVk
+#include "../../../Primitives/interface/DefineInterfaceHelperMacros.h"
+
+#define IFramebufferVkInclusiveMethods                              \
+    /*IFramebufferInclusiveMethods*/ IDeviceObjectInclusiveMethods; \
+    IFramebufferVkMethods FramebufferVk
+
+/// Exposes Vulkan-specific functionality of a Framebuffer object.
+DILIGENT_BEGIN_INTERFACE(IFramebufferVk, IFramebuffer)
 {
-    void* function(IMemoryAllocator*, size_t Size, const(char)* dbgDescription, const(char)* dbgFileName, const int dbgLineNumber) Allocate;
-    void function(IMemoryAllocator*, void* Ptr) Free;
-}
+    /// Returns Vulkan framebuffer object handle
+    VIRTUAL VkFramebufferGetVkFramebuffer() CONST PURE;
+};
+DILIGENT_END_INTERFACE
 
-struct IMemoryAllocatorVtbl
-{
-    IMemoryAllocatorMethods MemoryAllocator;
-}
+#include "../../../Primitives/interface/UndefInterfaceHelperMacros.h"
 
-struct IMemoryAllocator
-{
-    IMemoryAllocatorVtbl* pVtbl;
-}
+#if DILIGENT_C_INTERFACE
 
-void* IMemoryAllocator_Allocate(IMemoryAllocator* memAllocator, size_t size, const(char)* dbgDescription, const(char)* dbgFileName, const int dbgLineNumber) {
-    return memAllocator.pVtbl.MemoryAllocator.Allocate(memAllocator, size, dbgDescription, dbgFileName, dbgLineNumber);
-}
+#    define IFramebufferVk_GetVkFramebuffer(This) CALL_IFACE_METHOD(FramebufferVk, GetVkFramebuffer, This)
 
-void IMemoryAllocator_Free(IMemoryAllocator* memAllocator, void* ptr) {
-    return memAllocator.pVtbl.MemoryAllocator.Free(memAllocator, ptr);
-}
+#endif
+
+

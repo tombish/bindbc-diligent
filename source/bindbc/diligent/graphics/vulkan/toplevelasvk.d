@@ -2,10 +2,8 @@
  *  Copyright 2021 Thomas Bishop
  *  Distributed under the Boost Software License, Version 1.0
  *  See accompanying file LICENSE or https://www.boost.org/LICENSE_1_0.txt
- *  Modified source based on DiligentCore/Primitives/interface/MemoryAllocator.h
- *  The original licence follows this statement
  */
-
+ 
 /*
  *  Copyright 2019-2021 Diligent Graphics LLC
  *  Copyright 2015-2019 Egor Yusov
@@ -33,28 +31,42 @@
  *  of the possibility of such damages.
  */
 
-module bindbc.diligent.primitives.memoryallocator;
+module bindbc.diligent.graphics.vulkan.toplevelasvk;
 
-struct IMemoryAllocatorMethods
+/// \file
+/// Definition of the Diligent::ITopLevelASVk interface
+
+#include "../../GraphicsEngine/interface/TopLevelAS.h"
+
+// {356FFFFA-9E57-49F7-8FF4-7017B61BE6A8}
+static const INTERFACE_ID IID_TopLevelASVk =
+    {0x356ffffa, 0x9e57, 0x49f7, {0x8f, 0xf4, 0x70, 0x17, 0xb6, 0x1b, 0xe6, 0xa8}};
+
+#define DILIGENT_INTERFACE_NAME ITopLevelASVk
+#include "../../../Primitives/interface/DefineInterfaceHelperMacros.h"
+
+#define ITopLevelASVkInclusiveMethods \
+    ITopLevelASInclusiveMethods;      \
+    ITopLevelASVkMethods TopLevelASVk
+
+/// Exposes Vulkan-specific functionality of a Top-level acceleration structure object.
+DILIGENT_BEGIN_INTERFACE(ITopLevelASVk, ITopLevelAS)
 {
-    void* function(IMemoryAllocator*, size_t Size, const(char)* dbgDescription, const(char)* dbgFileName, const int dbgLineNumber) Allocate;
-    void function(IMemoryAllocator*, void* Ptr) Free;
-}
+    /// Returns a Vulkan handle of the internal top-level AS object.
+    VIRTUAL VkAccelerationStructureKHRGetVkTLAS(THIS) CONST PURE;
 
-struct IMemoryAllocatorVtbl
-{
-    IMemoryAllocatorMethods MemoryAllocator;
-}
+    /// Returns a Vulkan device address of the internal top-level AS object.
+    VIRTUAL VkDeviceAddressGetVkDeviceAddress(THIS) CONST PURE;
+};
+DILIGENT_END_INTERFACE
 
-struct IMemoryAllocator
-{
-    IMemoryAllocatorVtbl* pVtbl;
-}
+#include "../../../Primitives/interface/UndefInterfaceHelperMacros.h"
 
-void* IMemoryAllocator_Allocate(IMemoryAllocator* memAllocator, size_t size, const(char)* dbgDescription, const(char)* dbgFileName, const int dbgLineNumber) {
-    return memAllocator.pVtbl.MemoryAllocator.Allocate(memAllocator, size, dbgDescription, dbgFileName, dbgLineNumber);
-}
+#if DILIGENT_C_INTERFACE
 
-void IMemoryAllocator_Free(IMemoryAllocator* memAllocator, void* ptr) {
-    return memAllocator.pVtbl.MemoryAllocator.Free(memAllocator, ptr);
-}
+#    define ITopLevelASVk_GetVkTLAS(This)          CALL_IFACE_METHOD(TopLevelASVk, GetVkTLAS, This)
+#    define ITopLevelASVk_GetVkDeviceAddress(This) CALL_IFACE_METHOD(TopLevelASVk, GetVkDeviceAddress, This)
+
+#endif
+
+

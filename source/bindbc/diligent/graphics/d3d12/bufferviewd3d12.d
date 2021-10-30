@@ -2,10 +2,8 @@
  *  Copyright 2021 Thomas Bishop
  *  Distributed under the Boost Software License, Version 1.0
  *  See accompanying file LICENSE or https://www.boost.org/LICENSE_1_0.txt
- *  Modified source based on DiligentCore/Primitives/interface/MemoryAllocator.h
- *  The original licence follows this statement
  */
-
+ 
 /*
  *  Copyright 2019-2021 Diligent Graphics LLC
  *  Copyright 2015-2019 Egor Yusov
@@ -33,28 +31,29 @@
  *  of the possibility of such damages.
  */
 
-module bindbc.diligent.primitives.memoryallocator;
+module bindbc.diligent.graphics.d3d12.bufferviewd3d12;
 
-struct IMemoryAllocatorMethods
+/// \file
+/// Definition of the Diligent::IBufferViewD3D12 interface
+
+import bindbc.diligent.graphics.bufferview;
+
+// {09643F2F-40D4-4076-B086-9E5CDC2CC4FC}
+static const INTERFACE_ID IID_BufferViewD3D12 =
+    INTERFACE_ID(0x9643f2f, 0x40d4, 0x4076, [0xb0, 0x86, 0x9e, 0x5c, 0xdc, 0x2c, 0xc4, 0xfc]);
+
+/// Exposes Direct3D12-specific functionality of a buffer view object.
+struct IBufferViewD3D12Methods
 {
-    void* function(IMemoryAllocator*, size_t Size, const(char)* dbgDescription, const(char)* dbgFileName, const int dbgLineNumber) Allocate;
-    void function(IMemoryAllocator*, void* Ptr) Free;
+    /// Returns CPU descriptor handle of the buffer view.
+    D3D12_CPU_DESCRIPTOR_HANDLE* GetCPUDescriptorHandle(IBufferViewD3D12*);
 }
 
-struct IMemoryAllocatorVtbl
-{
-    IMemoryAllocatorMethods MemoryAllocator;
-}
 
-struct IMemoryAllocator
-{
-    IMemoryAllocatorVtbl* pVtbl;
-}
+struct IBufferViewD3D12Vtbl { IBufferViewD3D12Methods BufferViewD3D12; }
+struct IBufferViewD3D12 { IBufferViewD3D12Vtbl* pVtbl; }
 
-void* IMemoryAllocator_Allocate(IMemoryAllocator* memAllocator, size_t size, const(char)* dbgDescription, const(char)* dbgFileName, const int dbgLineNumber) {
-    return memAllocator.pVtbl.MemoryAllocator.Allocate(memAllocator, size, dbgDescription, dbgFileName, dbgLineNumber);
-}
-
-void IMemoryAllocator_Free(IMemoryAllocator* memAllocator, void* ptr) {
-    return memAllocator.pVtbl.MemoryAllocator.Free(memAllocator, ptr);
+// #    define IBufferViewD3D12_GetCPUDescriptorHandle(This) CALL_IFACE_METHOD(BufferViewD3D12, GetCPUDescriptorHandle, This)
+D3D12_CPU_DESCRIPTOR_HANDLE* IBufferViewD3D12_GetCPUDescriptorHandle(IBufferViewD3D12* bufferView) {
+    return bufferView.pVtbl.BufferViewD3D12.GetCPUDescriptorHandle(bufferView);
 }

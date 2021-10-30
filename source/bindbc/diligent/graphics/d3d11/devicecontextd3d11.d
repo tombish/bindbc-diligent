@@ -2,10 +2,8 @@
  *  Copyright 2021 Thomas Bishop
  *  Distributed under the Boost Software License, Version 1.0
  *  See accompanying file LICENSE or https://www.boost.org/LICENSE_1_0.txt
- *  Modified source based on DiligentCore/Primitives/interface/MemoryAllocator.h
- *  The original licence follows this statement
  */
-
+ 
 /*
  *  Copyright 2019-2021 Diligent Graphics LLC
  *  Copyright 2015-2019 Egor Yusov
@@ -33,28 +31,31 @@
  *  of the possibility of such damages.
  */
 
-module bindbc.diligent.primitives.memoryallocator;
+module bindbc.diligent.graphics.d3d11.devicecontextd3d11;
 
-struct IMemoryAllocatorMethods
+/// \file
+/// Definition of the Diligent::IDeviceContextD3D11 interface
+
+import bindbc.diligent.graphics.devicecontext;
+
+// {F0EE0335-C8AB-4EC1-BB15-B8EE5F003B99}
+static const INTERFACE_ID IID_DeviceContextD3D11 =
+    INTERFACE_ID(0xf0ee0335, 0xc8ab, 0x4ec1, [0xbb, 0x15, 0xb8, 0xee, 0x5f, 0x0, 0x3b, 0x99]);
+
+/// Exposes Direct3D11-specific functionality of a device context.
+struct IDeviceContextD3D11Methods
 {
-    void* function(IMemoryAllocator*, size_t Size, const(char)* dbgDescription, const(char)* dbgFileName, const int dbgLineNumber) Allocate;
-    void function(IMemoryAllocator*, void* Ptr) Free;
+    /// Returns a pointer to the ID3D11DeviceContext interface of the internal Direct3D11 object.
+
+    /// The method does *NOT* increment the reference counter of the returned object,
+    /// so Release() must not be called.
+    ID3D11DeviceContext** GetD3D11DeviceContext(IDeviceContextD3D11*);
 }
 
-struct IMemoryAllocatorVtbl
-{
-    IMemoryAllocatorMethods MemoryAllocator;
-}
+struct IDeviceContextD3D11Vtbl { IDeviceContextD3D11Methods DeviceContextD3D11; }
+struct IDeviceContextD3D11 { IDeviceContextD3D11Vtbl* pVtbl; }
 
-struct IMemoryAllocator
-{
-    IMemoryAllocatorVtbl* pVtbl;
-}
-
-void* IMemoryAllocator_Allocate(IMemoryAllocator* memAllocator, size_t size, const(char)* dbgDescription, const(char)* dbgFileName, const int dbgLineNumber) {
-    return memAllocator.pVtbl.MemoryAllocator.Allocate(memAllocator, size, dbgDescription, dbgFileName, dbgLineNumber);
-}
-
-void IMemoryAllocator_Free(IMemoryAllocator* memAllocator, void* ptr) {
-    return memAllocator.pVtbl.MemoryAllocator.Free(memAllocator, ptr);
+// #    define IDeviceContextD3D11_GetD3D11DeviceContext(This) CALL_IFACE_METHOD(DeviceContextD3D11, GetD3D11DeviceContext, This)
+ID3D11DeviceContext** IDeviceContextD3D11_GetD3D11DeviceContext(IDeviceContextD3D11* context) {
+    return context.pVtbl.DeviceContextD3D11.GetD3D11DeviceContext(context);
 }

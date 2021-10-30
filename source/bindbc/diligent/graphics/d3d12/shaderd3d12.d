@@ -2,10 +2,8 @@
  *  Copyright 2021 Thomas Bishop
  *  Distributed under the Boost Software License, Version 1.0
  *  See accompanying file LICENSE or https://www.boost.org/LICENSE_1_0.txt
- *  Modified source based on DiligentCore/Primitives/interface/MemoryAllocator.h
- *  The original licence follows this statement
  */
-
+ 
 /*
  *  Copyright 2019-2021 Diligent Graphics LLC
  *  Copyright 2015-2019 Egor Yusov
@@ -33,28 +31,52 @@
  *  of the possibility of such damages.
  */
 
-module bindbc.diligent.primitives.memoryallocator;
+module bindbc.diligent.graphics.d3d12.shaderd3d12;
 
-struct IMemoryAllocatorMethods
+/// \file
+/// Definition of the Diligent::IShaderD3D12 interface
+
+#include "../../GraphicsEngineD3DBase/interface/ShaderD3D.h"
+
+// {C059B160-7F31-4029-943D-0996B98EE79A}
+static const INTERFACE_ID IID_ShaderD3D12 =
+    {0xc059b160, 0x7f31, 0x4029, {0x94, 0x3d, 0x9, 0x96, 0xb9, 0x8e, 0xe7, 0x9a}};
+
+#define DILIGENT_INTERFACE_NAME IShaderD3D12
+#include "../../../Primitives/interface/DefineInterfaceHelperMacros.h"
+
+#define IShaderD3D12InclusiveMethods \
+    IShaderD3DInclusiveMethods       \
+    /*IShaderD3D12Methods ShaderD3D12*/
+
+#if DILIGENT_CPP_INTERFACE
+
+/// Exposes Direct3D12-specific functionality of a shader object.
+DILIGENT_BEGIN_INTERFACE(IShaderD3D12, IShaderD3D){
+    /// Returns a pointer to the ID3D12DeviceChild interface of the internal Direct3D12 object.
+
+    /// The method does *NOT* increment the reference counter of the returned object,
+    /// so Release() must not be called.
+    //virtual ID3D12DeviceChild* GetD3D12Shader() = 0;
+};
+DILIGENT_END_INTERFACE
+
+#endif
+
+#include "../../../Primitives/interface/UndefInterfaceHelperMacros.h"
+
+#if DILIGENT_C_INTERFACE
+
+struct IShaderD3D12Vtbl
 {
-    void* function(IMemoryAllocator*, size_t Size, const(char)* dbgDescription, const(char)* dbgFileName, const int dbgLineNumber) Allocate;
-    void function(IMemoryAllocator*, void* Ptr) Free;
-}
+    IShaderD3D12InclusiveMethods;
+};
 
-struct IMemoryAllocatorVtbl
+typedef struct IShaderD3D12
 {
-    IMemoryAllocatorMethods MemoryAllocator;
-}
+    struct IShaderD3D12Vtbl* pVtbl;
+} IShaderD3D12;
 
-struct IMemoryAllocator
-{
-    IMemoryAllocatorVtbl* pVtbl;
-}
+#endif
 
-void* IMemoryAllocator_Allocate(IMemoryAllocator* memAllocator, size_t size, const(char)* dbgDescription, const(char)* dbgFileName, const int dbgLineNumber) {
-    return memAllocator.pVtbl.MemoryAllocator.Allocate(memAllocator, size, dbgDescription, dbgFileName, dbgLineNumber);
-}
 
-void IMemoryAllocator_Free(IMemoryAllocator* memAllocator, void* ptr) {
-    return memAllocator.pVtbl.MemoryAllocator.Free(memAllocator, ptr);
-}

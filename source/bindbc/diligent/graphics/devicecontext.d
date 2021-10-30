@@ -42,32 +42,28 @@ import bindbc.diligent.graphics.constants;
 import bindbc.diligent.graphics.buffer;
 import bindbc.diligent.graphics.inputlayout;
 import bindbc.diligent.graphics.shader;
-
-#include "Texture.h"
-#include "Sampler.h"
-#include "ResourceMapping.h"
-#include "TextureView.h"
-#include "BufferView.h"
-#include "DepthStencilState.h"
-#include "BlendState.h"
-#include "PipelineState.h"
-#include "Fence.h"
-#include "Query.h"
-#include "RenderPass.h"
-#include "Framebuffer.h"
-#include "CommandList.h"
-#include "SwapChain.h"
-#include "BottomLevelAS.h"
-#include "TopLevelAS.h"
-#include "ShaderBindingTable.h"
-#include "CommandQueue.h"
-
-DILIGENT_BEGIN_NAMESPACE(Diligent)
-
+import bindbc.diligent.graphics.texture;
+import bindbc.diligent.graphics.sampler;
+import bindbc.diligent.graphics.resourcemapping;
+import bindbc.diligent.graphics.textureview;
+import bindbc.diligent.graphics.bufferview;
+import bindbc.diligent.graphics.depthstencilstate;
+import bindbc.diligent.graphics.blendstate;
+import bindbc.diligent.graphics.pipelinestate;
+import bindbc.diligent.graphics.fence;
+import bindbc.diligent.graphics.query;
+import bindbc.diligent.graphics.renderpass;
+import bindbc.diligent.graphics.framebuffer;
+import bindbc.diligent.graphics.commandlist;
+import bindbc.diligent.graphics.swapchain;
+import bindbc.diligent.graphics.bottomlevelas;
+import bindbc.diligent.graphics.toplevelas;
+import bindbc.diligent.graphics.shaderbindingtable;
+import bindbc.diligent.graphics.commandqueue;
 
 // {DC92711B-A1BE-4319-B2BD-C662D1CC19E4}
 static const INTERFACE_ID IID_DeviceContext =
-    {0xdc92711b, 0xa1be, 0x4319, {0xb2, 0xbd, 0xc6, 0x62, 0xd1, 0xcc, 0x19, 0xe4}};
+    INTERFACE_ID(0xdc92711b, 0xa1be, 0x4319, [0xb2, 0xbd, 0xc6, 0x62, 0xd1, 0xcc, 0x19, 0xe4]);
 
 /// Device context description.
 struct DeviceContextDesc

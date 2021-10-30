@@ -2,10 +2,8 @@
  *  Copyright 2021 Thomas Bishop
  *  Distributed under the Boost Software License, Version 1.0
  *  See accompanying file LICENSE or https://www.boost.org/LICENSE_1_0.txt
- *  Modified source based on DiligentCore/Primitives/interface/MemoryAllocator.h
- *  The original licence follows this statement
  */
-
+ 
 /*
  *  Copyright 2019-2021 Diligent Graphics LLC
  *  Copyright 2015-2019 Egor Yusov
@@ -33,28 +31,46 @@
  *  of the possibility of such damages.
  */
 
-module bindbc.diligent.primitives.memoryallocator;
+module bindbc.diligent.graphics.vulkan.queryvk;
 
-struct IMemoryAllocatorMethods
+/// \file
+/// Definition of the Diligent::IQueryVk interface
+
+#include "../../GraphicsEngine/interface/Query.h"
+
+// {161C015B-1FE2-4452-8BFF-E35F27B3103C}
+static const INTERFACE_ID IID_QueryVk =
+    {0x161c015b, 0x1fe2, 0x4452, {0x8b, 0xff, 0xe3, 0x5f, 0x27, 0xb3, 0x10, 0x3c}};
+
+#define DILIGENT_INTERFACE_NAME IQueryVk
+#include "../../../Primitives/interface/DefineInterfaceHelperMacros.h"
+
+#define IQueryVkInclusiveMethods \
+    IQueryInclusiveMethods
+//IQueryVkMethods QueryVk
+
+#if DILIGENT_CPP_INTERFACE
+
+/// Exposes Vulkan-specific functionality of a Query object.
+DILIGENT_BEGIN_INTERFACE(IQueryVk, IQuery){};
+DILIGENT_END_INTERFACE
+
+#endif
+
+#include "../../../Primitives/interface/UndefInterfaceHelperMacros.h"
+
+#if DILIGENT_C_INTERFACE
+
+typedef struct IQueryVkVtbl
 {
-    void* function(IMemoryAllocator*, size_t Size, const(char)* dbgDescription, const(char)* dbgFileName, const int dbgLineNumber) Allocate;
-    void function(IMemoryAllocator*, void* Ptr) Free;
-}
+    IQueryVkInclusiveMethods;
+} IQueryVkVtbl;
 
-struct IMemoryAllocatorVtbl
+typedef struct IQueryVk
 {
-    IMemoryAllocatorMethods MemoryAllocator;
-}
+    struct IQueryVkVtbl* pVtbl;
+} IQueryVk;
 
-struct IMemoryAllocator
-{
-    IMemoryAllocatorVtbl* pVtbl;
-}
+#endif
 
-void* IMemoryAllocator_Allocate(IMemoryAllocator* memAllocator, size_t size, const(char)* dbgDescription, const(char)* dbgFileName, const int dbgLineNumber) {
-    return memAllocator.pVtbl.MemoryAllocator.Allocate(memAllocator, size, dbgDescription, dbgFileName, dbgLineNumber);
-}
 
-void IMemoryAllocator_Free(IMemoryAllocator* memAllocator, void* ptr) {
-    return memAllocator.pVtbl.MemoryAllocator.Free(memAllocator, ptr);
-}

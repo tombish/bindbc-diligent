@@ -2,10 +2,8 @@
  *  Copyright 2021 Thomas Bishop
  *  Distributed under the Boost Software License, Version 1.0
  *  See accompanying file LICENSE or https://www.boost.org/LICENSE_1_0.txt
- *  Modified source based on DiligentCore/Primitives/interface/MemoryAllocator.h
- *  The original licence follows this statement
  */
-
+ 
 /*
  *  Copyright 2019-2021 Diligent Graphics LLC
  *  Copyright 2015-2019 Egor Yusov
@@ -33,28 +31,38 @@
  *  of the possibility of such damages.
  */
 
-module bindbc.diligent.primitives.memoryallocator;
+module bindbc.diligent.graphics.opengl.buffergl;
 
-struct IMemoryAllocatorMethods
+/// \file
+/// Definition of the Diligent::IBufferGL interface
+
+#include "../../GraphicsEngine/interface/Buffer.h"
+
+// {08DF7319-F425-4EC7-8D2B-1B3FC0BDDBB4}
+static const INTERFACE_ID IID_BufferGL =
+    {0x8df7319, 0xf425, 0x4ec7, {0x8d, 0x2b, 0x1b, 0x3f, 0xc0, 0xbd, 0xdb, 0xb4}};
+
+#define DILIGENT_INTERFACE_NAME IBufferGL
+#include "../../../Primitives/interface/DefineInterfaceHelperMacros.h"
+
+#define IBufferGLInclusiveMethods \
+    IBufferInclusiveMethods;      \
+    IBufferGLMethods BufferGL
+
+/// Exposes OpenGL-specific functionality of a buffer object.
+DILIGENT_BEGIN_INTERFACE(IBufferGL, IBuffer)
 {
-    void* function(IMemoryAllocator*, size_t Size, const(char)* dbgDescription, const(char)* dbgFileName, const int dbgLineNumber) Allocate;
-    void function(IMemoryAllocator*, void* Ptr) Free;
-}
+    /// Returns OpenGL buffer handle
+    VIRTUAL GLuintGetGLBufferHandle(THIS) PURE;
+};
+DILIGENT_END_INTERFACE
 
-struct IMemoryAllocatorVtbl
-{
-    IMemoryAllocatorMethods MemoryAllocator;
-}
+#include "../../../Primitives/interface/UndefInterfaceHelperMacros.h"
 
-struct IMemoryAllocator
-{
-    IMemoryAllocatorVtbl* pVtbl;
-}
+#if DILIGENT_C_INTERFACE
 
-void* IMemoryAllocator_Allocate(IMemoryAllocator* memAllocator, size_t size, const(char)* dbgDescription, const(char)* dbgFileName, const int dbgLineNumber) {
-    return memAllocator.pVtbl.MemoryAllocator.Allocate(memAllocator, size, dbgDescription, dbgFileName, dbgLineNumber);
-}
+#    define IBufferGL_GetGLBufferHandle(This) CALL_IFACE_METHOD(BufferGL, GetGLBufferHandle, This)
 
-void IMemoryAllocator_Free(IMemoryAllocator* memAllocator, void* ptr) {
-    return memAllocator.pVtbl.MemoryAllocator.Free(memAllocator, ptr);
-}
+#endif
+
+

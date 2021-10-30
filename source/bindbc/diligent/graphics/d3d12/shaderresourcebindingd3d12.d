@@ -2,10 +2,8 @@
  *  Copyright 2021 Thomas Bishop
  *  Distributed under the Boost Software License, Version 1.0
  *  See accompanying file LICENSE or https://www.boost.org/LICENSE_1_0.txt
- *  Modified source based on DiligentCore/Primitives/interface/MemoryAllocator.h
- *  The original licence follows this statement
  */
-
+ 
 /*
  *  Copyright 2019-2021 Diligent Graphics LLC
  *  Copyright 2015-2019 Egor Yusov
@@ -33,28 +31,46 @@
  *  of the possibility of such damages.
  */
 
-module bindbc.diligent.primitives.memoryallocator;
+module bindbc.diligent.graphics.d3d12.shaderresourcebindingd3d12;
 
-struct IMemoryAllocatorMethods
+/// \file
+/// Definition of the Diligent::IShaderResourceBindingD3D12 interface and related data structures
+
+#include "../../GraphicsEngine/interface/ShaderResourceBinding.h"
+
+// {70DD5C7C-81FA-4D9A-942F-D1B91423FAAC}
+static const INTERFACE_ID IID_ShaderResourceBindingD3D12 =
+    {0x70dd5c7c, 0x81fa, 0x4d9a, {0x94, 0x2f, 0xd1, 0xb9, 0x14, 0x23, 0xfa, 0xac}};
+
+#define DILIGENT_INTERFACE_NAME IShaderResourceBindingD3D12
+#include "../../../Primitives/interface/DefineInterfaceHelperMacros.h"
+
+#define IShaderResourceBindingD3D12InclusiveMethods \
+    IShaderResourceBindingInclusiveMethods          \
+    /*IShaderResourceBindingD3D12Methods ShaderResourceBindingD3D12*/
+
+#if DILIGENT_CPP_INTERFACE
+
+/// Exposes Direct3D12-specific functionality of a shader resource binding.
+DILIGENT_BEGIN_INTERFACE(IShaderResourceBindingD3D12, IShaderResourceBinding){};
+DILIGENT_END_INTERFACE
+
+#endif
+
+#include "../../../Primitives/interface/UndefInterfaceHelperMacros.h"
+
+#if DILIGENT_C_INTERFACE
+
+struct IShaderResourceBindingD3D12Vtbl
 {
-    void* function(IMemoryAllocator*, size_t Size, const(char)* dbgDescription, const(char)* dbgFileName, const int dbgLineNumber) Allocate;
-    void function(IMemoryAllocator*, void* Ptr) Free;
-}
+    IShaderResourceBindingD3D12InclusiveMethods;
+};
 
-struct IMemoryAllocatorVtbl
+typedef struct IShaderResourceBindingD3D12
 {
-    IMemoryAllocatorMethods MemoryAllocator;
-}
+    struct IShaderResourceBindingD3D12Vtbl* pVtbl;
+} IShaderResourceBindingD3D12;
 
-struct IMemoryAllocator
-{
-    IMemoryAllocatorVtbl* pVtbl;
-}
+#endif
 
-void* IMemoryAllocator_Allocate(IMemoryAllocator* memAllocator, size_t size, const(char)* dbgDescription, const(char)* dbgFileName, const int dbgLineNumber) {
-    return memAllocator.pVtbl.MemoryAllocator.Allocate(memAllocator, size, dbgDescription, dbgFileName, dbgLineNumber);
-}
 
-void IMemoryAllocator_Free(IMemoryAllocator* memAllocator, void* ptr) {
-    return memAllocator.pVtbl.MemoryAllocator.Free(memAllocator, ptr);
-}

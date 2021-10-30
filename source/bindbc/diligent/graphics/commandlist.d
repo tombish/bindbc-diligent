@@ -2,10 +2,8 @@
  *  Copyright 2021 Thomas Bishop
  *  Distributed under the Boost Software License, Version 1.0
  *  See accompanying file LICENSE or https://www.boost.org/LICENSE_1_0.txt
- *  Modified source based on DiligentCore/Primitives/interface/MemoryAllocator.h
- *  The original licence follows this statement
  */
-
+ 
 /*
  *  Copyright 2019-2021 Diligent Graphics LLC
  *  Copyright 2015-2019 Egor Yusov
@@ -33,28 +31,32 @@
  *  of the possibility of such damages.
  */
 
-module bindbc.diligent.primitives.memoryallocator;
+module bindbc.diligent.graphics.engine.commandlist;
 
-struct IMemoryAllocatorMethods
+/// \file
+/// Defines Diligent::IBuffer interface and related data structures
+
+import bindbc.diligent.graphics.deviceobject;
+
+// {C38C68F2-8A8C-4ED5-B7EE-69126E75DCD8}
+static const INTERFACE_ID IID_CommandList =
+    INTERFACE_ID(0xc38c68f2, 0x8a8c, 0x4ed5, [0xb7, 0xee, 0x69, 0x12, 0x6e, 0x75, 0xdc, 0xd8]);
+
+struct ICommandList;
+
+//  C requires that a struct or union has at least one member
+//struct ICommandListMethods
+//{
+//};
+
+struct ICommandListVtbl
 {
-    void* function(IMemoryAllocator*, size_t Size, const(char)* dbgDescription, const(char)* dbgFileName, const int dbgLineNumber) Allocate;
-    void function(IMemoryAllocator*, void* Ptr) Free;
-}
+    IObjectMethods Object;
+    IDeviceObjectMethods DeviceObject;
+    //struct ICommandListMethods  CommandList;
+};
 
-struct IMemoryAllocatorVtbl
+struct ICommandList
 {
-    IMemoryAllocatorMethods MemoryAllocator;
-}
-
-struct IMemoryAllocator
-{
-    IMemoryAllocatorVtbl* pVtbl;
-}
-
-void* IMemoryAllocator_Allocate(IMemoryAllocator* memAllocator, size_t size, const(char)* dbgDescription, const(char)* dbgFileName, const int dbgLineNumber) {
-    return memAllocator.pVtbl.MemoryAllocator.Allocate(memAllocator, size, dbgDescription, dbgFileName, dbgLineNumber);
-}
-
-void IMemoryAllocator_Free(IMemoryAllocator* memAllocator, void* ptr) {
-    return memAllocator.pVtbl.MemoryAllocator.Free(memAllocator, ptr);
+    ICommandListVtbl* pVtbl;
 }

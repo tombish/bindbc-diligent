@@ -2,20 +2,17 @@
  *  Copyright 2021 Thomas Bishop
  *  Distributed under the Boost Software License, Version 1.0
  *  See accompanying file LICENSE or https://www.boost.org/LICENSE_1_0.txt
- *  Modified source based on DiligentCore/primitives/interface/DataBlob.h
- *  The original licence follows this statement
  */
-
+ 
 /*
  *  Copyright 2019-2021 Diligent Graphics LLC
- *  Copyright 2015-2019 Egor Yusov
- *  
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- *  
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- *  
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -33,49 +30,45 @@
  *  of the possibility of such damages.
  */
 
+module bindbc.diligent.graphics.engine.commandqueue;
+
 /// \file
-/// Defines Diligent::IDataBlob interface
+/// Definition of the Diligent::ICommandQueue interface
 
 import bindbc.diligent.primitives.object;
 
-// {F578FF0D-ABD2-4514-9D32-7CB454D4A73B}
-static const INTERFACE_ID IID_DataBlob =
-    INTERFACE_ID(0xf578ff0d, 0xabd2, 0x4514, [0x9d, 0x32, 0x7c, 0xb4, 0x54, 0xd4, 0xa7, 0x3b]);
+// {0FF427F7-6284-409E-8161-A023CA07EF5D}
+static const INTERFACE_ID IID_CommandQueue =
+    INTERFACE_ID(0xff427f7, 0x6284, 0x409e, [0x81, 0x61, 0xa0, 0x23, 0xca, 0x7, 0xef, 0x5d]);
 
-struct IDataBlobMethods
+/// Command queue interface
+struct ICommandQueueMethods
 {
-    extern(C) @nogc nothrow 
-    {
-        /// Sets the size of the internal data buffer
-        void* Resize(IDataBlob*, size_t NewSize);
+    /// Returns the value of the internal fence that will be signaled next time
+    ulong* GetNextFenceValue(ICommandQueue*);
 
-        /// Returns the size of the internal data buffer
-        size_t* GetSize(IDataBlob*);
+    /// Returns the last completed value of the internal fence
+    ulong* GetCompletedFenceValue(ICommandQueue*);
 
-        /// Returns the pointer to the internal data buffer
-        void** GetDataPtr(IDataBlob*);
-
-        /// Returns const pointer to the internal data buffer
-        const void** GetConstDataPtr(IDataBlob*);
-    }
+    /// Blocks execution until all pending GPU commands are complete
+    ulong* WaitForIdle(ICommandQueue*);
 }
 
-/// Base interface for a file stream
-struct IDataBlobVtbl { IDataBlobMethods DataBlob; }
-struct IDataBlob { IDataBlobVtbl* pVtbl; }
+struct ICommandQueueVtbl { ICommandQueueMethods CommandQueue; }
+struct ICommandQueue { ICommandQueueVtbl* pVtbl; }
 
-void* IDataBlob_Resize(IDataBlob* dataBlob, size_t newSize) {
-    return dataBlob.pVtbl.DataBlob.Resize(dataBlob, newSize);
+//#    define ICommandQueue_GetNextFenceValue(This)        CALL_IFACE_METHOD(CommandQueue, GetNextFenceValue,      This)
+//#    define ICommandQueue_GetCompletedFenceValue(This)   CALL_IFACE_METHOD(CommandQueue, GetCompletedFenceValue, This)
+//#    define ICommandQueue_WaitForIdle(This)              CALL_IFACE_METHOD(CommandQueue, WaitForIdle,            This)
+
+ulong* ICommandQueue_GetNextFenceValue(ICommandQueue* queue) {
+    return queue.pVtbl.CommandQueue.GetNextFenceValue(queue);
 }
 
-size_t* IDataBlob_GetSize(IDataBlob* dataBlob) {
-    return dataBlob.pVtbl.DataBlob.GetSize(dataBlob);
+ulong* ICommandQueue_GetCompletedFenceValue(ICommandQueue* queue) {
+    return queue.pVtbl.CommandQueue.GetCompletedFenceValue(queue);
 }
 
-void** IDataBlob_GetDataPtr(IDataBlob* dataBlob) {
-    return dataBlob.pVtbl.DataBlob.GetDataPtr(dataBlob);
-}
-
-const void** IDataBlob_GetConstDataPtr(IDataBlob* dataBlob) {
-    return dataBlob.pVtbl.DataBlob.GetConstDataPtr(dataBlob);
+ulong* ICommandQueue_WaitForIdle(ICommandQueue* queue) {
+    return queue.pVtbl.CommandQueue.WaitForIdle(queue);
 }

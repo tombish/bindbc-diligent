@@ -2,10 +2,8 @@
  *  Copyright 2021 Thomas Bishop
  *  Distributed under the Boost Software License, Version 1.0
  *  See accompanying file LICENSE or https://www.boost.org/LICENSE_1_0.txt
- *  Modified source based on DiligentCore/Primitives/interface/MemoryAllocator.h
- *  The original licence follows this statement
  */
-
+ 
 /*
  *  Copyright 2019-2021 Diligent Graphics LLC
  *  Copyright 2015-2019 Egor Yusov
@@ -33,28 +31,38 @@
  *  of the possibility of such damages.
  */
 
-module bindbc.diligent.primitives.memoryallocator;
+module bindbc.diligent.graphics.vulkan.bufferviewvk;
 
-struct IMemoryAllocatorMethods
+/// \file
+/// Definition of the Diligent::IBufferViewVk interface
+
+#include "../../GraphicsEngine/interface/BufferView.h"
+
+// {CB67024A-1E23-4202-A49A-07B6BCEABC06}
+static const INTERFACE_ID IID_BufferViewVk =
+    {0xcb67024a, 0x1e23, 0x4202, {0xa4, 0x9a, 0x7, 0xb6, 0xbc, 0xea, 0xbc, 0x6}};
+
+#define DILIGENT_INTERFACE_NAME IBufferViewVk
+#include "../../../Primitives/interface/DefineInterfaceHelperMacros.h"
+
+#define IBufferViewVkInclusiveMethods \
+    IBufferViewInclusiveMethods;      \
+    IBufferViewVkMethods BufferViewVk
+
+/// Exposes Vulkan-specific functionality of a buffer view object.
+DILIGENT_BEGIN_INTERFACE(IBufferViewVk, IBufferView)
 {
-    void* function(IMemoryAllocator*, size_t Size, const(char)* dbgDescription, const(char)* dbgFileName, const int dbgLineNumber) Allocate;
-    void function(IMemoryAllocator*, void* Ptr) Free;
-}
+    /// Returns a Vulkan handle of the internal buffer view object.
+    VIRTUAL VkBufferViewGetVkBufferView(THIS) CONST PURE;
+};
+DILIGENT_END_INTERFACE
 
-struct IMemoryAllocatorVtbl
-{
-    IMemoryAllocatorMethods MemoryAllocator;
-}
+#include "../../../Primitives/interface/UndefInterfaceHelperMacros.h"
 
-struct IMemoryAllocator
-{
-    IMemoryAllocatorVtbl* pVtbl;
-}
+#if DILIGENT_C_INTERFACE
 
-void* IMemoryAllocator_Allocate(IMemoryAllocator* memAllocator, size_t size, const(char)* dbgDescription, const(char)* dbgFileName, const int dbgLineNumber) {
-    return memAllocator.pVtbl.MemoryAllocator.Allocate(memAllocator, size, dbgDescription, dbgFileName, dbgLineNumber);
-}
+#    define IBufferViewVk_GetVkBufferView(This) CALL_IFACE_METHOD(BufferViewVk, GetVkBufferView, This)
 
-void IMemoryAllocator_Free(IMemoryAllocator* memAllocator, void* ptr) {
-    return memAllocator.pVtbl.MemoryAllocator.Free(memAllocator, ptr);
-}
+#endif
+
+

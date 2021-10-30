@@ -2,10 +2,8 @@
  *  Copyright 2021 Thomas Bishop
  *  Distributed under the Boost Software License, Version 1.0
  *  See accompanying file LICENSE or https://www.boost.org/LICENSE_1_0.txt
- *  Modified source based on DiligentCore/Primitives/interface/MemoryAllocator.h
- *  The original licence follows this statement
  */
-
+ 
 /*
  *  Copyright 2019-2021 Diligent Graphics LLC
  *  Copyright 2015-2019 Egor Yusov
@@ -33,28 +31,31 @@
  *  of the possibility of such damages.
  */
 
-module bindbc.diligent.primitives.memoryallocator;
+module bindbc.diligent.graphics.accessories.colorconversion;
 
-struct IMemoryAllocatorMethods
+import std.math;
+
+// https://en.wikipedia.org/wiki/SRGB
+float LinearToSRGB(float x)
 {
-    void* function(IMemoryAllocator*, size_t Size, const(char)* dbgDescription, const(char)* dbgFileName, const int dbgLineNumber) Allocate;
-    void function(IMemoryAllocator*, void* Ptr) Free;
+    return x <= 0.0031308 ? x * 12.92f : 1.055f * pow(x, 1.f / 2.4f) - 0.055f;
 }
 
-struct IMemoryAllocatorVtbl
+float SRGBToLinear(float x)
 {
-    IMemoryAllocatorMethods MemoryAllocator;
+    return x <= 0.04045f ? x / 12.92f : pow((x + 0.055f) / 1.055f, 2.4f);
 }
 
-struct IMemoryAllocator
+float LinearToSRGB(ubyte x);
+float SRGBToLinear(ubyte x);
+
+float FastLinearToSRGB(float x)
 {
-    IMemoryAllocatorVtbl* pVtbl;
+    return x < 0.0031308f ? 12.92f * x : 1.13005f * sqrtf(fabs(x - 0.00228f)) - 0.13448f * x + 0.005719f;
 }
 
-void* IMemoryAllocator_Allocate(IMemoryAllocator* memAllocator, size_t size, const(char)* dbgDescription, const(char)* dbgFileName, const int dbgLineNumber) {
-    return memAllocator.pVtbl.MemoryAllocator.Allocate(memAllocator, size, dbgDescription, dbgFileName, dbgLineNumber);
-}
-
-void IMemoryAllocator_Free(IMemoryAllocator* memAllocator, void* ptr) {
-    return memAllocator.pVtbl.MemoryAllocator.Free(memAllocator, ptr);
+float FastSRGBToLinear(float x)
+{
+    // http://chilliant.blogspot.com/2012/08/srgb-approximations-for-hlsl.html
+    return x * (x * (x * 0.305306011f + 0.682171111f) + 0.012522878f);
 }

@@ -41,51 +41,44 @@ import bindbc.diligent.primitives.datablob;
 
 /// IFileStream interface unique identifier
 // {E67F386C-6A5A-4A24-A0CE-C66435465D41}
-static const struct INTERFACE_ID IID_FileStream =
+static const INTERFACE_ID IID_FileStream =
     INTERFACE_ID(0xe67f386c, 0x6a5a, 0x4a24, [0xa0, 0xce, 0xc6, 0x64, 0x35, 0x46, 0x5d, 0x41]);
 
-#define DILIGENT_INTERFACE_NAME IFileStream
-#include "DefineInterfaceHelperMacros.h"
-
-#define IFileStreamInclusiveMethods \
-    IObjectInclusiveMethods;        \
-    IFileStreamMethods FileStream
-
-#    define DILIGENT_BEGIN_INTERFACE(Iface, Base) \
-        typedef struct Iface                      \
-        {                                         \
-            struct Iface##Vtbl* pVtbl;            \
-        } Iface;                                  \
-        struct Iface##Methods
-
-struct IFileStream { struct IFileStreamVtbl* pVtbl; }
-
+/// Base interface for a file stream
 struct IFileStreamMethods
 {
     /// Reads data from the stream
-    bool Read(IFileStream*, void* Data, size_t BufferSize);
+    bool* Read(IFileStream*, void* Data, size_t BufferSize);
 
-    void ReadBlob(IFileStream*, IDataBlob* pData);
+    void* ReadBlob(IFileStream*, IDataBlob* pData);
 
     /// Writes data to the stream
-    bool Write(IFileStream*, const void* Data, size_t Size);
+    bool* Write(IFileStream*, const void* Data, size_t Size);
 
     size_t* GetSize(IFileStream*);
 
-    bool IsValid(IFileStream*);
+    bool* IsValid(IFileStream*);
 }
 
-/// Base interface for a file stream
-DILIGENT_BEGIN_INTERFACE(IFileStream, IObject)
-{
-    
-};
-DILIGENT_END_INTERFACE
+struct IFileStreamVtbl { IFileStreamMethods FileStream; }
+struct IFileStream { IFileStreamVtbl* pVtbl; }
 
-#include "UndefInterfaceHelperMacros.h"
+bool* IFileStream_Read(IFileStream* filestream, void* data, size_t bufferSize) {
+    return filestream.pVtbl.FileStream.Read(filestream, data, bufferSize);
+}
 
-#    define IFileStream_Read(This, ...)     CALL_IFACE_METHOD(FileStream, Read,     This, __VA_ARGS__)
-#    define IFileStream_ReadBlob(This, ...) CALL_IFACE_METHOD(FileStream, ReadBlob, This, __VA_ARGS__)
-#    define IFileStream_Write(This, ...)    CALL_IFACE_METHOD(FileStream, Write,    This, __VA_ARGS__)
-#    define IFileStream_GetSize(This)       CALL_IFACE_METHOD(FileStream, GetSize,  This)
-#    define IFileStream_IsValid(This)       CALL_IFACE_METHOD(FileStream, IsValid,  This)
+void* IFileStream_ReadBlob(IFileStream* filestream, IDataBlob* pData) {
+    return filestream.pVtbl.FileStream.ReadBlob(filestream, pData);
+}
+
+bool* IFileStream_Write(IFileStream* filestream, const void* data, size_t size) {
+    return filestream.pVtbl.FileStream.Write(filestream, data, size);
+}
+
+size_t* IFileStream_GetSize(IFileStream* filestream) {
+    return filestream.pVtbl.FileStream.GetSize(filestream);
+}
+
+bool* IFileStream_IsValid(IFileStream* filestream) {
+    return filestream.pVtbl.FileStream.IsValid(filestream);
+}

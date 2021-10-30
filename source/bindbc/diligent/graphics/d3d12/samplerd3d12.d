@@ -2,10 +2,8 @@
  *  Copyright 2021 Thomas Bishop
  *  Distributed under the Boost Software License, Version 1.0
  *  See accompanying file LICENSE or https://www.boost.org/LICENSE_1_0.txt
- *  Modified source based on DiligentCore/Primitives/interface/MemoryAllocator.h
- *  The original licence follows this statement
  */
-
+ 
 /*
  *  Copyright 2019-2021 Diligent Graphics LLC
  *  Copyright 2015-2019 Egor Yusov
@@ -33,28 +31,41 @@
  *  of the possibility of such damages.
  */
 
-module bindbc.diligent.primitives.memoryallocator;
+module bindbc.diligent.graphics.d3d12.samplerd3d12;
 
-struct IMemoryAllocatorMethods
+/// \file
+/// Definition of the Diligent::ISamplerD3D12 interface
+
+#include "../../GraphicsEngine/interface/Sampler.h"
+
+// {31A3BFAF-738E-4D8C-AD18-B021C5D948DD}
+static const INTERFACE_ID IID_SamplerD3D12 =
+    {0x31a3bfaf, 0x738e, 0x4d8c, {0xad, 0x18, 0xb0, 0x21, 0xc5, 0xd9, 0x48, 0xdd}};
+
+#define DILIGENT_INTERFACE_NAME ISamplerD3D12
+#include "../../../Primitives/interface/DefineInterfaceHelperMacros.h"
+
+#define ISamplerD3D12InclusiveMethods \
+    ISamplerInclusiveMethods;         \
+    ISamplerD3D12Methods SamplerD3D12
+
+/// Exposes Direct3D12-specific functionality of a sampler object.
+DILIGENT_BEGIN_INTERFACE(ISamplerD3D12, ISampler)
 {
-    void* function(IMemoryAllocator*, size_t Size, const(char)* dbgDescription, const(char)* dbgFileName, const int dbgLineNumber) Allocate;
-    void function(IMemoryAllocator*, void* Ptr) Free;
-}
+    /// Returns a CPU descriptor handle of the D3D12 sampler object
 
-struct IMemoryAllocatorVtbl
-{
-    IMemoryAllocatorMethods MemoryAllocator;
-}
+    /// The method does *NOT* increment the reference counter of the returned object,
+    /// so Release() must not be called.
+    VIRTUAL D3D12_CPU_DESCRIPTOR_HANDLEGetCPUDescriptorHandle(THIS) PURE;
+};
+DILIGENT_END_INTERFACE
 
-struct IMemoryAllocator
-{
-    IMemoryAllocatorVtbl* pVtbl;
-}
+#include "../../../Primitives/interface/UndefInterfaceHelperMacros.h"
 
-void* IMemoryAllocator_Allocate(IMemoryAllocator* memAllocator, size_t size, const(char)* dbgDescription, const(char)* dbgFileName, const int dbgLineNumber) {
-    return memAllocator.pVtbl.MemoryAllocator.Allocate(memAllocator, size, dbgDescription, dbgFileName, dbgLineNumber);
-}
+#if DILIGENT_C_INTERFACE
 
-void IMemoryAllocator_Free(IMemoryAllocator* memAllocator, void* ptr) {
-    return memAllocator.pVtbl.MemoryAllocator.Free(memAllocator, ptr);
-}
+#    define ISamplerD3D12_GetCPUDescriptorHandle(This) CALL_IFACE_METHOD(SamplerD3D12, GetCPUDescriptorHandle, This)
+
+#endif
+
+

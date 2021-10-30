@@ -2,10 +2,8 @@
  *  Copyright 2021 Thomas Bishop
  *  Distributed under the Boost Software License, Version 1.0
  *  See accompanying file LICENSE or https://www.boost.org/LICENSE_1_0.txt
- *  Modified source based on DiligentCore/Primitives/interface/MemoryAllocator.h
- *  The original licence follows this statement
  */
-
+ 
 /*
  *  Copyright 2019-2021 Diligent Graphics LLC
  *  Copyright 2015-2019 Egor Yusov
@@ -33,28 +31,38 @@
  *  of the possibility of such damages.
  */
 
-module bindbc.diligent.primitives.memoryallocator;
+module bindbc.diligent.graphics.vulkan.fencevk;
 
-struct IMemoryAllocatorMethods
+/// \file
+/// Definition of the Diligent::IFenceVk interface
+
+#include "../../GraphicsEngine/interface/Fence.h"
+
+// {7610B4CD-EDEA-4951-82CF-52F97FAFED2D}
+static const INTERFACE_ID IID_FenceVk =
+    {0x7610b4cd, 0xedea, 0x4951, {0x82, 0xcf, 0x52, 0xf9, 0x7f, 0xaf, 0xed, 0x2d}};
+
+#define DILIGENT_INTERFACE_NAME IFenceVk
+#include "../../../Primitives/interface/DefineInterfaceHelperMacros.h"
+
+#define IFenceVkInclusiveMethods \
+    IFenceInclusiveMethods;      \
+    IFenceVkMethods FenceVk
+
+/// Exposes Vulkan-specific functionality of a fence object.
+DILIGENT_BEGIN_INTERFACE(IFenceVk, IFence)
 {
-    void* function(IMemoryAllocator*, size_t Size, const(char)* dbgDescription, const(char)* dbgFileName, const int dbgLineNumber) Allocate;
-    void function(IMemoryAllocator*, void* Ptr) Free;
-}
+    /// If timeline semaphores are supported, returns the semaphore object; otherwise returns VK_NULL_HANDLE.
+    VIRTUAL VkSemaphoreGetVkSemaphore(THIS) PURE;
+};
+DILIGENT_END_INTERFACE
 
-struct IMemoryAllocatorVtbl
-{
-    IMemoryAllocatorMethods MemoryAllocator;
-}
+#include "../../../Primitives/interface/UndefInterfaceHelperMacros.h"
 
-struct IMemoryAllocator
-{
-    IMemoryAllocatorVtbl* pVtbl;
-}
+#if DILIGENT_C_INTERFACE
 
-void* IMemoryAllocator_Allocate(IMemoryAllocator* memAllocator, size_t size, const(char)* dbgDescription, const(char)* dbgFileName, const int dbgLineNumber) {
-    return memAllocator.pVtbl.MemoryAllocator.Allocate(memAllocator, size, dbgDescription, dbgFileName, dbgLineNumber);
-}
+#    define IFenceVk_GetVkSemaphore(This)    CALL_IFACE_METHOD(FenceVk, GetVkSemaphore, This)
 
-void IMemoryAllocator_Free(IMemoryAllocator* memAllocator, void* ptr) {
-    return memAllocator.pVtbl.MemoryAllocator.Free(memAllocator, ptr);
-}
+#endif
+
+

@@ -2,10 +2,8 @@
  *  Copyright 2021 Thomas Bishop
  *  Distributed under the Boost Software License, Version 1.0
  *  See accompanying file LICENSE or https://www.boost.org/LICENSE_1_0.txt
- *  Modified source based on DiligentCore/Primitives/interface/MemoryAllocator.h
- *  The original licence follows this statement
  */
-
+ 
 /*
  *  Copyright 2019-2021 Diligent Graphics LLC
  *  Copyright 2015-2019 Egor Yusov
@@ -33,28 +31,29 @@
  *  of the possibility of such damages.
  */
 
-module bindbc.diligent.primitives.memoryallocator;
+module bindbc.diligent.graphics.d3dbase.shaderresourcevariabled3d;
 
-struct IMemoryAllocatorMethods
+/// \file
+/// Definition of the Diligent::IShaderResourceVariableD3D interface
+
+import bindbc.diligent.graphics.shaderresourcevariable;
+import shaderd3d;
+
+/*
+namespace Diligent
 {
-    void* function(IMemoryAllocator*, size_t Size, const(char)* dbgDescription, const(char)* dbgFileName, const int dbgLineNumber) Allocate;
-    void function(IMemoryAllocator*, void* Ptr) Free;
-}
 
-struct IMemoryAllocatorVtbl
+// {99BCAFBF-E7E1-420A-929B-C862265FD146}
+static constexpr INTERFACE_ID IID_ShaderResourceVariableD3D =
+    {0x99bcafbf, 0xe7e1, 0x420a, {0x92, 0x9b, 0xc8, 0x62, 0x26, 0x5f, 0xd1, 0x46}};
+
+/// Interface to the Direct3D ShaderResourceVariable resource variable
+class IShaderResourceVariableD3D : public IShaderResourceVariable
 {
-    IMemoryAllocatorMethods MemoryAllocator;
-}
+public:
+    /// Returns HLSL ShaderResourceVariable resource description
+    virtual void DILIGENT_CALL_TYPE GetHLSLResourceDesc(HLSLShaderResourceDesc& HLSLResDesc) const = 0;
+};
 
-struct IMemoryAllocator
-{
-    IMemoryAllocatorVtbl* pVtbl;
-}
-
-void* IMemoryAllocator_Allocate(IMemoryAllocator* memAllocator, size_t size, const(char)* dbgDescription, const(char)* dbgFileName, const int dbgLineNumber) {
-    return memAllocator.pVtbl.MemoryAllocator.Allocate(memAllocator, size, dbgDescription, dbgFileName, dbgLineNumber);
-}
-
-void IMemoryAllocator_Free(IMemoryAllocator* memAllocator, void* ptr) {
-    return memAllocator.pVtbl.MemoryAllocator.Free(memAllocator, ptr);
-}
+} // namespace Diligent
+*/

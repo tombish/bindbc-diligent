@@ -2,10 +2,8 @@
  *  Copyright 2021 Thomas Bishop
  *  Distributed under the Boost Software License, Version 1.0
  *  See accompanying file LICENSE or https://www.boost.org/LICENSE_1_0.txt
- *  Modified source based on DiligentCore/Primitives/interface/MemoryAllocator.h
- *  The original licence follows this statement
  */
-
+ 
 /*
  *  Copyright 2019-2021 Diligent Graphics LLC
  *  Copyright 2015-2019 Egor Yusov
@@ -33,28 +31,46 @@
  *  of the possibility of such damages.
  */
 
-module bindbc.diligent.primitives.memoryallocator;
+module bindbc.diligent.graphics.opengl.renderdevicegles;
 
-struct IMemoryAllocatorMethods
+/// \file
+/// Definition of the Diligent::IRenderDeviceGLES interface
+
+#include "RenderDeviceGL.h"
+#include <android/native_window.h>
+#include <EGL/egl.h>
+
+// {F705A0D9-2023-4DE1-8B3C-C56E4CEB8DB7}
+static const INTERFACE_ID IID_RenderDeviceGLES =
+    {0xf705a0d9, 0x2023, 0x4de1, {0x8b, 0x3c, 0xc5, 0x6e, 0x4c, 0xeb, 0x8d, 0xb7}};
+
+#define DILIGENT_INTERFACE_NAME IRenderDeviceGLES
+#include "../../../Primitives/interface/DefineInterfaceHelperMacros.h"
+
+#define IRenderDeviceGLESInclusiveMethods \
+    IRenderDeviceGLInclusiveMethods;      \
+    IRenderDeviceGLESMethods RenderDeviceGLES
+
+/// Interface to the render device object implemented in OpenGLES
+DILIGENT_BEGIN_INTERFACE(IRenderDeviceGLES, IRenderDeviceGL)
 {
-    void* function(IMemoryAllocator*, size_t Size, const(char)* dbgDescription, const(char)* dbgFileName, const int dbgLineNumber) Allocate;
-    void function(IMemoryAllocator*, void* Ptr) Free;
-}
+    VIRTUAL boolInvalidate(THIS) PURE;
 
-struct IMemoryAllocatorVtbl
-{
-    IMemoryAllocatorMethods MemoryAllocator;
-}
+    VIRTUAL voidSuspend(THIS) PURE;
 
-struct IMemoryAllocator
-{
-    IMemoryAllocatorVtbl* pVtbl;
-}
+    VIRTUAL EGLintResume(THIS_
+                                  ANativeWindow* window) PURE;
+};
+DILIGENT_END_INTERFACE
 
-void* IMemoryAllocator_Allocate(IMemoryAllocator* memAllocator, size_t size, const(char)* dbgDescription, const(char)* dbgFileName, const int dbgLineNumber) {
-    return memAllocator.pVtbl.MemoryAllocator.Allocate(memAllocator, size, dbgDescription, dbgFileName, dbgLineNumber);
-}
+#include "../../../Primitives/interface/UndefInterfaceHelperMacros.h"
 
-void IMemoryAllocator_Free(IMemoryAllocator* memAllocator, void* ptr) {
-    return memAllocator.pVtbl.MemoryAllocator.Free(memAllocator, ptr);
-}
+#if DILIGENT_C_INTERFACE
+
+#    define IRenderDeviceGLES_Invalidate(This)   CALL_IFACE_METHOD(RenderDeviceGLES, Invalidate, This)
+#    define IRenderDeviceGLES_Suspend(This)      CALL_IFACE_METHOD(RenderDeviceGLES, Suspend,    This)
+#    define IRenderDeviceGLES_Resume(This, ...)  CALL_IFACE_METHOD(RenderDeviceGLES, Resume,     This, __VA_ARGS__)
+
+#endif
+
+

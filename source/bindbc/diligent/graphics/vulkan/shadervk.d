@@ -2,10 +2,8 @@
  *  Copyright 2021 Thomas Bishop
  *  Distributed under the Boost Software License, Version 1.0
  *  See accompanying file LICENSE or https://www.boost.org/LICENSE_1_0.txt
- *  Modified source based on DiligentCore/Primitives/interface/MemoryAllocator.h
- *  The original licence follows this statement
  */
-
+ 
 /*
  *  Copyright 2019-2021 Diligent Graphics LLC
  *  Copyright 2015-2019 Egor Yusov
@@ -33,28 +31,36 @@
  *  of the possibility of such damages.
  */
 
-module bindbc.diligent.primitives.memoryallocator;
+module bindbc.diligent.graphics.vulkan.shadervk;
 
-struct IMemoryAllocatorMethods
+/// \file
+/// Definition of the Diligent::IShaderVk interface
+
+#include "../../../Primitives/interface/CommonDefinitions.h"
+#if DILIGENT_CPP_INTERFACE
+#    include <vector>
+#endif
+
+#include "../../GraphicsEngine/interface/Shader.h"
+
+// {8B0C91B4-B1D8-4E03-9250-A70E131A59FA}
+static const INTERFACE_ID IID_ShaderVk =
+    {0x8b0c91b4, 0xb1d8, 0x4e03, {0x92, 0x50, 0xa7, 0xe, 0x13, 0x1a, 0x59, 0xfa}};
+
+#define IShaderVkInclusiveMethods \
+    IShaderInclusiveMethods;      \
+    IShaderVkMethods ShaderVk
+
+#if DILIGENT_CPP_INTERFACE
+
+/// Exposes Vulkan-specific functionality of a shader object.
+class IShaderVk : public IShader
 {
-    void* function(IMemoryAllocator*, size_t Size, const(char)* dbgDescription, const(char)* dbgFileName, const int dbgLineNumber) Allocate;
-    void function(IMemoryAllocator*, void* Ptr) Free;
-}
+public:
+    /// Returns SPIRV bytecode
+    virtual const std::vector<uint32_t>& DILIGENT_CALL_TYPE GetSPIRV() const = 0;
+};
 
-struct IMemoryAllocatorVtbl
-{
-    IMemoryAllocatorMethods MemoryAllocator;
-}
+#endif
 
-struct IMemoryAllocator
-{
-    IMemoryAllocatorVtbl* pVtbl;
-}
 
-void* IMemoryAllocator_Allocate(IMemoryAllocator* memAllocator, size_t size, const(char)* dbgDescription, const(char)* dbgFileName, const int dbgLineNumber) {
-    return memAllocator.pVtbl.MemoryAllocator.Allocate(memAllocator, size, dbgDescription, dbgFileName, dbgLineNumber);
-}
-
-void IMemoryAllocator_Free(IMemoryAllocator* memAllocator, void* ptr) {
-    return memAllocator.pVtbl.MemoryAllocator.Free(memAllocator, ptr);
-}

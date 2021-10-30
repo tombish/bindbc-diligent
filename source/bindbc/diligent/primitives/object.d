@@ -40,22 +40,23 @@ import bindbc.diligent.primitives.referencecounters;
 
 struct IObjectMethods
 {
-    void function(IObject*, const INTERFACE_ID* IID, IObject** ppInterface) QueryInterface;
-    ReferenceCounterValueType function(IObject*) AddRef;
-    ReferenceCounterValueType function(IObject*) Release;
-    IReferenceCounters* function(IObject*) GetReferenceCounters;
+    extern(C) @nogc nothrow {
+        void function(IObject*, const INTERFACE_ID* IID, IObject** ppInterface) QueryInterface;
+        ReferenceCounterValueType function(IObject*) AddRef;
+        ReferenceCounterValueType function(IObject*) Release;
+        IReferenceCounters* function(IObject*) GetReferenceCounters;
+    }    
 }
 
-struct IObjectVtbl { IObjectMethods Object; }
-
+struct IObjectVtbl { IObjectMethods object; }
 struct IObject { IObjectVtbl* pVtbl; }
 
-void IObject_QueryInterface(IObject* object, const INTERFACE_ID* IID, IObject** ppInterface) {
-    object.pVtbl.Object.QueryInterface(object, IID, ppInterface);
+void objectQueryInterface(IObject* object, const INTERFACE_ID* IID, IObject** ppInterface) {
+     object.pVtbl.object.QueryInterface(object, IID, ppInterface);
 }
-ReferenceCounterValueType IObject_AddRef(IObject* object) {
-return object.pVtbl.Object.AddRef(object);
+ReferenceCounterValueType objectAddRef(IObject* object) {
+    return object.pVtbl.object.AddRef(object);
 }
-ReferenceCounterValueType IObject_Release(IObject* object) {
-return object.pVtbl.Object.Release(object);
+ReferenceCounterValueType objectRelease(IObject* object) {
+    return object.pVtbl.object.Release(object);
 }

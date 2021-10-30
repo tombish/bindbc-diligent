@@ -2,10 +2,8 @@
  *  Copyright 2021 Thomas Bishop
  *  Distributed under the Boost Software License, Version 1.0
  *  See accompanying file LICENSE or https://www.boost.org/LICENSE_1_0.txt
- *  Modified source based on DiligentCore/Primitives/interface/MemoryAllocator.h
- *  The original licence follows this statement
  */
-
+ 
 /*
  *  Copyright 2019-2021 Diligent Graphics LLC
  *  Copyright 2015-2019 Egor Yusov
@@ -33,28 +31,42 @@
  *  of the possibility of such damages.
  */
 
-module bindbc.diligent.primitives.memoryallocator;
+module bindbc.diligent.graphics.opengl.texturegl;
 
-struct IMemoryAllocatorMethods
+/// \file
+/// Definition of the Diligent::ITextureGL interface
+
+#include "../../GraphicsEngine/interface/Texture.h"
+
+// {D7BC9FF0-28F0-4636-9732-710C204D1D63}
+static const INTERFACE_ID IID_TextureGL =
+    {0xd7bc9ff0, 0x28f0, 0x4636, {0x97, 0x32, 0x71, 0xc, 0x20, 0x4d, 0x1d, 0x63}};
+
+#define DILIGENT_INTERFACE_NAME ITextureGL
+#include "../../../Primitives/interface/DefineInterfaceHelperMacros.h"
+
+#define ITextureGLInclusiveMethods \
+    ITextureInclusiveMethods;      \
+    ITextureGLMethods TextureGL
+
+/// Exposes OpenGL-specific functionality of a texture object.
+DILIGENT_BEGIN_INTERFACE(ITextureGL, ITexture)
 {
-    void* function(IMemoryAllocator*, size_t Size, const(char)* dbgDescription, const(char)* dbgFileName, const int dbgLineNumber) Allocate;
-    void function(IMemoryAllocator*, void* Ptr) Free;
-}
+    /// Returns OpenGL texture handle
+    VIRTUAL GLuintGetGLTextureHandle(THIS) PURE;
 
-struct IMemoryAllocatorVtbl
-{
-    IMemoryAllocatorMethods MemoryAllocator;
-}
+    /// Returns bind target of the native OpenGL texture
+    VIRTUAL GLenumGetBindTarget(THIS) CONST PURE;
+};
+DILIGENT_END_INTERFACE
 
-struct IMemoryAllocator
-{
-    IMemoryAllocatorVtbl* pVtbl;
-}
+#include "../../../Primitives/interface/UndefInterfaceHelperMacros.h"
 
-void* IMemoryAllocator_Allocate(IMemoryAllocator* memAllocator, size_t size, const(char)* dbgDescription, const(char)* dbgFileName, const int dbgLineNumber) {
-    return memAllocator.pVtbl.MemoryAllocator.Allocate(memAllocator, size, dbgDescription, dbgFileName, dbgLineNumber);
-}
+#if DILIGENT_C_INTERFACE
 
-void IMemoryAllocator_Free(IMemoryAllocator* memAllocator, void* ptr) {
-    return memAllocator.pVtbl.MemoryAllocator.Free(memAllocator, ptr);
-}
+#    define ITextureGL_GetGLTextureHandle(This) CALL_IFACE_METHOD(TextureGL, GetGLTextureHandle, This)
+#    define ITextureGL_GetBindTarget(This)      CALL_IFACE_METHOD(TextureGL, GetBindTarget,      This)
+
+#endif
+
+

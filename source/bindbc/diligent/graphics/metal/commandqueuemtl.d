@@ -2,20 +2,17 @@
  *  Copyright 2021 Thomas Bishop
  *  Distributed under the Boost Software License, Version 1.0
  *  See accompanying file LICENSE or https://www.boost.org/LICENSE_1_0.txt
- *  Modified source based on DiligentCore/Primitives/interface/MemoryAllocator.h
- *  The original licence follows this statement
  */
-
+ 
 /*
  *  Copyright 2019-2021 Diligent Graphics LLC
- *  Copyright 2015-2019 Egor Yusov
- *  
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- *  
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- *  
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -33,28 +30,45 @@
  *  of the possibility of such damages.
  */
 
-module bindbc.diligent.primitives.memoryallocator;
+module bindbc.diligent.graphics.metal.commandqueuemtl;
 
-struct IMemoryAllocatorMethods
+/// \file
+/// Definition of the Diligent::ICommandQueueMtl interface
+
+#include "../../GraphicsEngine/interface/CommandQueue.h"
+
+// {1C0013CB-41B8-453D-8983-4D935F5973B0}
+static const INTERFACE_ID IID_CommandQueueMtl =
+    {0x1c0013cb, 0x41b8, 0x453d, {0x89, 0x83, 0x4d, 0x93, 0x5f, 0x59, 0x73, 0xb0}};
+
+#define DILIGENT_INTERFACE_NAME ICommandQueueMtl
+#include "../../../Primitives/interface/DefineInterfaceHelperMacros.h"
+
+#define ICommandQueueMtlInclusiveMethods \
+    ICommandQueueInclusiveMethods;       \
+    ICommandQueueMtlMethods CommandQueueMtl
+
+/// Command queue interface
+DILIGENT_BEGIN_INTERFACE(ICommandQueueMtl, ICommandQueue)
 {
-    void* function(IMemoryAllocator*, size_t Size, const(char)* dbgDescription, const(char)* dbgFileName, const int dbgLineNumber) Allocate;
-    void function(IMemoryAllocator*, void* Ptr) Free;
-}
+    /// Returns a pointer to Metal command queue (MTLCommandQueue)
+    VIRTUAL id<MTLCommandQueue>GetMtlCommandQueue(THIS) CONST PURE;
 
-struct IMemoryAllocatorVtbl
-{
-    IMemoryAllocatorMethods MemoryAllocator;
-}
+    /// Submits a given command buffer to the command queue
 
-struct IMemoryAllocator
-{
-    IMemoryAllocatorVtbl* pVtbl;
-}
+    /// \return Fence value associated with the submitted command buffer
+    VIRTUAL Uint64Submit(THIS_
+                                  id<MTLCommandBuffer> mtlCommandBuffer) PURE;
+};
+DILIGENT_END_INTERFACE
 
-void* IMemoryAllocator_Allocate(IMemoryAllocator* memAllocator, size_t size, const(char)* dbgDescription, const(char)* dbgFileName, const int dbgLineNumber) {
-    return memAllocator.pVtbl.MemoryAllocator.Allocate(memAllocator, size, dbgDescription, dbgFileName, dbgLineNumber);
-}
+#include "../../../Primitives/interface/UndefInterfaceHelperMacros.h"
 
-void IMemoryAllocator_Free(IMemoryAllocator* memAllocator, void* ptr) {
-    return memAllocator.pVtbl.MemoryAllocator.Free(memAllocator, ptr);
-}
+#if DILIGENT_C_INTERFACE
+
+#    define ICommandQueueMtl_GetMtlCommandQueue(This)  CALL_IFACE_METHOD(CommandQueueMtl, GetMtlCommandQueue, This)
+#    define ICommandQueueMtl_Submit(This, ...)         CALL_IFACE_METHOD(CommandQueueMtl, Submit,             This, __VA_ARGS__)
+
+#endif
+
+

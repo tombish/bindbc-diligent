@@ -2,10 +2,8 @@
  *  Copyright 2021 Thomas Bishop
  *  Distributed under the Boost Software License, Version 1.0
  *  See accompanying file LICENSE or https://www.boost.org/LICENSE_1_0.txt
- *  Modified source based on DiligentCore/Primitives/interface/MemoryAllocator.h
- *  The original licence follows this statement
  */
-
+ 
 /*
  *  Copyright 2019-2021 Diligent Graphics LLC
  *  Copyright 2015-2019 Egor Yusov
@@ -33,28 +31,44 @@
  *  of the possibility of such damages.
  */
 
-module bindbc.diligent.primitives.memoryallocator;
+module bindbc.diligent.graphics.opengl.baseinterfacesgl;
 
-struct IMemoryAllocatorMethods
-{
-    void* function(IMemoryAllocator*, size_t Size, const(char)* dbgDescription, const(char)* dbgFileName, const int dbgLineNumber) Allocate;
-    void function(IMemoryAllocator*, void* Ptr) Free;
-}
+#if PLATFORM_ANDROID
 
-struct IMemoryAllocatorVtbl
-{
-    IMemoryAllocatorMethods MemoryAllocator;
-}
+#   include "RenderDeviceGLES.h"
+    
 
-struct IMemoryAllocator
-{
-    IMemoryAllocatorVtbl* pVtbl;
-}
+        typedef IRenderDeviceGLES IGLDeviceBaseInterface;
 
-void* IMemoryAllocator_Allocate(IMemoryAllocator* memAllocator, size_t size, const(char)* dbgDescription, const(char)* dbgFileName, const int dbgLineNumber) {
-    return memAllocator.pVtbl.MemoryAllocator.Allocate(memAllocator, size, dbgDescription, dbgFileName, dbgLineNumber);
-}
+    DILIGENT_END_NAMESPACE
 
-void IMemoryAllocator_Free(IMemoryAllocator* memAllocator, void* ptr) {
-    return memAllocator.pVtbl.MemoryAllocator.Free(memAllocator, ptr);
-}
+#elif PLATFORM_WIN32 || PLATFORM_LINUX || PLATFORM_MACOS
+
+#   include "RenderDeviceGL.h"
+    
+    
+        typedef IRenderDeviceGL IGLDeviceBaseInterface;
+    
+    DILIGENT_END_NAMESPACE
+
+#elif PLATFORM_IOS
+
+#   include "RenderDeviceGL.h"
+    
+    
+        typedef IRenderDeviceGL IGLDeviceBaseInterface;
+    
+    DILIGENT_END_NAMESPACE
+
+#else
+
+#   error Unsupported platform
+
+#endif
+
+#include "DeviceContextGL.h"
+
+    typedef IDeviceContextGL IGLDeviceContextBaseInterface;
+
+DILIGENT_END_NAMESPACE
+

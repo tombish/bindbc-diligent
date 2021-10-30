@@ -2,10 +2,8 @@
  *  Copyright 2021 Thomas Bishop
  *  Distributed under the Boost Software License, Version 1.0
  *  See accompanying file LICENSE or https://www.boost.org/LICENSE_1_0.txt
- *  Modified source based on DiligentCore/Primitives/interface/MemoryAllocator.h
- *  The original licence follows this statement
  */
-
+ 
 /*
  *  Copyright 2019-2021 Diligent Graphics LLC
  *  Copyright 2015-2019 Egor Yusov
@@ -33,28 +31,42 @@
  *  of the possibility of such damages.
  */
 
-module bindbc.diligent.primitives.memoryallocator;
+module bindbc.diligent.graphics.d3d12.shaderbindingtabled3d12;
 
-struct IMemoryAllocatorMethods
+/// \file
+/// Definition of the Diligent::IShaderBindingTableD3D12 interface
+
+#include "../../GraphicsEngine/interface/ShaderBindingTable.h"
+#include "DeviceContextD3D12.h"
+
+// {DCA2FAD9-2C41-4419-9D16-79731C0ED9D8}
+static const INTERFACE_ID IID_ShaderBindingTableD3D12 =
+    {0xdca2fad9, 0x2c41, 0x4419, {0x9d, 0x16, 0x79, 0x73, 0x1c, 0xe, 0xd9, 0xd8}};
+
+#define DILIGENT_INTERFACE_NAME IShaderBindingTableD3D12
+#include "../../../Primitives/interface/DefineInterfaceHelperMacros.h"
+
+#define IShaderBindingTableD3D12InclusiveMethods \
+    IShaderBindingTableInclusiveMethods;         \
+    IShaderBindingTableD3D12Methods ShaderBindingTableD3D12
+
+/// Exposes Direct3D12-specific functionality of a shader binding table object.
+DILIGENT_BEGIN_INTERFACE(IShaderBindingTableD3D12, IShaderBindingTable)
 {
-    void* function(IMemoryAllocator*, size_t Size, const(char)* dbgDescription, const(char)* dbgFileName, const int dbgLineNumber) Allocate;
-    void function(IMemoryAllocator*, void* Ptr) Free;
-}
+    /// Returns the structure that can be used with ID3D12GraphicsCommandList4::DispatchRays() call.
+    /// 
+    /// \remarks  The method is not thread-safe. An application must externally synchronize the access
+    ///           to the shader binding table.
+    VIRTUAL const D3D12_DISPATCH_RAYS_DESC REFGetD3D12BindingTable(THIS) CONST PURE;
+};
+DILIGENT_END_INTERFACE
 
-struct IMemoryAllocatorVtbl
-{
-    IMemoryAllocatorMethods MemoryAllocator;
-}
+#include "../../../Primitives/interface/UndefInterfaceHelperMacros.h"
 
-struct IMemoryAllocator
-{
-    IMemoryAllocatorVtbl* pVtbl;
-}
+#if DILIGENT_C_INTERFACE
 
-void* IMemoryAllocator_Allocate(IMemoryAllocator* memAllocator, size_t size, const(char)* dbgDescription, const(char)* dbgFileName, const int dbgLineNumber) {
-    return memAllocator.pVtbl.MemoryAllocator.Allocate(memAllocator, size, dbgDescription, dbgFileName, dbgLineNumber);
-}
+#    define IShaderBindingTableD3D12_GetD3D12BindingTable(This) CALL_IFACE_METHOD(ShaderBindingTableD3D12, GetD3D12BindingTable, This)
 
-void IMemoryAllocator_Free(IMemoryAllocator* memAllocator, void* ptr) {
-    return memAllocator.pVtbl.MemoryAllocator.Free(memAllocator, ptr);
-}
+#endif
+
+

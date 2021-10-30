@@ -2,10 +2,8 @@
  *  Copyright 2021 Thomas Bishop
  *  Distributed under the Boost Software License, Version 1.0
  *  See accompanying file LICENSE or https://www.boost.org/LICENSE_1_0.txt
- *  Modified source based on DiligentCore/Primitives/interface/MemoryAllocator.h
- *  The original licence follows this statement
  */
-
+ 
 /*
  *  Copyright 2019-2021 Diligent Graphics LLC
  *  Copyright 2015-2019 Egor Yusov
@@ -33,28 +31,31 @@
  *  of the possibility of such damages.
  */
 
-module bindbc.diligent.primitives.memoryallocator;
+module bindbc.diligent.graphics.d3d11.shaderd3d11;
 
-struct IMemoryAllocatorMethods
+/// \file
+/// Definition of the Diligent::IShaderD3D11 interface
+
+import bindbc.diligent.graphics.d3dbase.shaderd3d;
+
+// {C513E83E-B037-405B-8B49-BF8F5C220DEE}
+static const INTERFACE_ID IID_ShaderD3D11 =
+    INTERFACE_ID(0xc513e83e, 0xb037, 0x405b, [0x8b, 0x49, 0xbf, 0x8f, 0x5c, 0x22, 0xd, 0xee]);
+
+/// Exposes Direct3D11-specific functionality of a shader object.
+struct IShaderD3D11Methods
 {
-    void* function(IMemoryAllocator*, size_t Size, const(char)* dbgDescription, const(char)* dbgFileName, const int dbgLineNumber) Allocate;
-    void function(IMemoryAllocator*, void* Ptr) Free;
+    /// Returns a pointer to the ID3D11DeviceChild interface of the internal Direct3D11 object.
+
+    /// The method does *NOT* increment the reference counter of the returned object,
+    /// so Release() must not be called.
+    ID3D11DeviceChild** GetD3D11Shader(IShaderD3D11*);
 }
 
-struct IMemoryAllocatorVtbl
-{
-    IMemoryAllocatorMethods MemoryAllocator;
-}
+struct IShaderD3D11Vtbl { IShaderD3D11Methods ShaderD3D11; }
+struct IShaderD3D11{ IShaderD3D11Vtbl* pVtbl; }
 
-struct IMemoryAllocator
-{
-    IMemoryAllocatorVtbl* pVtbl;
-}
-
-void* IMemoryAllocator_Allocate(IMemoryAllocator* memAllocator, size_t size, const(char)* dbgDescription, const(char)* dbgFileName, const int dbgLineNumber) {
-    return memAllocator.pVtbl.MemoryAllocator.Allocate(memAllocator, size, dbgDescription, dbgFileName, dbgLineNumber);
-}
-
-void IMemoryAllocator_Free(IMemoryAllocator* memAllocator, void* ptr) {
-    return memAllocator.pVtbl.MemoryAllocator.Free(memAllocator, ptr);
+// #    define IShaderD3D11_GetD3D11Shader(This) CALL_IFACE_METHOD(ShaderD3D11, GetD3D11Shader, This)
+ID3D11DeviceChild** IShaderD3D11_GetD3D11Shader(IShaderD3D11* shader) {
+    return shader.pVtbl.ShaderD3D11.GetD3D11Shader(shader);
 }

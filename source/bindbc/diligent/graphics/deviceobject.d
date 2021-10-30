@@ -78,7 +78,7 @@ struct IDeviceObjectMethods
     ///         The method keeps strong reference to the user data object.
     ///         If an application needs to release the object, it
     ///         should call SetUserData(nullptr);
-    void* SetUserData(in IDeviceObject, IObject* pUserData);
+    void* SetUserData(IDeviceObject*, IObject* pUserData);
 
 
     /// Returns a pointer to the user data object previously
@@ -93,13 +93,6 @@ struct IDeviceObjectMethods
 
 struct IDeviceObjectVtbl { IDeviceObjectMethods DeviceObject; }
 struct IDeviceObject { IDeviceObjectVtbl* pVtbl; }
-
-//#include "../../../Primitives/interface/UndefInterfaceHelperMacros.h"
-
-//#    define IDeviceObject_GetDesc(This)          CALL_IFACE_METHOD(DeviceObject, GetDesc,     This)
-//#    define IDeviceObject_GetUniqueID(This)      CALL_IFACE_METHOD(DeviceObject, GetUniqueID, This)
-//#    define IDeviceObject_SetUserData(This, ...) CALL_IFACE_METHOD(DeviceObject, SetUserData, This, __VA_ARGS__)
-//#    define IDeviceObject_GetUserData(This)      CALL_IFACE_METHOD(DeviceObject, GetUserData, This)
 
 DeviceObjectAttribs** IDeviceObject_GetDesc(IDeviceObject* object) {
     return object.pVtbl.DeviceObject.GetDesc(object);

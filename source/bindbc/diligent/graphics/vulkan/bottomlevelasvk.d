@@ -2,10 +2,8 @@
  *  Copyright 2021 Thomas Bishop
  *  Distributed under the Boost Software License, Version 1.0
  *  See accompanying file LICENSE or https://www.boost.org/LICENSE_1_0.txt
- *  Modified source based on DiligentCore/Primitives/interface/MemoryAllocator.h
- *  The original licence follows this statement
  */
-
+ 
 /*
  *  Copyright 2019-2021 Diligent Graphics LLC
  *  Copyright 2015-2019 Egor Yusov
@@ -33,28 +31,42 @@
  *  of the possibility of such damages.
  */
 
-module bindbc.diligent.primitives.memoryallocator;
+module bindbc.diligent.graphics.vulkan.bottomlevelasvk;
 
-struct IMemoryAllocatorMethods
+/// \file
+/// Definition of the Diligent::IBottomLevelASVk interface
+
+#include "../../GraphicsEngine/interface/BottomLevelAS.h"
+
+// {7212AFC9-02E2-4D7F-81A8-1CE5353CEA2D}
+static const INTERFACE_ID IID_BottomLevelASVk =
+    {0x7212afc9, 0x2e2, 0x4d7f, {0x81, 0xa8, 0x1c, 0xe5, 0x35, 0x3c, 0xea, 0x2d}};
+
+#define DILIGENT_INTERFACE_NAME IBottomLevelASVk
+#include "../../../Primitives/interface/DefineInterfaceHelperMacros.h"
+
+#define IBottomLevelASVkInclusiveMethods \
+    IBottomLevelASInclusiveMethods;      \
+    IBottomLevelASVkMethods BottomLevelASVk
+
+/// Exposes Vulkan-specific functionality of a Bottom-level acceleration structure object.
+DILIGENT_BEGIN_INTERFACE(IBottomLevelASVk, IBottomLevelAS)
 {
-    void* function(IMemoryAllocator*, size_t Size, const(char)* dbgDescription, const(char)* dbgFileName, const int dbgLineNumber) Allocate;
-    void function(IMemoryAllocator*, void* Ptr) Free;
-}
+    /// Returns a Vulkan handle of the internal BLAS object.
+    VIRTUAL VkAccelerationStructureKHRGetVkBLAS(THIS) CONST PURE;
 
-struct IMemoryAllocatorVtbl
-{
-    IMemoryAllocatorMethods MemoryAllocator;
-}
+    /// Returns a Vulkan device address of the internal BLAS object.
+    VIRTUAL VkDeviceAddressGetVkDeviceAddress(THIS) CONST PURE;
+};
+DILIGENT_END_INTERFACE
 
-struct IMemoryAllocator
-{
-    IMemoryAllocatorVtbl* pVtbl;
-}
+#include "../../../Primitives/interface/UndefInterfaceHelperMacros.h"
 
-void* IMemoryAllocator_Allocate(IMemoryAllocator* memAllocator, size_t size, const(char)* dbgDescription, const(char)* dbgFileName, const int dbgLineNumber) {
-    return memAllocator.pVtbl.MemoryAllocator.Allocate(memAllocator, size, dbgDescription, dbgFileName, dbgLineNumber);
-}
+#if DILIGENT_C_INTERFACE
 
-void IMemoryAllocator_Free(IMemoryAllocator* memAllocator, void* ptr) {
-    return memAllocator.pVtbl.MemoryAllocator.Free(memAllocator, ptr);
-}
+#    define IBottomLevelASVk_GetVkBLAS(This)          CALL_IFACE_METHOD(BottomLevelASVk, GetVkBLAS, This)
+#    define IBottomLevelASVk_GetVkDeviceAddress(This) CALL_IFACE_METHOD(BottomLevelASVk, GetVkDeviceAddress, This)
+
+#endif
+
+

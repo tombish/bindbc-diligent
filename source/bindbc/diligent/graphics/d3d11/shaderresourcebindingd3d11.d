@@ -2,10 +2,8 @@
  *  Copyright 2021 Thomas Bishop
  *  Distributed under the Boost Software License, Version 1.0
  *  See accompanying file LICENSE or https://www.boost.org/LICENSE_1_0.txt
- *  Modified source based on DiligentCore/Primitives/interface/MemoryAllocator.h
- *  The original licence follows this statement
  */
-
+ 
 /*
  *  Copyright 2019-2021 Diligent Graphics LLC
  *  Copyright 2015-2019 Egor Yusov
@@ -33,28 +31,20 @@
  *  of the possibility of such damages.
  */
 
-module bindbc.diligent.primitives.memoryallocator;
+module bindbc.diligent.graphics.d3d11.shaderresourcebindingd3d11;
 
-struct IMemoryAllocatorMethods
+/// \file
+/// Definition of the Diligent::IShaderResourceBindingD3D11 interface and related data structures
+
+import bindbc.diligent.graphics.shaderresourcebinding;
+
+// {97A6D4AC-D4AF-4AA9-B46C-67417B89026A}
+static const INTERFACE_ID IID_ShaderResourceBindingD3D11 =
+    INTERFACE_ID(0x97a6d4ac, 0xd4af, 0x4aa9, [0xb4, 0x6c, 0x67, 0x41, 0x7b, 0x89, 0x2, 0x6a]);
+
+struct IShaderResourceBindingD3D11Vtbl { }
+
+struct IShaderResourceBindingD3D11
 {
-    void* function(IMemoryAllocator*, size_t Size, const(char)* dbgDescription, const(char)* dbgFileName, const int dbgLineNumber) Allocate;
-    void function(IMemoryAllocator*, void* Ptr) Free;
-}
-
-struct IMemoryAllocatorVtbl
-{
-    IMemoryAllocatorMethods MemoryAllocator;
-}
-
-struct IMemoryAllocator
-{
-    IMemoryAllocatorVtbl* pVtbl;
-}
-
-void* IMemoryAllocator_Allocate(IMemoryAllocator* memAllocator, size_t size, const(char)* dbgDescription, const(char)* dbgFileName, const int dbgLineNumber) {
-    return memAllocator.pVtbl.MemoryAllocator.Allocate(memAllocator, size, dbgDescription, dbgFileName, dbgLineNumber);
-}
-
-void IMemoryAllocator_Free(IMemoryAllocator* memAllocator, void* ptr) {
-    return memAllocator.pVtbl.MemoryAllocator.Free(memAllocator, ptr);
+    IShaderResourceBindingD3D11Vtbl* pVtbl;
 }

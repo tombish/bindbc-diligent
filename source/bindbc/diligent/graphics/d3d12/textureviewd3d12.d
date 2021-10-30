@@ -2,10 +2,8 @@
  *  Copyright 2021 Thomas Bishop
  *  Distributed under the Boost Software License, Version 1.0
  *  See accompanying file LICENSE or https://www.boost.org/LICENSE_1_0.txt
- *  Modified source based on DiligentCore/Primitives/interface/MemoryAllocator.h
- *  The original licence follows this statement
  */
-
+ 
 /*
  *  Copyright 2019-2021 Diligent Graphics LLC
  *  Copyright 2015-2019 Egor Yusov
@@ -33,28 +31,38 @@
  *  of the possibility of such damages.
  */
 
-module bindbc.diligent.primitives.memoryallocator;
+module bindbc.diligent.graphics.d3d12.textureviewd3d12;
 
-struct IMemoryAllocatorMethods
+/// \file
+/// Definition of the Diligent::ITextureViewD3D12 interface
+
+#include "../../GraphicsEngine/interface/TextureView.h"
+
+// {BDFBD325-0699-4720-BC0E-BF84086EC033}
+static const INTERFACE_ID IID_TextureViewD3D12 =
+    {0xbdfbd325, 0x699, 0x4720, {0xbc, 0xe, 0xbf, 0x84, 0x8, 0x6e, 0xc0, 0x33}};
+
+#define DILIGENT_INTERFACE_NAME ITextureViewD3D12
+#include "../../../Primitives/interface/DefineInterfaceHelperMacros.h"
+
+#define ITextureViewD3D12InclusiveMethods \
+    ITextureViewInclusiveMethods;         \
+    ITextureViewD3D12Methods TextureViewD3D12
+
+/// Exposes Direct3D12-specific functionality of a texture view object.
+DILIGENT_BEGIN_INTERFACE(ITextureViewD3D12, ITextureView)
 {
-    void* function(IMemoryAllocator*, size_t Size, const(char)* dbgDescription, const(char)* dbgFileName, const int dbgLineNumber) Allocate;
-    void function(IMemoryAllocator*, void* Ptr) Free;
-}
+    /// Returns CPU descriptor handle of the texture view.
+    VIRTUAL D3D12_CPU_DESCRIPTOR_HANDLEGetCPUDescriptorHandle(THIS) PURE;
+};
+DILIGENT_END_INTERFACE
 
-struct IMemoryAllocatorVtbl
-{
-    IMemoryAllocatorMethods MemoryAllocator;
-}
+#include "../../../Primitives/interface/UndefInterfaceHelperMacros.h"
 
-struct IMemoryAllocator
-{
-    IMemoryAllocatorVtbl* pVtbl;
-}
+#if DILIGENT_C_INTERFACE
 
-void* IMemoryAllocator_Allocate(IMemoryAllocator* memAllocator, size_t size, const(char)* dbgDescription, const(char)* dbgFileName, const int dbgLineNumber) {
-    return memAllocator.pVtbl.MemoryAllocator.Allocate(memAllocator, size, dbgDescription, dbgFileName, dbgLineNumber);
-}
+#    define ITextureViewD3D12_GetCPUDescriptorHandle(This) CALL_IFACE_METHOD(TextureViewD3D12, GetCPUDescriptorHandle, This)
 
-void IMemoryAllocator_Free(IMemoryAllocator* memAllocator, void* ptr) {
-    return memAllocator.pVtbl.MemoryAllocator.Free(memAllocator, ptr);
-}
+#endif
+
+

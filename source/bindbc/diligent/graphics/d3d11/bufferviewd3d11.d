@@ -2,10 +2,8 @@
  *  Copyright 2021 Thomas Bishop
  *  Distributed under the Boost Software License, Version 1.0
  *  See accompanying file LICENSE or https://www.boost.org/LICENSE_1_0.txt
- *  Modified source based on DiligentCore/Primitives/interface/MemoryAllocator.h
- *  The original licence follows this statement
  */
-
+ 
 /*
  *  Copyright 2019-2021 Diligent Graphics LLC
  *  Copyright 2015-2019 Egor Yusov
@@ -33,28 +31,32 @@
  *  of the possibility of such damages.
  */
 
-module bindbc.diligent.primitives.memoryallocator;
+module bindbc.diligent.graphics.d3d11.bufferviewd3d11;
 
-struct IMemoryAllocatorMethods
+/// \file
+/// Definition of the Diligent::IBufferViewD3D11 interface
+
+import bindbc.diligent.graphics.bufferview;
+
+// {6ABA95FC-CD7D-4C03-8CAE-AFC45F9696B7}
+static const INTERFACE_ID IID_BufferViewD3D11 =
+    INTERFACE_ID(0x6aba95fc, 0xcd7d, 0x4c03, [0x8c, 0xae, 0xaf, 0xc4, 0x5f, 0x96, 0x96, 0xb7]);
+
+/// Exposes Direct3D11-specific functionality of a buffer view object.
+struct IBufferViewD3D11Methods
 {
-    void* function(IMemoryAllocator*, size_t Size, const(char)* dbgDescription, const(char)* dbgFileName, const int dbgLineNumber) Allocate;
-    void function(IMemoryAllocator*, void* Ptr) Free;
+    /// Returns a pointer to the ID3D11View interface of the internal Direct3D11 object.
+
+    /// The method does *NOT* increment the reference counter of the returned object,
+    /// so Release() must not be called.
+    ID3D11View** GetD3D11View(IBufferViewD3D11*);
 }
 
-struct IMemoryAllocatorVtbl
-{
-    IMemoryAllocatorMethods MemoryAllocator;
-}
+struct IBufferViewD3D11Vtbl { IBufferViewD3D11Methods BufferViewD3D11; }
+struct IBufferViewD3D11 { IBufferViewD3D11Vtbl* pVtbl; }
 
-struct IMemoryAllocator
-{
-    IMemoryAllocatorVtbl* pVtbl;
-}
+// #    define IBufferViewD3D11_GetD3D11View(This) CALL_IFACE_METHOD(BufferViewD3D11, GetD3D11View, This)
 
-void* IMemoryAllocator_Allocate(IMemoryAllocator* memAllocator, size_t size, const(char)* dbgDescription, const(char)* dbgFileName, const int dbgLineNumber) {
-    return memAllocator.pVtbl.MemoryAllocator.Allocate(memAllocator, size, dbgDescription, dbgFileName, dbgLineNumber);
-}
-
-void IMemoryAllocator_Free(IMemoryAllocator* memAllocator, void* ptr) {
-    return memAllocator.pVtbl.MemoryAllocator.Free(memAllocator, ptr);
+ID3D11View** IBufferViewD3D11_GetD3D11View(IBufferViewD3D11* bufferView) {
+    return bufferView.pVtbl.BufferViewD3D11.GetD3D11View(bufferView);
 }

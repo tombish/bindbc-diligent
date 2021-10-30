@@ -2,10 +2,8 @@
  *  Copyright 2021 Thomas Bishop
  *  Distributed under the Boost Software License, Version 1.0
  *  See accompanying file LICENSE or https://www.boost.org/LICENSE_1_0.txt
- *  Modified source based on DiligentCore/Primitives/interface/MemoryAllocator.h
- *  The original licence follows this statement
  */
-
+ 
 /*
  *  Copyright 2019-2021 Diligent Graphics LLC
  *  Copyright 2015-2019 Egor Yusov
@@ -33,28 +31,44 @@
  *  of the possibility of such damages.
  */
 
-module bindbc.diligent.primitives.memoryallocator;
+module bindbc.diligent.graphics.d3d12.swapchaind3d12;
 
-struct IMemoryAllocatorMethods
+/// \file
+/// Definition of the Diligent::ISwapChainD3D12 interface
+
+#include <dxgi1_4.h>
+
+#include "../../GraphicsEngine/interface/SwapChain.h"
+#include "TextureViewD3D12.h"
+
+// {C9F8384D-A45E-4970-8447-394177E5B0EE}
+static const INTERFACE_ID IID_SwapChainD3D12 =
+    {0xc9f8384d, 0xa45e, 0x4970, {0x84, 0x47, 0x39, 0x41, 0x77, 0xe5, 0xb0, 0xee}};
+
+#define DILIGENT_INTERFACE_NAME ISwapChainD3D12
+#include "../../../Primitives/interface/DefineInterfaceHelperMacros.h"
+
+#define ISwapChainD3D12InclusiveMethods \
+    ISwapChainInclusiveMethods;         \
+    ISwapChainD3D12Methods SwapChainD3D12
+
+/// Exposes Direct3D12-specific functionality of a swap chain.
+DILIGENT_BEGIN_INTERFACE(ISwapChainD3D12, ISwapChain)
 {
-    void* function(IMemoryAllocator*, size_t Size, const(char)* dbgDescription, const(char)* dbgFileName, const int dbgLineNumber) Allocate;
-    void function(IMemoryAllocator*, void* Ptr) Free;
-}
+    /// Returns a pointer to the IDXGISwapChain interface of the internal DXGI object.
 
-struct IMemoryAllocatorVtbl
-{
-    IMemoryAllocatorMethods MemoryAllocator;
-}
+    /// The method does *NOT* increment the reference counter of the returned object,
+    /// so Release() must not be called.
+    VIRTUAL IDXGISwapChain*GetDXGISwapChain(THIS) PURE;
+};
+DILIGENT_END_INTERFACE
 
-struct IMemoryAllocator
-{
-    IMemoryAllocatorVtbl* pVtbl;
-}
+#include "../../../Primitives/interface/UndefInterfaceHelperMacros.h"
 
-void* IMemoryAllocator_Allocate(IMemoryAllocator* memAllocator, size_t size, const(char)* dbgDescription, const(char)* dbgFileName, const int dbgLineNumber) {
-    return memAllocator.pVtbl.MemoryAllocator.Allocate(memAllocator, size, dbgDescription, dbgFileName, dbgLineNumber);
-}
+#if DILIGENT_C_INTERFACE
 
-void IMemoryAllocator_Free(IMemoryAllocator* memAllocator, void* ptr) {
-    return memAllocator.pVtbl.MemoryAllocator.Free(memAllocator, ptr);
-}
+#    define ISwapChainD3D12_GetDXGISwapChain(This)  CALL_IFACE_METHOD(SwapChainD3D12, GetDXGISwapChain, This)
+
+#endif
+
+

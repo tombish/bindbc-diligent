@@ -2,10 +2,8 @@
  *  Copyright 2021 Thomas Bishop
  *  Distributed under the Boost Software License, Version 1.0
  *  See accompanying file LICENSE or https://www.boost.org/LICENSE_1_0.txt
- *  Modified source based on DiligentCore/Primitives/interface/MemoryAllocator.h
- *  The original licence follows this statement
  */
-
+ 
 /*
  *  Copyright 2019-2021 Diligent Graphics LLC
  *  Copyright 2015-2019 Egor Yusov
@@ -33,28 +31,32 @@
  *  of the possibility of such damages.
  */
 
-module bindbc.diligent.primitives.memoryallocator;
+module bindbc.diligent.graphics.d3d11.queryd3d11;
 
-struct IMemoryAllocatorMethods
+/// \file
+/// Definition of the Diligent::IQueryD3D11 interface
+
+import bindbc.diligent.graphics.query;
+
+// {77D95EAA-D16E-43F4-B0EB-BEBCD2EC8C57}
+static const INTERFACE_ID IID_QueryD3D11 =
+    INTERFACE_ID(0x77d95eaa, 0xd16e, 0x43f4, [0xb0, 0xeb, 0xbe, 0xbc, 0xd2, 0xec, 0x8c, 0x57]);
+
+/// Exposes Direct3D11-specific functionality of a Query object.
+struct IQueryD3D11Methods
 {
-    void* function(IMemoryAllocator*, size_t Size, const(char)* dbgDescription, const(char)* dbgFileName, const int dbgLineNumber) Allocate;
-    void function(IMemoryAllocator*, void* Ptr) Free;
+    /// Returns a pointer to the internal ID3D11Query object.
+
+    /// \param [in] QueryId - Query Id. For most query types this must be 0. An exception is
+    ///                       QUERY_TYPE_DURATION, in which case allowed values are 0 for the
+    ///                       beginning timestamp query, and 1 for the ending query.
+    /// \return               pointer to the ID3D11Query object.
+    ID3D11Query** GetD3D11Query(IQueryD3D11*, uint QueryId);
 }
 
-struct IMemoryAllocatorVtbl
-{
-    IMemoryAllocatorMethods MemoryAllocator;
-}
+struct IQueryD3D11Vtbl { IQueryD3D11Methods QueryD3D11; }
+struct IQueryD3D11 { IQueryD3D11Vtbl* pVtbl; }
 
-struct IMemoryAllocator
-{
-    IMemoryAllocatorVtbl* pVtbl;
-}
-
-void* IMemoryAllocator_Allocate(IMemoryAllocator* memAllocator, size_t size, const(char)* dbgDescription, const(char)* dbgFileName, const int dbgLineNumber) {
-    return memAllocator.pVtbl.MemoryAllocator.Allocate(memAllocator, size, dbgDescription, dbgFileName, dbgLineNumber);
-}
-
-void IMemoryAllocator_Free(IMemoryAllocator* memAllocator, void* ptr) {
-    return memAllocator.pVtbl.MemoryAllocator.Free(memAllocator, ptr);
+ID3D11Query** IQueryD3D11_GetD3D11Query(IQueryD3D11* query, uint QueryId) {
+    return query.pVtbl.QueryD3D11.GetD3D11Query(query, QueryId);
 }

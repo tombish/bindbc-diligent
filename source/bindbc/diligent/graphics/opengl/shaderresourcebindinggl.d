@@ -2,10 +2,8 @@
  *  Copyright 2021 Thomas Bishop
  *  Distributed under the Boost Software License, Version 1.0
  *  See accompanying file LICENSE or https://www.boost.org/LICENSE_1_0.txt
- *  Modified source based on DiligentCore/Primitives/interface/MemoryAllocator.h
- *  The original licence follows this statement
  */
-
+ 
 /*
  *  Copyright 2019-2021 Diligent Graphics LLC
  *  Copyright 2015-2019 Egor Yusov
@@ -33,28 +31,41 @@
  *  of the possibility of such damages.
  */
 
-module bindbc.diligent.primitives.memoryallocator;
+module bindbc.diligent.graphics.opengl.shaderresourcebindinggl;
 
-struct IMemoryAllocatorMethods
+/// \file
+/// Definition of the Diligent::IShaderResourceBindingD3D11 interface and related data structures
+
+#include "../../GraphicsEngine/interface/ShaderResourceBinding.h"
+
+// {41DB0329-B6D2-4470-9A58-D44CF4695FC6}
+static const INTERFACE_ID IID_ShaderResourceBindingGL =
+    {0x41db0329, 0xb6d2, 0x4470, {0x9a, 0x58, 0xd4, 0x4c, 0xf4, 0x69, 0x5f, 0xc6}};
+
+#define DILIGENT_INTERFACE_NAME IShaderResourceBindingGL
+#include "../../../Primitives/interface/DefineInterfaceHelperMacros.h"
+
+#define IShaderResourceBindingGLInclusiveMethods \
+    IShaderResourceBindingInclusiveMethods
+//IShaderResourceBindingGLMethods ShaderResourceBindingGL
+
+#if DILIGENT_CPP_INTERFACE
+
+/// Exposes OpenGL-specific functionality of a shader resource binding object.
+DILIGENT_BEGIN_INTERFACE(IShaderResourceBindingGL, IShaderResourceBinding){};
+DILIGENT_END_INTERFACE
+
+#endif
+
+#include "../../../Primitives/interface/UndefInterfaceHelperMacros.h"
+
+#if DILIGENT_C_INTERFACE
+
+typedef struct IShaderResourceBindingGLVtbl
 {
-    void* function(IMemoryAllocator*, size_t Size, const(char)* dbgDescription, const(char)* dbgFileName, const int dbgLineNumber) Allocate;
-    void function(IMemoryAllocator*, void* Ptr) Free;
-}
+    IShaderResourceBindingGLInclusiveMethods;
+} IShaderResourceBindingGLVtbl;
 
-struct IMemoryAllocatorVtbl
-{
-    IMemoryAllocatorMethods MemoryAllocator;
-}
+#endif
 
-struct IMemoryAllocator
-{
-    IMemoryAllocatorVtbl* pVtbl;
-}
 
-void* IMemoryAllocator_Allocate(IMemoryAllocator* memAllocator, size_t size, const(char)* dbgDescription, const(char)* dbgFileName, const int dbgLineNumber) {
-    return memAllocator.pVtbl.MemoryAllocator.Allocate(memAllocator, size, dbgDescription, dbgFileName, dbgLineNumber);
-}
-
-void IMemoryAllocator_Free(IMemoryAllocator* memAllocator, void* ptr) {
-    return memAllocator.pVtbl.MemoryAllocator.Free(memAllocator, ptr);
-}

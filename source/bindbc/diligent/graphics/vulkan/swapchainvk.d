@@ -2,10 +2,8 @@
  *  Copyright 2021 Thomas Bishop
  *  Distributed under the Boost Software License, Version 1.0
  *  See accompanying file LICENSE or https://www.boost.org/LICENSE_1_0.txt
- *  Modified source based on DiligentCore/Primitives/interface/MemoryAllocator.h
- *  The original licence follows this statement
  */
-
+ 
 /*
  *  Copyright 2019-2021 Diligent Graphics LLC
  *  Copyright 2015-2019 Egor Yusov
@@ -33,28 +31,39 @@
  *  of the possibility of such damages.
  */
 
-module bindbc.diligent.primitives.memoryallocator;
+module bindbc.diligent.graphics.vulkan.swapchainvk;
 
-struct IMemoryAllocatorMethods
+/// \file
+/// Definition of the Diligent::ISwapChainVk interface
+
+#include "../../GraphicsEngine/interface/SwapChain.h"
+#include "TextureViewVk.h"
+
+// {22A39881-5EC5-4A9C-8395-90215F04A5CC}
+static const INTERFACE_ID IID_SwapChainVk =
+    {0x22a39881, 0x5ec5, 0x4a9c, {0x83, 0x95, 0x90, 0x21, 0x5f, 0x4, 0xa5, 0xcc}};
+
+#define DILIGENT_INTERFACE_NAME ISwapChainVk
+#include "../../../Primitives/interface/DefineInterfaceHelperMacros.h"
+
+#define ISwapChainVkInclusiveMethods \
+    ISwapChainInclusiveMethods;      \
+    ISwapChainVkMethods SwapChainVk
+
+/// Exposes Vulkan-specific functionality of a swap chain.
+DILIGENT_BEGIN_INTERFACE(ISwapChainVk, ISwapChain)
 {
-    void* function(IMemoryAllocator*, size_t Size, const(char)* dbgDescription, const(char)* dbgFileName, const int dbgLineNumber) Allocate;
-    void function(IMemoryAllocator*, void* Ptr) Free;
-}
+    /// Returns a Vulkan handle to the internal swap chain object.
+    VIRTUAL VkSwapchainKHRGetVkSwapChain(THIS) PURE;
+};
+DILIGENT_END_INTERFACE
 
-struct IMemoryAllocatorVtbl
-{
-    IMemoryAllocatorMethods MemoryAllocator;
-}
+#include "../../../Primitives/interface/UndefInterfaceHelperMacros.h"
 
-struct IMemoryAllocator
-{
-    IMemoryAllocatorVtbl* pVtbl;
-}
+#if DILIGENT_C_INTERFACE
 
-void* IMemoryAllocator_Allocate(IMemoryAllocator* memAllocator, size_t size, const(char)* dbgDescription, const(char)* dbgFileName, const int dbgLineNumber) {
-    return memAllocator.pVtbl.MemoryAllocator.Allocate(memAllocator, size, dbgDescription, dbgFileName, dbgLineNumber);
-}
+#    define ISwapChainVk_GetVkSwapChain(This)  CALL_IFACE_METHOD(SwapChainVk, GetVkSwapChain, This)
 
-void IMemoryAllocator_Free(IMemoryAllocator* memAllocator, void* ptr) {
-    return memAllocator.pVtbl.MemoryAllocator.Free(memAllocator, ptr);
-}
+#endif
+
+

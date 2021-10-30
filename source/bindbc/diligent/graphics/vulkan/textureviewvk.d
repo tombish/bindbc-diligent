@@ -2,10 +2,8 @@
  *  Copyright 2021 Thomas Bishop
  *  Distributed under the Boost Software License, Version 1.0
  *  See accompanying file LICENSE or https://www.boost.org/LICENSE_1_0.txt
- *  Modified source based on DiligentCore/Primitives/interface/MemoryAllocator.h
- *  The original licence follows this statement
  */
-
+ 
 /*
  *  Copyright 2019-2021 Diligent Graphics LLC
  *  Copyright 2015-2019 Egor Yusov
@@ -33,28 +31,40 @@
  *  of the possibility of such damages.
  */
 
-module bindbc.diligent.primitives.memoryallocator;
+module bindbc.diligent.graphics.vulkan.textureviewvk;
 
-struct IMemoryAllocatorMethods
+/// \file
+/// Definition of the Diligent::ITextureViewVk interface
+
+#include "../../GraphicsEngine/interface/TextureView.h"
+
+// {B02AA468-3328-46F3-9777-55E97BF6C86E}
+static const INTERFACE_ID IID_TextureViewVk =
+    {0xb02aa468, 0x3328, 0x46f3, {0x97, 0x77, 0x55, 0xe9, 0x7b, 0xf6, 0xc8, 0x6e}};
+
+#define DILIGENT_INTERFACE_NAME ITextureViewVk
+#include "../../../Primitives/interface/DefineInterfaceHelperMacros.h"
+
+#define ITextureViewVkInclusiveMethods \
+    ITextureViewInclusiveMethods;      \
+    ITextureViewVkMethods TextureViewVk
+
+/// Exposes Vulkan-specific functionality of a texture view object.
+DILIGENT_BEGIN_INTERFACE(ITextureViewVk, ITextureView)
 {
-    void* function(IMemoryAllocator*, size_t Size, const(char)* dbgDescription, const(char)* dbgFileName, const int dbgLineNumber) Allocate;
-    void function(IMemoryAllocator*, void* Ptr) Free;
-}
+    /// Returns Vulkan image view handle
+    VIRTUAL VkImageViewGetVulkanImageView(THIS) CONST PURE;
+};
+DILIGENT_END_INTERFACE
 
-struct IMemoryAllocatorVtbl
-{
-    IMemoryAllocatorMethods MemoryAllocator;
-}
+#include "../../../Primitives/interface/UndefInterfaceHelperMacros.h"
 
-struct IMemoryAllocator
-{
-    IMemoryAllocatorVtbl* pVtbl;
-}
+#if DILIGENT_C_INTERFACE
 
-void* IMemoryAllocator_Allocate(IMemoryAllocator* memAllocator, size_t size, const(char)* dbgDescription, const(char)* dbgFileName, const int dbgLineNumber) {
-    return memAllocator.pVtbl.MemoryAllocator.Allocate(memAllocator, size, dbgDescription, dbgFileName, dbgLineNumber);
-}
+#    define ITextureViewVk_GetVulkanImageView(This) CALL_IFACE_METHOD(TextureViewVk, GetVulkanImageView, This)
 
-void IMemoryAllocator_Free(IMemoryAllocator* memAllocator, void* ptr) {
-    return memAllocator.pVtbl.MemoryAllocator.Free(memAllocator, ptr);
-}
+s
+
+#endif
+
+

@@ -2,10 +2,8 @@
  *  Copyright 2021 Thomas Bishop
  *  Distributed under the Boost Software License, Version 1.0
  *  See accompanying file LICENSE or https://www.boost.org/LICENSE_1_0.txt
- *  Modified source based on DiligentCore/Primitives/interface/MemoryAllocator.h
- *  The original licence follows this statement
  */
-
+ 
 /*
  *  Copyright 2019-2021 Diligent Graphics LLC
  *  Copyright 2015-2019 Egor Yusov
@@ -33,28 +31,30 @@
  *  of the possibility of such damages.
  */
 
-module bindbc.diligent.primitives.memoryallocator;
+module bindbc.diligent.graphics.d3d11.textureviewd3d11;
 
-struct IMemoryAllocatorMethods
+/// \file
+/// Definition of the Diligent::ITextureViewD3D11 interface
+
+import bindbc.diligent.graphics.textureview;
+
+// {0767EBE4-AD47-4E70-9B65-38C6B9CAC37D}
+static const INTERFACE_ID IID_TextureViewD3D11 =
+    (0x767ebe4, 0xad47, 0x4e70, [0x9b, 0x65, 0x38, 0xc6, 0xb9, 0xca, 0xc3, 0x7d]);
+
+/// Exposes Direct3D11-specific functionality of a texture view object.
+struct ITextureViewD3D11Methods
 {
-    void* function(IMemoryAllocator*, size_t Size, const(char)* dbgDescription, const(char)* dbgFileName, const int dbgLineNumber) Allocate;
-    void function(IMemoryAllocator*, void* Ptr) Free;
+    /// Returns a pointer to the ID3D11View interface of the internal Direct3D11 object.
+
+    /// The method does *NOT* increment the reference counter of the returned object,
+    /// so Release() must not be called.
+    ID3D11View** GetD3D11View(ITextureViewD3D11*);
 }
 
-struct IMemoryAllocatorVtbl
-{
-    IMemoryAllocatorMethods MemoryAllocator;
-}
+struct ITextureViewD3D11Vtbl { ITextureViewD3D11Methods TextureViewD3D11; }
+struct ITextureViewD3D11 { ITextureViewD3D11Vtbl* pVtbl; }
 
-struct IMemoryAllocator
-{
-    IMemoryAllocatorVtbl* pVtbl;
-}
-
-void* IMemoryAllocator_Allocate(IMemoryAllocator* memAllocator, size_t size, const(char)* dbgDescription, const(char)* dbgFileName, const int dbgLineNumber) {
-    return memAllocator.pVtbl.MemoryAllocator.Allocate(memAllocator, size, dbgDescription, dbgFileName, dbgLineNumber);
-}
-
-void IMemoryAllocator_Free(IMemoryAllocator* memAllocator, void* ptr) {
-    return memAllocator.pVtbl.MemoryAllocator.Free(memAllocator, ptr);
+ID3D11View** ITextureViewD3D11_GetD3D11View(ITextureViewD3D11* textureView) {
+    return textureView.pVtbl.TextureViewD3D11.GetD3D11View(textureView);
 }

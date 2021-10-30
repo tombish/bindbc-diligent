@@ -2,10 +2,8 @@
  *  Copyright 2021 Thomas Bishop
  *  Distributed under the Boost Software License, Version 1.0
  *  See accompanying file LICENSE or https://www.boost.org/LICENSE_1_0.txt
- *  Modified source based on DiligentCore/Primitives/interface/MemoryAllocator.h
- *  The original licence follows this statement
  */
-
+ 
 /*
  *  Copyright 2019-2021 Diligent Graphics LLC
  *  Copyright 2015-2019 Egor Yusov
@@ -33,28 +31,35 @@
  *  of the possibility of such damages.
  */
 
-module bindbc.diligent.primitives.memoryallocator;
+module bindbc.diligent.graphics.d3dbase.shaderd3d;
 
-struct IMemoryAllocatorMethods
+/// \file
+/// Definition of the Diligent::IShaderD3D interface and related data structures
+
+import bindbc.diligent.graphics.shader;
+
+// {1EA0898C-1612-457F-B74E-808843D2CBE3}
+static const INTERFACE_ID IID_ShaderD3D =
+    INTERFACE_ID(0x1ea0898c, 0x1612, 0x457f, [0xb7, 0x4e, 0x80, 0x88, 0x43, 0xd2, 0xcb, 0xe3]);
+
+/// HLSL resource description
+struct HLSLShaderResourceDesc
 {
-    void* function(IMemoryAllocator*, size_t Size, const(char)* dbgDescription, const(char)* dbgFileName, const int dbgLineNumber) Allocate;
-    void function(IMemoryAllocator*, void* Ptr) Free;
+    ShaderResourceDesc _ShaderResourceDesc;
+
+    uint ShaderRegister = 0;
 }
 
-struct IMemoryAllocatorVtbl
+/// Exposes Direct3D-specific functionality of a shader object.
+struct IShaderD3DMethods
 {
-    IMemoryAllocatorMethods MemoryAllocator;
+    /// Returns HLSL shader resource description
+    void* GetHLSLResource(IShaderD3D*, uint Index, HLSLShaderResourceDesc* ResourceDesc);
 }
 
-struct IMemoryAllocator
-{
-    IMemoryAllocatorVtbl* pVtbl;
-}
+struct IShaderD3DVtbl { IShaderD3DMethods ShaderD3D; }
+struct IShaderD3D { IShaderD3DVtbl* pVtbl; }
 
-void* IMemoryAllocator_Allocate(IMemoryAllocator* memAllocator, size_t size, const(char)* dbgDescription, const(char)* dbgFileName, const int dbgLineNumber) {
-    return memAllocator.pVtbl.MemoryAllocator.Allocate(memAllocator, size, dbgDescription, dbgFileName, dbgLineNumber);
-}
-
-void IMemoryAllocator_Free(IMemoryAllocator* memAllocator, void* ptr) {
-    return memAllocator.pVtbl.MemoryAllocator.Free(memAllocator, ptr);
+void* IShaderD3D_GetHLSLResource(IShaderD3D* shader, uint index, HLSLShaderResourceDesc* resourceDesc) {
+    return shader.pVtbl.ShaderD3D.GetHLSLResource(shader, index, resourceDesc);
 }

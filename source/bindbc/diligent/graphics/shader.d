@@ -36,7 +36,7 @@
 /// \file
 /// Definition of the Diligent::IShader interface and related data structures
 
-#include "../../../Primitives/interface/FileStream.h"
+import bindbc.diligent.primitives.filestream;
 import bindbc.diligent.graphics.deviceobject;
 
 // {2989B45C-143D-4886-B89C-C3271C2DCC5D}

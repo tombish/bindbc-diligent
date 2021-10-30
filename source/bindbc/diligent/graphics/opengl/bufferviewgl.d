@@ -2,10 +2,8 @@
  *  Copyright 2021 Thomas Bishop
  *  Distributed under the Boost Software License, Version 1.0
  *  See accompanying file LICENSE or https://www.boost.org/LICENSE_1_0.txt
- *  Modified source based on DiligentCore/Primitives/interface/MemoryAllocator.h
- *  The original licence follows this statement
  */
-
+ 
 /*
  *  Copyright 2019-2021 Diligent Graphics LLC
  *  Copyright 2015-2019 Egor Yusov
@@ -33,28 +31,46 @@
  *  of the possibility of such damages.
  */
 
-module bindbc.diligent.primitives.memoryallocator;
+module bindbc.diligent.graphics.opengl.bufferviewgl;
 
-struct IMemoryAllocatorMethods
+/// \file
+/// Definition of the Diligent::IBufferViewGL interface
+
+#include "../../GraphicsEngine/interface/BufferView.h"
+
+// {927A865B-3CEB-4743-9A22-2A1397A73E6D}
+static const INTERFACE_ID IID_BufferViewGL =
+    {0x927a865b, 0x3ceb, 0x4743, {0x9a, 0x22, 0x2a, 0x13, 0x97, 0xa7, 0x3e, 0x6d}};
+
+#define DILIGENT_INTERFACE_NAME IBufferViewGL
+#include "../../../Primitives/interface/DefineInterfaceHelperMacros.h"
+
+#define IBufferViewGLInclusiveMethods \
+    IBufferViewInclusiveMethods
+//IBufferViewGLMethods BufferViewGL
+
+#if DILIGENT_CPP_INTERFACE
+
+/// Exposes OpenGL-specific functionality of a buffer view object.
+DILIGENT_BEGIN_INTERFACE(IBufferViewGL, IBufferView){};
+DILIGENT_END_INTERFACE
+
+#endif
+
+#include "../../../Primitives/interface/UndefInterfaceHelperMacros.h"
+
+#if DILIGENT_C_INTERFACE
+
+typedef struct IBufferViewGLVtbl
 {
-    void* function(IMemoryAllocator*, size_t Size, const(char)* dbgDescription, const(char)* dbgFileName, const int dbgLineNumber) Allocate;
-    void function(IMemoryAllocator*, void* Ptr) Free;
-}
+    IBufferViewGLInclusiveMethods;
+} IBufferViewGLVtbl;
 
-struct IMemoryAllocatorVtbl
+typedef struct IBufferViewGL
 {
-    IMemoryAllocatorMethods MemoryAllocator;
-}
+    struct IBufferViewGLVtbl* pVtbl;
+} IBufferViewGL;
 
-struct IMemoryAllocator
-{
-    IMemoryAllocatorVtbl* pVtbl;
-}
+#endif
 
-void* IMemoryAllocator_Allocate(IMemoryAllocator* memAllocator, size_t size, const(char)* dbgDescription, const(char)* dbgFileName, const int dbgLineNumber) {
-    return memAllocator.pVtbl.MemoryAllocator.Allocate(memAllocator, size, dbgDescription, dbgFileName, dbgLineNumber);
-}
 
-void IMemoryAllocator_Free(IMemoryAllocator* memAllocator, void* ptr) {
-    return memAllocator.pVtbl.MemoryAllocator.Free(memAllocator, ptr);
-}
