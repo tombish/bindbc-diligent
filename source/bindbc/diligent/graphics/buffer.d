@@ -141,96 +141,98 @@ struct BufferData
 /// Defines the methods to manipulate a buffer object
 struct IBufferMethods
 {
-    /// Creates a new buffer view
+    extern(C) @nogc nothrow {
+        /// Creates a new buffer view
 
-    /// \param [in] ViewDesc - View description. See Diligent::BufferViewDesc for details.
-    /// \param [out] ppView - Address of the memory location where the pointer to the view interface will be written to.
-    ///
-    /// \remarks To create a view addressing the entire buffer, set only BufferViewDesc::ViewType member
-    ///          of the ViewDesc structure and leave all other members in their default values.\n
-    ///          Buffer view will contain strong reference to the buffer, so the buffer will not be destroyed
-    ///          until all views are released.\n
-    ///          The function calls AddRef() for the created interface, so it must be released by
-    ///          a call to Release() when it is no longer needed.
-    void* CreateView(IBuffer*, const BufferViewDesc* ViewDesc, IBufferView** ppView);
+        /// \param [in] ViewDesc - View description. See Diligent::BufferViewDesc for details.
+        /// \param [out] ppView - Address of the memory location where the pointer to the view interface will be written to.
+        ///
+        /// \remarks To create a view addressing the entire buffer, set only BufferViewDesc::ViewType member
+        ///          of the ViewDesc structure and leave all other members in their default values.\n
+        ///          Buffer view will contain strong reference to the buffer, so the buffer will not be destroyed
+        ///          until all views are released.\n
+        ///          The function calls AddRef() for the created interface, so it must be released by
+        ///          a call to Release() when it is no longer needed.
+        void* CreateView(IBuffer*, const BufferViewDesc* ViewDesc, IBufferView** ppView);
 
-    /// Returns the pointer to the default view.
+        /// Returns the pointer to the default view.
 
-    /// \param [in] ViewType - Type of the requested view. See Diligent::BUFFER_VIEW_TYPE.
-    /// \return Pointer to the interface
-    ///
-    /// \remarks Default views are only created for structured and raw buffers. As for formatted buffers
-    ///          the view format is unknown at buffer initialization time, no default views are created.
-    ///
-    /// \note The function does not increase the reference counter for the returned interface, so
-    ///       Release() must *NOT* be called.
-    IBufferView** GetDefaultView(IBuffer*, BUFFER_VIEW_TYPE ViewType);
+        /// \param [in] ViewType - Type of the requested view. See Diligent::BUFFER_VIEW_TYPE.
+        /// \return Pointer to the interface
+        ///
+        /// \remarks Default views are only created for structured and raw buffers. As for formatted buffers
+        ///          the view format is unknown at buffer initialization time, no default views are created.
+        ///
+        /// \note The function does not increase the reference counter for the returned interface, so
+        ///       Release() must *NOT* be called.
+        IBufferView** GetDefaultView(IBuffer*, BUFFER_VIEW_TYPE ViewType);
 
-    /// Returns native buffer handle specific to the underlying graphics API
+        /// Returns native buffer handle specific to the underlying graphics API
 
-    /// \return pointer to ID3D11Resource interface, for D3D11 implementation\n
-    ///         pointer to ID3D12Resource interface, for D3D12 implementation\n
-    ///         GL buffer handle, for GL implementation
-    void** GetNativeHandle(IBuffer*);
+        /// \return pointer to ID3D11Resource interface, for D3D11 implementation\n
+        ///         pointer to ID3D12Resource interface, for D3D12 implementation\n
+        ///         GL buffer handle, for GL implementation
+        void** GetNativeHandle(IBuffer*);
 
-    /// Sets the buffer usage state.
+        /// Sets the buffer usage state.
 
-    /// \note This method does not perform state transition, but
-    ///       resets the internal buffer state to the given value.
-    ///       This method should be used after the application finished
-    ///       manually managing the buffer state and wants to hand over
-    ///       state management back to the engine.
-    void* SetState(IBuffer*, RESOURCE_STATE State);
+        /// \note This method does not perform state transition, but
+        ///       resets the internal buffer state to the given value.
+        ///       This method should be used after the application finished
+        ///       manually managing the buffer state and wants to hand over
+        ///       state management back to the engine.
+        void* SetState(IBuffer*, RESOURCE_STATE State);
 
-    /// Returns the internal buffer state
-    RESOURCE_STATE* GetState(IBuffer*);
-
-
-    /// Returns the buffer memory properties, see Diligent::MEMORY_PROPERTIES.
-
-    /// The memory properties are only relevant for persistently mapped buffers.
-    /// In particular, if the memory is not coherent, an application must call
-    /// IBuffer::FlushMappedRange() to make writes by the CPU available to the GPU, and
-    /// call IBuffer::InvalidateMappedRange() to make writes by the GPU visible to the CPU.
-    MEMORY_PROPERTIES* GetMemoryProperties(IBuffer*);
+        /// Returns the internal buffer state
+        RESOURCE_STATE* GetState(IBuffer*);
 
 
-    /// Flushes the specified range of non-coherent memory from the host cache to make
-    /// it available to the GPU.
+        /// Returns the buffer memory properties, see Diligent::MEMORY_PROPERTIES.
 
-    /// \param [in] StartOffset - Offset, in bytes, from the beginning of the buffer to
-    ///                           the start of the memory range to flush.
-    /// \param [in] Size        - Size, in bytes, of the memory range to flush.
-    ///
-    /// This method should only be used for persistently-mapped buffers that do not
-    /// report MEMORY_PROPERTY_HOST_COHERENT property. After an application modifies
-    /// a mapped memory range on the CPU, it must flush the range to make it available
-    /// to the GPU.
-    ///
-    /// \note   This method must never be used for USAGE_DYNAMIC buffers.
-    ///
-    ///         When a mapped buffer is unmapped it is automatically flushed by
-    ///         the engine if necessary.
-    void* FlushMappedRange(IBuffer*, uint StartOffset, uint Size);
+        /// The memory properties are only relevant for persistently mapped buffers.
+        /// In particular, if the memory is not coherent, an application must call
+        /// IBuffer::FlushMappedRange() to make writes by the CPU available to the GPU, and
+        /// call IBuffer::InvalidateMappedRange() to make writes by the GPU visible to the CPU.
+        MEMORY_PROPERTIES* GetMemoryProperties(IBuffer*);
 
 
-    /// Invalidates the specified range of non-coherent memory modified by the GPU to make
-    /// it visible to the CPU.
+        /// Flushes the specified range of non-coherent memory from the host cache to make
+        /// it available to the GPU.
 
-    /// \param [in] StartOffset - Offset, in bytes, from the beginning of the buffer to
-    ///                           the start of the memory range to invalidate.
-    /// \param [in] Size        - Size, in bytes, of the memory range to invalidate.
-    ///
-    /// This method should only be used for persistently-mapped buffers that do not
-    /// report MEMORY_PROPERTY_HOST_COHERENT property. After an application modifies
-    /// a mapped memory range on the GPU, it must invalidate the range to make it visible
-    /// to the CPU.
-    ///
-    /// \note   This method must never be used for USAGE_DYNAMIC buffers.
-    ///
-    ///         When a mapped buffer is unmapped it is automatically invalidated by
-    ///         the engine if necessary.
-    void* InvalidateMappedRange(IBuffer*, uint StartOffset, uint Size);   
+        /// \param [in] StartOffset - Offset, in bytes, from the beginning of the buffer to
+        ///                           the start of the memory range to flush.
+        /// \param [in] Size        - Size, in bytes, of the memory range to flush.
+        ///
+        /// This method should only be used for persistently-mapped buffers that do not
+        /// report MEMORY_PROPERTY_HOST_COHERENT property. After an application modifies
+        /// a mapped memory range on the CPU, it must flush the range to make it available
+        /// to the GPU.
+        ///
+        /// \note   This method must never be used for USAGE_DYNAMIC buffers.
+        ///
+        ///         When a mapped buffer is unmapped it is automatically flushed by
+        ///         the engine if necessary.
+        void* FlushMappedRange(IBuffer*, uint StartOffset, uint Size);
+
+
+        /// Invalidates the specified range of non-coherent memory modified by the GPU to make
+        /// it visible to the CPU.
+
+        /// \param [in] StartOffset - Offset, in bytes, from the beginning of the buffer to
+        ///                           the start of the memory range to invalidate.
+        /// \param [in] Size        - Size, in bytes, of the memory range to invalidate.
+        ///
+        /// This method should only be used for persistently-mapped buffers that do not
+        /// report MEMORY_PROPERTY_HOST_COHERENT property. After an application modifies
+        /// a mapped memory range on the GPU, it must invalidate the range to make it visible
+        /// to the CPU.
+        ///
+        /// \note   This method must never be used for USAGE_DYNAMIC buffers.
+        ///
+        ///         When a mapped buffer is unmapped it is automatically invalidated by
+        ///         the engine if necessary.
+        void* InvalidateMappedRange(IBuffer*, uint StartOffset, uint Size);
+    }
 }
 
 struct IBufferVtbl { IBufferMethods Buffer; }
@@ -255,4 +257,28 @@ void* IBuffer_CreateView(IBuffer* object, const BufferViewDesc* ViewDesc, IBuffe
 
 IBufferView** IBuffer_GetDefaultView(IBuffer* object, BUFFER_VIEW_TYPE ViewType) {
     return object.pVtbl.Buffer.GetDefaultView(object, ViewType);
+}
+
+void** IBuffer_GetNativeHandle() {
+
+}
+
+void* IBuffer_SetState() {
+
+}
+
+RESOURCE_STATE* IBuffer_GetState() {
+
+}
+
+MEMORY_PROPERTIES* IBuffer_GetMemoryProperties() {
+
+}
+
+void* IBuffer_FlushMappedRange(){
+
+}
+
+void* IBuffer_InvalidateMappedRange() {
+
 }

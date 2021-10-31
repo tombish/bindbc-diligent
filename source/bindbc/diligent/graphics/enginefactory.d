@@ -39,7 +39,7 @@ module bindbc.diligent.graphics.engine.enginefactory;
 import bindbc.diligent.primitives.object;
 import bindbc.diligent.graphics.graphicstypes;
 
-Version(Android) {
+version(Android) {
     struct ANativeActivity;
     struct AAssetManager;
 }
@@ -53,52 +53,54 @@ static const INTERFACE_ID IID_EngineFactory =
 /// Engine factory base interface
 struct IEngineFactoryMethods
 {
-    /// Returns API info structure, see Diligent::APIInfo.
-    const APIInfo** GetAPIInfo(IEngineFactory*);
+    extern(C) @nogc nothrow {
+        /// Returns API info structure, see Diligent::APIInfo.
+        const APIInfo** GetAPIInfo(IEngineFactory*);
 
-    /// Creates default shader source input stream factory
+        /// Creates default shader source input stream factory
 
-    /// \param [in]  SearchDirectories           - Semicolon-seprated list of search directories.
-    /// \param [out] ppShaderSourceStreamFactory - Memory address where the pointer to the shader source stream factory will be written.
-    void* CreateDefaultShaderSourceStreamFactory(
-                        IEngineFactory*,
-                        const(char)*                              SearchDirectories,
-                        struct IShaderSourceInputStreamFactory** ppShaderSourceFactory);
+        /// \param [in]  SearchDirectories           - Semicolon-seprated list of search directories.
+        /// \param [out] ppShaderSourceStreamFactory - Memory address where the pointer to the shader source stream factory will be written.
+        void* CreateDefaultShaderSourceStreamFactory(
+                            IEngineFactory*,
+                            const(char)*                              SearchDirectories,
+                            IShaderSourceInputStreamFactory** ppShaderSourceFactory);
 
-    /// Enumerates adapters available on this machine.
+        /// Enumerates adapters available on this machine.
 
-    /// \param [in]     MinVersion  - Minimum required API version (feature level for Direct3D).
-    /// \param [in,out] NumAdapters - The number of adapters. If Adapters is null, this value
-    ///                               will be overwritten with the number of adapters available
-    ///                               on this system. If Adapters is not null, this value should
-    ///                               contain the maximum number of elements reserved in the array
-    ///                               pointed to by Adapters. In the latter case, this value
-    ///                               is overwritten with the actual number of elements written to
-    ///                               Adapters.
-    /// \param [out]    Adapters - Pointer to the array conataining adapter information. If
-    ///                            null is provided, the number of available adapters is
-    ///                            written to NumAdapters.
-    ///
-    /// \note OpenGL backend only supports one device; features and properties will have limited information.
-    void* EnumerateAdapters(IEngineFactory*,
-                            Version              MinVersion,
-                            uint*                NumAdapters,
-                            GraphicsAdapterInfo* Adapters);
+        /// \param [in]     MinVersion  - Minimum required API version (feature level for Direct3D).
+        /// \param [in,out] NumAdapters - The number of adapters. If Adapters is null, this value
+        ///                               will be overwritten with the number of adapters available
+        ///                               on this system. If Adapters is not null, this value should
+        ///                               contain the maximum number of elements reserved in the array
+        ///                               pointed to by Adapters. In the latter case, this value
+        ///                               is overwritten with the actual number of elements written to
+        ///                               Adapters.
+        /// \param [out]    Adapters - Pointer to the array conataining adapter information. If
+        ///                            null is provided, the number of available adapters is
+        ///                            written to NumAdapters.
+        ///
+        /// \note OpenGL backend only supports one device; features and properties will have limited information.
+        void* EnumerateAdapters(IEngineFactory*,
+                                Version              MinVersion,
+                                uint*                NumAdapters,
+                                GraphicsAdapterInfo* Adapters);
 
-Version(Android) {
-    /// On Android platform, it is necessary to initialize the file system before
-    /// CreateDefaultShaderSourceStreamFactory() method can be called.
+        version(Android) {
+            /// On Android platform, it is necessary to initialize the file system before
+            /// CreateDefaultShaderSourceStreamFactory() method can be called.
 
-    /// \param [in] NativeActivity          - Pointer to the native activity object (ANativeActivity).
-    /// \param [in] NativeActivityClassName - Native activity class name.
-    /// \param [in] AssetManager            - Pointer to the asset manager (AAssetManager).
-    ///
-    /// \remarks See AndroidFileSystem::Init.
-    void* InitAndroidFileSystem(IEngineFactory*,
-                                               ANativeActivity*  NativeActivity,
-                                               const(char)*      NativeActivityClassName,
-                                               AAssetManager*    AssetManager);
-}
+            /// \param [in] NativeActivity          - Pointer to the native activity object (ANativeActivity).
+            /// \param [in] NativeActivityClassName - Native activity class name.
+            /// \param [in] AssetManager            - Pointer to the asset manager (AAssetManager).
+            ///
+            /// \remarks See AndroidFileSystem::Init.
+            void* InitAndroidFileSystem(IEngineFactory*,
+                                                    ANativeActivity*  NativeActivity,
+                                                    const(char)*      NativeActivityClassName,
+                                                    AAssetManager*    AssetManager);
+        }
+    }
 }
 
 struct IEngineFactoryVtbl { IEngineFactoryMethods EngineFactory; }

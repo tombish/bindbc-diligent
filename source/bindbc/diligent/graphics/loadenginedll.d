@@ -36,50 +36,47 @@ module bindbc.diligent.graphics.engine.loadenginedll;
 /// \file
 /// Helper function to load engine DLL on Windows
 
-#include <stdlib.h>
-#include <stdio.h>
+//#include <stdlib.h>
+//#include <stdio.h>
 
-#include "../../../Primitives/interface/CommonDefinitions.h"
+//#if PLATFORM_UNIVERSAL_WINDOWS
+//#    include "../../../Common/interface/StringTools.hpp"
+//#endif
 
-#if PLATFORM_UNIVERSAL_WINDOWS
-#    include "../../../Common/interface/StringTools.hpp"
-#endif
+import core.sys.windows.windows;
 
-#ifndef NOMINMAX
-#    define NOMINMAX
-#endif
-#include <Windows.h>
-
-inline FARPROC LoadEngineDll(const char* EngineName, const char* GetFactoryFuncName)
+FARPROC LoadEngineDll(const(char)* EngineName, const(char)* GetFactoryFuncName)
 {
     const size_t StringBufferSize = 4096;
-    char*        LibName          = (char*)malloc(StringBufferSize);
+    char*        LibName          = cast(char*)malloc(StringBufferSize);
     FARPROC      GetFactoryFunc   = NULL;
     HMODULE      hModule          = NULL;
 
     
-#if _WIN64
-    const char* Arch = "_64";
-#else
-    const char* Arch = "_32";
-#endif
+    version(Win64) {
+        const(char)* Arch = "_64";
+    }
+    else {
+        const(char)* Arch = "_32";
+    }
 
-#if defined(DILIGENT_DEBUG) || defined(_DEBUG)
-    const char* Conf = "d";
-#else
-    const char* Conf = "r";
-#endif
+
+    debug {
+        const(char)* Conf = "d";
+    }
+    else {
+        const(char)* Conf = "r";
+    }
+
 
     sprintf_s(LibName, StringBufferSize, "%s%s%s.dll", EngineName, Arch, Conf);
 
-#if PLATFORM_WIN32
-    hModule = LoadLibraryA(LibName);
-#elif PLATFORM_UNIVERSAL_WINDOWS
-    hModule = LoadPackagedLibrary(WidenString(LibName).c_str(), 0);
-#else
-#    error Unexpected platform
-#endif
-    
+    version(Win32) {
+        hModule = LoadLibraryA(LibName);
+    }
+    else {
+        hModule = LoadPackagedLibrary(WidenString(LibName).c_str(), 0);  
+    }
 
     if (hModule == NULL)
     {

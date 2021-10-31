@@ -8,7 +8,9 @@ targetType "staticLibrary"
 targetPath "lib"
 targetName "BindBC_Diligent"
 
-dependency "directx-d" version="~>0.14.0" platform="windows"
+platform "windows" {
+    dependency "directx-d" version="~>0.14.0" 
+}
 
 configuration "dynamic" {
     versions "BindDiligent_Dynamic"

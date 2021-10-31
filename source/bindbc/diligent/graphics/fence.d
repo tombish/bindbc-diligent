@@ -36,16 +36,16 @@ module bindbc.diligent.graphics.engine.fence;
 /// \file
 /// Defines Diligent::IFence interface and related data structures
 
-#include "DeviceObject.h"
+import bindbc.diligent.graphics.deviceobject;
 
 // {3B19184D-32AB-4701-84F4-9A0C03AE1672}
 static const INTERFACE_ID IID_Fence =
-    {0x3b19184d, 0x32ab, 0x4701, {0x84, 0xf4, 0x9a, 0xc, 0x3, 0xae, 0x16, 0x72}};
+    INTERFACE_ID(0x3b19184d, 0x32ab, 0x4701, [0x84, 0xf4, 0x9a, 0xc, 0x3, 0xae, 0x16, 0x72]);
 
 /// Describes the fence type.
 
 /// This enumeration is used by FenceDesc structure.
-DILIGENT_TYPED_ENUM(FENCE_TYPE, Uint8)
+enum FENCE_TYPE : ubyte
 {
     /// Basic fence that may be used for:
     ///  - signaling the fence from GPU
@@ -63,22 +63,15 @@ DILIGENT_TYPED_ENUM(FENCE_TYPE, Uint8)
     FENCE_TYPE_GENERAL = 1,
 
     FENCE_TYPE_LAST = FENCE_TYPE_GENERAL
-};
+}
 
 /// Fence description
-struct FenceDesc DILIGENT_DERIVE(DeviceObjectAttribs)
-
+struct FenceDesc
+{
+    DeviceObjectAttribs _DeviceObjectAttribs;
     /// Fence type, see Diligent::FENCE_TYPE.
-    FENCE_TYPE Type DEFAULT_INITIALIZER(FENCE_TYPE_CPU_WAIT_ONLY);
-};
-typedef struct FenceDesc FenceDesc;
-
-#define DILIGENT_INTERFACE_NAME IFence
-#include "../../../Primitives/interface/DefineInterfaceHelperMacros.h"
-
-#define IFenceInclusiveMethods      \
-    IDeviceObjectInclusiveMethods;  \
-    IFenceMethods Fence
+    FENCE_TYPE Type = FENCE_TYPE.FENCE_TYPE_CPU_WAIT_ONLY;
+}
 
 /// Fence interface
 
@@ -88,55 +81,58 @@ typedef struct FenceDesc FenceDesc;
 ///          it may block the GPU until all prior commands have completed execution.
 ///
 /// \remarks In Direct3D12 and Vulkan backends, fence is thread-safe.
-DILIGENT_BEGIN_INTERFACE(IFence, IDeviceObject)
+struct IFenceMethods
 {
-#if DILIGENT_CPP_INTERFACE
-    /// Returns the fence description used to create the object
-    virtual const FenceDesc&GetDesc() const override = 0;
-#endif
+    extern(C) @nogc nothrow {
+        /// Returns the last completed value signaled by the GPU
 
-    /// Returns the last completed value signaled by the GPU
+        /// \remarks   In Direct3D11 backend, this method is not thread-safe (even if the fence
+        ///            object is protected by a mutex) and must only be called by the same thread 
+        ///            that signals the fence via IDeviceContext::EnqueueSignal().
+        ulong* GetCompletedValue(IFence*);
 
-    /// \remarks   In Direct3D11 backend, this method is not thread-safe (even if the fence
-    ///            object is protected by a mutex) and must only be called by the same thread 
-    ///            that signals the fence via IDeviceContext::EnqueueSignal().
-    VIRTUAL Uint64GetCompletedValue(THIS) PURE;
+        /// Sets the fence to the specified value.
 
-    /// Sets the fence to the specified value.
+        /// \param [in] Value - New value to set the fence to.
+        ///                     The value must be greater than the current value of the fence.
+        /// 
+        /// \note  Fence value will be changed immediately on the CPU.
+        ///        Use IDeviceContext::EnqueueSignal to enqueue a signal command
+        ///        that will change the value on the GPU after all previously submitted commands
+        ///        are complete.
+        /// 
+        /// \note  The fence must have been created with type FENCE_TYPE_GENERAL.
+        void* Signal(IFence*, ulong Value);
+        
 
-    /// \param [in] Value - New value to set the fence to.
-    ///                     The value must be greater than the current value of the fence.
-    /// 
-    /// \note  Fence value will be changed immediately on the CPU.
-    ///        Use IDeviceContext::EnqueueSignal to enqueue a signal command
-    ///        that will change the value on the GPU after all previously submitted commands
-    ///        are complete.
-    /// 
-    /// \note  The fence must have been created with type FENCE_TYPE_GENERAL.
-    VIRTUAL voidSignal(THIS_
-                                Uint64 Value) PURE;
-    
+        /// Waits until the fence reaches or exceeds the specified value, on the host.
 
-    /// Waits until the fence reaches or exceeds the specified value, on the host.
+        /// \param [in] Value - The value that the fence is waiting for to reach.
+        ///
+        /// \note  The method blocks the execution of the calling thread until the wait is complete.
+        void* Wait(IFence*, ulong Value);
+    }
+}
 
-    /// \param [in] Value - The value that the fence is waiting for to reach.
-    ///
-    /// \note  The method blocks the execution of the calling thread until the wait is complete.
-    VIRTUAL voidWait(THIS_
-                              Uint64 Value) PURE;
-};
-DILIGENT_END_INTERFACE
+struct IFenceVtbl { IFenceMethods Fence; }
+struct IFence { IFenceVtbl* pVtbl; }
 
-#include "../../../Primitives/interface/UndefInterfaceHelperMacros.h"
+FenceDesc* IFence_GetDesc(IFence* fence) {
+    return cast(const FenceDesc*)IDeviceObject_GetDesc(fence);
+}
 
-#if DILIGENT_C_INTERFACE
+//#    define IFence_GetCompletedValue(This) CALL_IFACE_METHOD(Fence, GetCompletedValue, This)
+//#    define IFence_Signal(This, ...)       CALL_IFACE_METHOD(Fence, Signal,            This, __VA_ARGS__)
+//#    define IFence_Wait(This, ...)         CALL_IFACE_METHOD(Fence, Wait,              This, __VA_ARGS__)
 
-#    define IFence_GetDesc(This) (const struct FenceDesc*)IDeviceObject_GetDesc(This)
+ulong* IFence_GetCompletedValue(IFence* fence) {
+    return fence.pVtbl.Fence.GetCompletedValue(fence);
+}
 
-#    define IFence_GetCompletedValue(This) CALL_IFACE_METHOD(Fence, GetCompletedValue, This)
-#    define IFence_Signal(This, ...)       CALL_IFACE_METHOD(Fence, Signal,            This, __VA_ARGS__)
-#    define IFence_Wait(This, ...)         CALL_IFACE_METHOD(Fence, Wait,              This, __VA_ARGS__)
+void* IFence_Signal(IFence* fence, ulong value) {
+    return fence.pVtbl.Fence.Signal(fence, value);
+}
 
-#endif
-
-
+void* IFence_Wait(IFence* fence, ulong value) {
+    return fence.pVtbl.Fence.Wait(fence, value);
+}

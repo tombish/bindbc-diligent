@@ -36,69 +36,47 @@ module bindbc.diligent.graphics.engine.framebuffer;
 /// \file
 /// Definition of the Diligent::IFramebuffer interface and related data structures
 
-#include "DeviceObject.h"
-#include "RenderPass.h"
-#include "TextureView.h"
+import bindbc.diligent.graphics.deviceobject;
+import bindbc.diligent.graphics.renderpass;
+import bindbc.diligent.graphics.textureview;
 
 // {05DA9E47-3CA6-4F96-A967-1DDDC53181A6}
-static const struct INTERFACE_ID IID_Framebuffer =
-    { 0x5da9e47, 0x3ca6, 0x4f96, { 0xa9, 0x67, 0x1d, 0xdd, 0xc5, 0x31, 0x81, 0xa6 } };
+static const INTERFACE_ID IID_Framebuffer =
+    INTERFACE_ID( 0x5da9e47, 0x3ca6, 0x4f96, [ 0xa9, 0x67, 0x1d, 0xdd, 0xc5, 0x31, 0x81, 0xa6 ] );
 
 /// Framebuffer description.
-struct FramebufferDesc DILIGENT_DERIVE(DeviceObjectAttribs)
+struct FramebufferDesc
+{
+    DeviceObjectAttribs _DeviceObjectAttribs;
 
     /// Render pass that the framebuffer will be compatible with.
-    IRenderPass*         pRenderPass     DEFAULT_INITIALIZER(nullptr);
+    IRenderPass* pRenderPass = null;
 
     /// The number of attachments.
-    Uint32               AttachmentCount DEFAULT_INITIALIZER(0);
+    uint AttachmentCount = 0;
 
     /// Pointer to the array of attachments.
-    ITextureView* const* ppAttachments   DEFAULT_INITIALIZER(nullptr);
+    const ITextureView** ppAttachments = null;
 
     /// Width of the framebuffer.
-    Uint32               Width           DEFAULT_INITIALIZER(0);
+    uint Width = 0;
 
     /// Height of the framebuffer.
-    Uint32               Height          DEFAULT_INITIALIZER(0);
+    uint Height = 0;
 
     /// The number of array slices in the framebuffer.
-    Uint32               NumArraySlices  DEFAULT_INITIALIZER(0);
-};
-typedef struct FramebufferDesc FramebufferDesc;
-
-#if DILIGENT_CPP_INTERFACE
-
-/// Framebuffer interface
-
-/// Framebuffer has no methods.
-class IFramebuffer : public IDeviceObject
-{
-public:
-    virtual const FramebufferDesc& DILIGENT_CALL_TYPE GetDesc() const override = 0;
-};
-
-#else
+    uint NumArraySlices = 0;
+}
 
 struct IFramebuffer;
 
-//  C requires that a struct or union has at least one member
-//struct IFramebufferMethods
-//{
-//};
-
 struct IFramebufferVtbl
 {
-    struct IObjectMethods       Object;
-    struct IDeviceObjectMethods DeviceObject;
-    //struct IFramebufferMethods  Framebuffer;
-};
+    IObjectMethods       Object;
+    IDeviceObjectMethods DeviceObject;
+}
 
-typedef struct IFramebuffer
+struct IFramebuffer
 {
-    struct IFramebufferVtbl* pVtbl;
-} IFramebuffer;
-
-#endif
-
-
+    IFramebufferVtbl* pVtbl;
+}

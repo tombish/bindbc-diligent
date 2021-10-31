@@ -36,13 +36,11 @@
 /// \file
 /// Definition input layout
 
-#include <string.h>
-
 import bindbc.graphics.graphicstypes;
 
-static const int MAX_LAYOUT_ELEMENTS        = 16;
-static const int LAYOUT_ELEMENT_AUTO_OFFSET = 0xFFFFFFFF;
-static const int LAYOUT_ELEMENT_AUTO_STRIDE = 0xFFFFFFFF;
+enum int MAX_LAYOUT_ELEMENTS        = 16;
+enum int LAYOUT_ELEMENT_AUTO_OFFSET = 0xFFFFFFFF;
+enum int LAYOUT_ELEMENT_AUTO_STRIDE = 0xFFFFFFFF;
 
 /// Input frequency
 enum INPUT_ELEMENT_FREQUENCY
@@ -87,7 +85,7 @@ struct LayoutElement
     /// indicates if the value should be normalized to [-1,+1] or 
     /// [0, 1] range respectively. For floating point types
     /// (VT_FLOAT16 and VT_FLOAT32), this member is ignored.
-    bool IsNormalized = true);
+    bool IsNormalized = true;
 
     /// Relative offset, in bytes, to the element bits.
     /// If this value is set to LAYOUT_ELEMENT_AUTO_OFFSET (default value), the offset will

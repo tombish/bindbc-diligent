@@ -186,66 +186,58 @@ struct ScratchBufferSizes
 /// Defines the methods to manipulate a BLAS object
 struct IBottomLevelASMethods
 {
-    /// Returns the geometry description index in BottomLevelASDesc::pTriangles or BottomLevelASDesc::pBoxes.
+    extern(C) @nogc nothrow {
+        /// Returns the geometry description index in BottomLevelASDesc::pTriangles or BottomLevelASDesc::pBoxes.
 
-    /// \param [in] Name - Geometry name that is specified in BLASTriangleDesc or BLASBoundingBoxDesc.
-    /// \return Geometry index or INVALID_INDEX if geometry does not exist.
-    /// 
-    /// \note Access to the BLAS must be externally synchronized.
-    uint* GetGeometryDescIndex(IBottomLevelAS*, const(char)* Name);
+        /// \param [in] Name - Geometry name that is specified in BLASTriangleDesc or BLASBoundingBoxDesc.
+        /// \return Geometry index or INVALID_INDEX if geometry does not exist.
+        /// 
+        /// \note Access to the BLAS must be externally synchronized.
+        uint* GetGeometryDescIndex(IBottomLevelAS*, const(char)* Name);
 
-    /// Returns the geometry index that can be used in a shader binding table.
-    
-    /// \param [in] Name - Geometry name that is specified in BLASTriangleDesc or BLASBoundingBoxDesc.
-    /// \return Geometry index or INVALID_INDEX if geometry does not exist.
-    /// 
-    /// \note Access to the BLAS must be externally synchronized.
-    uint* GetGeometryIndex(IBottomLevelAS*, const(char)* Name);
+        /// Returns the geometry index that can be used in a shader binding table.
+        
+        /// \param [in] Name - Geometry name that is specified in BLASTriangleDesc or BLASBoundingBoxDesc.
+        /// \return Geometry index or INVALID_INDEX if geometry does not exist.
+        /// 
+        /// \note Access to the BLAS must be externally synchronized.
+        uint* GetGeometryIndex(IBottomLevelAS*, const(char)* Name);
 
-    /// Returns the geometry count that was used to build AS.
-    /// Same as BuildBLASAttribs::TriangleDataCount or BuildBLASAttribs::BoxDataCount.
+        /// Returns the geometry count that was used to build AS.
+        /// Same as BuildBLASAttribs::TriangleDataCount or BuildBLASAttribs::BoxDataCount.
 
-    /// \return The number of geometries that was used to build AS.
-    /// 
-    /// \note Access to the BLAS must be externally synchronized.
-    uint* GetActualGeometryCount(IBottomLevelAS*);
+        /// \return The number of geometries that was used to build AS.
+        /// 
+        /// \note Access to the BLAS must be externally synchronized.
+        uint* GetActualGeometryCount(IBottomLevelAS*);
 
-    /// Returns the scratch buffer info for the current acceleration structure.
-    
-    /// \return ScratchBufferSizes object, see Diligent::ScratchBufferSizes.
-    ScratchBufferSizes* GetScratchBufferSizes(IBottomLevelAS*);
+        /// Returns the scratch buffer info for the current acceleration structure.
+        
+        /// \return ScratchBufferSizes object, see Diligent::ScratchBufferSizes.
+        ScratchBufferSizes* GetScratchBufferSizes(IBottomLevelAS*);
 
-    /// Returns the native acceleration structure handle specific to the underlying graphics API
+        /// Returns the native acceleration structure handle specific to the underlying graphics API
 
-    /// \return pointer to ID3D12Resource interface, for D3D12 implementation\n
-    ///         VkAccelerationStructure handle, for Vulkan implementation
-    ulong* GetNativeHandle(IBottomLevelAS*);
+        /// \return pointer to ID3D12Resource interface, for D3D12 implementation\n
+        ///         VkAccelerationStructure handle, for Vulkan implementation
+        ulong* GetNativeHandle(IBottomLevelAS*);
 
-    /// Sets the acceleration structure usage state.
+        /// Sets the acceleration structure usage state.
 
-    /// \note This method does not perform state transition, but
-    ///       resets the internal acceleration structure state to the given value.
-    ///       This method should be used after the application finished
-    ///       manually managing the acceleration structure state and wants to hand over
-    ///       state management back to the engine.
-    void* SetState(IBottomLevelAS*, RESOURCE_STATE State);
+        /// \note This method does not perform state transition, but
+        ///       resets the internal acceleration structure state to the given value.
+        ///       This method should be used after the application finished
+        ///       manually managing the acceleration structure state and wants to hand over
+        ///       state management back to the engine.
+        void* SetState(IBottomLevelAS*, RESOURCE_STATE State);
 
-    /// Returns the internal acceleration structure state
-    RESOURCE_STATE* GetState(IBottomLevelAS*);
+        /// Returns the internal acceleration structure state
+        RESOURCE_STATE* GetState(IBottomLevelAS*);
+    }
 }
 
 struct IBottomLevelASVtbl { IBottomLevelASMethods BottomLevelAS; }
 struct IBottomLevelAS { IBottomLevelASVtbl* pVtbl; }
-
-//define CALL_IFACE_METHOD(Iface, Method, This, ...) (This)->pVtbl->Iface.Method((I##Iface*)(This), ##__VA_ARGS__)
-
-//#    define IBottomLevelAS_GetGeometryDescIndex(This, ...)  CALL_IFACE_METHOD(BottomLevelAS, GetGeometryDescIndex,   This, __VA_ARGS__)
-//#    define IBottomLevelAS_GetGeometryIndex(This, ...)      CALL_IFACE_METHOD(BottomLevelAS, GetGeometryIndex,       This, __VA_ARGS__)
-//#    define IBottomLevelAS_GetActualGeometryCount(This)     CALL_IFACE_METHOD(BottomLevelAS, GetActualGeometryCount, This)
-//#    define IBottomLevelAS_GetScratchBufferSizes(This)      CALL_IFACE_METHOD(BottomLevelAS, GetScratchBufferSizes,  This)
-//#    define IBottomLevelAS_GetNativeHandle(This)            CALL_IFACE_METHOD(BottomLevelAS, GetNativeHandle,        This)
-//#    define IBottomLevelAS_SetState(This, ...)              CALL_IFACE_METHOD(BottomLevelAS, SetState,               This, __VA_ARGS__)
-//#    define IBottomLevelAS_GetState(This)                   CALL_IFACE_METHOD(BottomLevelAS, GetState,               This)
 
 uint* IBottomLevelAS_GetGeometryDescIndex(IBottomLevelAS* structure, const(char)* name) {
     return BottomLevelAS.pVtbl.BottomLevelAS.GetGeometryDescIndex(structure, name);

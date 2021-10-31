@@ -36,69 +36,65 @@ module bindbc.diligent.graphics.hlsl2glslconverterlib.hlsl2glslconverter;
 /// \file
 /// Definition of the Diligent::IHLSL2GLSLConverter interface
 
-#include "../../GraphicsEngine/interface/Shader.h"
-#include "../../../Primitives/interface/DataBlob.h"
+import bindbc.diligent.graphics.shader;
+import bindbc.diligent.primitives.datablob;
 
 // {1FDE020A-9C73-4A76-8AEF-C2C6C2CF0EA5}
 static const INTERFACE_ID IID_HLSL2GLSLConversionStream =
-    {0x1fde020a, 0x9c73, 0x4a76, {0x8a, 0xef, 0xc2, 0xc6, 0xc2, 0xcf, 0xe, 0xa5}};
+    INTERFACE_ID(0x1fde020a, 0x9c73, 0x4a76, [0x8a, 0xef, 0xc2, 0xc6, 0xc2, 0xcf, 0xe, 0xa5]);
 
-#define DILIGENT_INTERFACE_NAME IHLSL2GLSLConversionStream
-#include "../../../Primitives/interface/DefineInterfaceHelperMacros.h"
-
-#define IHLSL2GLSLConversionStreamInclusiveMethods \
-    IObjectInclusiveMethods;                       \
-    IHLSL2GLSLConversionStreamMethods HLSL2GLSLConversionStream
-
-DILIGENT_BEGIN_INTERFACE(IHLSL2GLSLConversionStream, IObject)
+struct IHLSL2GLSLConversionStreamMethods
 {
-    VIRTUAL voidConvert(THIS_
-                                 const Char* EntryPoint,
-                                 SHADER_TYPE ShaderType,
-                                 bool        IncludeDefintions,
-                                 const char* SamplerSuffix,
-                                 bool        UseInOutLocationQualifiers,
-                                 IDataBlob** ppGLSLSource) PURE;
-};
-DILIGENT_END_INTERFACE
+    extern(C) @nogc nothrow {
+        void* Convert(IHLSL2GLSLConversionStream*,
+                                    const(char)* EntryPoint,
+                                    SHADER_TYPE ShaderType,
+                                    bool        IncludeDefintions,
+                                    const(char)* SamplerSuffix,
+                                    bool        UseInOutLocationQualifiers,
+                                    IDataBlob** ppGLSLSource);
+    }
+}
 
-#include "../../../Primitives/interface/UndefInterfaceHelperMacros.h"
+struct IHLSL2GLSLConversionStreamVtbl { IHLSL2GLSLConversionStreamMethods HLSL2GLSLConversionStream; }
+struct IHLSL2GLSLConversionStream { IHLSL2GLSLConversionStreamVtbl* pVtbl; }
 
-#if DILIGENT_C_INTERFACE
+//#    define IHLSL2GLSLConversionStream_Convert(This, ...) CALL_IFACE_METHOD(HLSL2GLSLConversionStream, Convert, This, __VA_ARGS__)
 
-#    define IHLSL2GLSLConversionStream_Convert(This, ...) CALL_IFACE_METHOD(HLSL2GLSLConversionStream, Convert, This, __VA_ARGS__)
-
-#endif
-
+void* IHLSL2GLSLConversionStream_Convert(IHLSL2GLSLConversionStream* convert,
+                                            const(char)* entryPoint,
+                                            SHADER_TYPE shaderType,
+                                            bool        includeDefintions,
+                                            const(char)* samplerSuffix,
+                                            bool        useInOutLocationQualifiers,
+                                            IDataBlob** ppGLSLSource) {
+    return convert.pVtbl.HLSL2GLSLConversionStream.Convert(convert, entryPoint, shaderType, includeDefintions, samplerSuffix, useInOutLocationQualifiers, ppGLSLSource);
+}
 // {44A21160-77E0-4DDC-A57E-B8B8B65B5342}
 static const INTERFACE_ID IID_HLSL2GLSLConverter =
-    {0x44a21160, 0x77e0, 0x4ddc, {0xa5, 0x7e, 0xb8, 0xb8, 0xb6, 0x5b, 0x53, 0x42}};
-
-#define DILIGENT_INTERFACE_NAME IHLSL2GLSLConverter
-#include "../../../Primitives/interface/DefineInterfaceHelperMacros.h"
-
-#define IHLSL2GLSLConverterInclusiveMethods \
-    IObjectInclusiveMethods;                \
-    IHLSL2GLSLConverterMethods HLSL2GLSLConverter
+    INTERFACE_ID(0x44a21160, 0x77e0, 0x4ddc, [0xa5, 0x7e, 0xb8, 0xb8, 0xb6, 0x5b, 0x53, 0x42]);
 
 /// Interface to the buffer object implemented in OpenGL
-DILIGENT_BEGIN_INTERFACE(IHLSL2GLSLConverter, IObject)
+struct IObjectInclusiveMethods
 {
-    VIRTUAL voidCreateStream(THIS_
-                                      const Char*                      InputFileName,
-                                      IShaderSourceInputStreamFactory* pSourceStreamFactory,
-                                      const Char*                      HLSLSource,
-                                      size_t                           NumSymbols,
-                                      IHLSL2GLSLConversionStream**     ppStream) CONST PURE;
-};
-DILIGENT_END_INTERFACE
+    extern(C) @nogc nothrow {
+        void* CreateStream(IHLSL2GLSLConverter*,
+                                        const(char)*                      inputFileName,
+                                        IShaderSourceInputStreamFactory*  pSourceStreamFactory,
+                                        const(char)*                      hlslSource,
+                                        size_t                            numSymbols,
+                                        IHLSL2GLSLConversionStream**      ppStream);
+    }
+}
 
-#include "../../../Primitives/interface/UndefInterfaceHelperMacros.h"
+struct IHLSL2GLSLConverterVtbl { IHLSL2GLSLConverterMethods HLSL2GLSLConverter; }
+struct IHLSL2GLSLConverter { IHLSL2GLSLConverterVtbl* pVtbl; }
 
-#if DILIGENT_C_INTERFACE
-
-#    define IHLSL2GLSLConverter_CreateStream(This, ...) CALL_IFACE_METHOD(HLSL2GLSLConverter, CreateStream, This, __VA_ARGS__)
-
-#endif
-
-
+void* IHLSL2GLSLConverter_CreateStream(IHLSL2GLSLConverter* converter,
+                                      const(char)*                      inputFileName,
+                                      IShaderSourceInputStreamFactory*  pSourceStreamFactory,
+                                      const(char)*                      hlslSource,
+                                      size_t                            numSymbols,
+                                      IHLSL2GLSLConversionStream**      ppStream) {
+    return converter.pVtbl.HLSL2GLSLConverter.CreateStream(converter, inputFileName, pSourceStreamFactory, hlslSource, numSymbols, ppStream);
+}
