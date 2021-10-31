@@ -41,9 +41,7 @@ import bindbc.diligent.graphics.renderdevice;
 import bindbc.diligent.graphics.devicecontext;
 import bindbc.diligent.graphics.swapchain;
 
-//#if ENGINE_DLL
-//#    include "../../GraphicsEngine/interface/LoadEngineDll.h"
-//#endif
+version(BindDiligent_Dynamic) { import bindbc.diligent.graphics.loadenginedll; }
 
 // {62663A30-AAF0-4A9A-9729-9EAC6BF789F2}
 static const INTERFACE_ID IID_EngineFactoryD3D11 =
@@ -170,19 +168,12 @@ void* IEngineFactoryD3D11_EnumerateDisplayModes(IEngineFactoryD3D11* factory,
     return factory.pVtbl.EngineFactoryD3D11.EnumerateDisplayModes(factory, MinFeatureLevel, AdapterId, OutputId, Format, NumDisplayModes, DisplayModes);
 }
 
-//#if ENGINE_DLL
-//
-//typedef struct IEngineFactoryD3D11* (*GetEngineFactoryD3D11Type)();
-//
-//inline GetEngineFactoryD3D11Type DILIGENT_GLOBAL_FUNCTION(LoadGraphicsEngineD3D11)()
-//{
-//    return (GetEngineFactoryD3D11Type)LoadEngineDll("GraphicsEngineD3D11", "GetEngineFactoryD3D11");
-//}
+version(BindDiligent_Dynamic) {
+    IEngineFactoryD3D11* function() GetEngineFactoryD3D11Type;
 
-//#else
-
-//struct IEngineFactoryD3D11* DILIGENT_GLOBAL_FUNCTION(GetEngineFactoryD3D11)();
-
-//#endif
-
-
+    GetEngineFactoryD3D11Type Diligent_LoadGraphicsEngineD3D11()
+    {
+        return cast(GetEngineFactoryD3D11Type)LoadEngineDll("GraphicsEngineD3D11", "GetEngineFactoryD3D11");
+    }
+}
+else { IEngineFactoryD3D11* Diligent_GetEngineFactoryD3D11(); }

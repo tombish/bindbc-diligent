@@ -36,36 +36,27 @@ module bindbc.diligent.graphics.d3d12.fenced3d12;
 /// \file
 /// Definition of the Diligent::IFenceD3D12 interface
 
-#include "../../GraphicsEngine/interface/Fence.h"
+import bindbc.diligent.graphics.fence;
 
 // {053C0D8C-3757-4220-A9CC-4749EC4794AD}
 static const INTERFACE_ID IID_FenceD3D12 =
-    {0x53c0d8c, 0x3757, 0x4220, {0xa9, 0xcc, 0x47, 0x49, 0xec, 0x47, 0x94, 0xad}};
-
-#define DILIGENT_INTERFACE_NAME IFenceD3D12
-#include "../../../Primitives/interface/DefineInterfaceHelperMacros.h"
-
-#define IFenceD3D12InclusiveMethods \
-    IFenceInclusiveMethods;         \
-    IFenceD3D12Methods FenceD3D12
+    INTERFACE_ID(0x53c0d8c, 0x3757, 0x4220, [0xa9, 0xcc, 0x47, 0x49, 0xec, 0x47, 0x94, 0xad]);
 
 /// Exposes Direct3D12-specific functionality of a fence object.
-DILIGENT_BEGIN_INTERFACE(IFenceD3D12, IFence)
+struct IFenceD3D12Methods
 {
-    /// Returns a pointer to the ID3D12Fence interface of the internal Direct3D12 object.
+    extern(C) @nogc nothrow {
+        /// Returns a pointer to the ID3D12Fence interface of the internal Direct3D12 object.
 
-    /// The method does *NOT* increment the reference counter of the returned object,
-    /// so Release() must not be called.
-    VIRTUAL ID3D12Fence*GetD3D12Fence(THIS) PURE;
-};
-DILIGENT_END_INTERFACE
+        /// The method does *NOT* increment the reference counter of the returned object,
+        /// so Release() must not be called.
+        ID3D12Fence** GetD3D12Fence(IFenceD3D12*);
+    }
+}
 
-#include "../../../Primitives/interface/UndefInterfaceHelperMacros.h"
+struct IFenceD3D12Vtbl { IFenceD3D12Methods FenceD3D12; }
+struct IFenceD3D12 { IFenceD3D12Vtbl* pVtbl; }
 
-#if DILIGENT_C_INTERFACE
-
-#    define IFenceD3D12_GetD3D12Fence(This)          CALL_IFACE_METHOD(FenceD3D12, GetD3D12Fence,     This)
-
-#endif
-
-
+ID3D12Fence** IFenceD3D12_GetD3D12Fence(IFenceD3D12* fence) {
+    return fence.pVtbl.FenceD3D12.GetD3D12Fence(fence);
+}

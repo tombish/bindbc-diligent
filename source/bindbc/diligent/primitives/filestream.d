@@ -47,17 +47,19 @@ static const INTERFACE_ID IID_FileStream =
 /// Base interface for a file stream
 struct IFileStreamMethods
 {
-    /// Reads data from the stream
-    bool* Read(IFileStream*, void* Data, size_t BufferSize);
+    extern(C) @nogc nothrow {
+        /// Reads data from the stream
+        bool* Read(IFileStream*, void* Data, size_t BufferSize);
 
-    void* ReadBlob(IFileStream*, IDataBlob* pData);
+        void* ReadBlob(IFileStream*, IDataBlob* pData);
 
-    /// Writes data to the stream
-    bool* Write(IFileStream*, const void* Data, size_t Size);
+        /// Writes data to the stream
+        bool* Write(IFileStream*, const void* Data, size_t Size);
 
-    size_t* GetSize(IFileStream*);
+        size_t* GetSize(IFileStream*);
 
-    bool* IsValid(IFileStream*);
+        bool* IsValid(IFileStream*);
+    }
 }
 
 struct IFileStreamVtbl { IFileStreamMethods FileStream; }

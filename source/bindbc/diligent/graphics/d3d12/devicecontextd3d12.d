@@ -36,68 +36,69 @@ module bindbc.diligent.graphics.d3d12.devicecontextd3d12;
 /// \file
 /// Definition of the Diligent::IDeviceContextD3D12 interface
 
-#include "../../GraphicsEngine/interface/DeviceContext.h"
-#include "CommandQueueD3D12.h"
+import bindbc.diligent.graphics.devicecontext;
+import bindbc.diligent.graphics.d3d12.commandqueued3d12;
 
 // {DDE9E3AB-5109-4026-92B7-F5E7EC83E21E}
 static const INTERFACE_ID IID_DeviceContextD3D12 =
-    {0xdde9e3ab, 0x5109, 0x4026, {0x92, 0xb7, 0xf5, 0xe7, 0xec, 0x83, 0xe2, 0x1e}};
-
-#define DILIGENT_INTERFACE_NAME IDeviceContextD3D12
-#include "../../../Primitives/interface/DefineInterfaceHelperMacros.h"
-
-#define IDeviceContextD3D12InclusiveMethods \
-    IDeviceContextInclusiveMethods;         \
-    IDeviceContextD3D12Methods DeviceContextD3D12
+    INTERFACE_ID(0xdde9e3ab, 0x5109, 0x4026, [0x92, 0xb7, 0xf5, 0xe7, 0xec, 0x83, 0xe2, 0x1e]);
 
 /// Exposes Direct3D12-specific functionality of a device context.
-DILIGENT_BEGIN_INTERFACE(IDeviceContextD3D12, IDeviceContext)
+struct IDeviceContextD3D12Methods
 {
-    /// Transitions internal D3D12 texture object to a specified state
+    extern(C) @nogc nothrow {
+        /// Transitions internal D3D12 texture object to a specified state
 
-    /// \param [in] pTexture - texture to transition
-    /// \param [in] State - D3D12 resource state this texture to transition to
-    VIRTUAL voidTransitionTextureState(THIS_
+        /// \param [in] pTexture - texture to transition
+        /// \param [in] State - D3D12 resource state this texture to transition to
+        void* TransitionTextureState(IDeviceContextD3D12*,
+                                                    ITexture*             pTexture,
+                                                    D3D12_RESOURCE_STATES State);
+
+        /// Transitions internal D3D12 buffer object to a specified state
+
+        /// \param [in] pBuffer - Buffer to transition
+        /// \param [in] State - D3D12 resource state this buffer to transition to
+        void* TransitionBufferState(IDeviceContextD3D12*,
+                                                   IBuffer*              pBuffer,
+                                                   D3D12_RESOURCE_STATES State);
+
+        /// Returns a pointer to Direct3D12 graphics command list that is currently being recorded
+
+        /// \return - a pointer to the current command list
+        ///
+        /// \remarks  Any command on the device context may potentially submit the command list for
+        ///           execution into the command queue and make it invalid. An application should
+        ///           never cache the pointer and should instead request the command list every time it
+        ///           needs it.
+        ///
+        ///           The engine manages the lifetimes of all command buffers, so an application must
+        ///           not call AddRef/Release methods on the returned interface.
+        ///
+        ///           Diligent Engine internally keeps track of all resource state changes (vertex and index
+        ///           buffers, pipeline states, render targets, etc.). If an application changes any of these
+        ///           states in the command list, it must invalidate the engine's internal state tracking by
+        ///           calling IDeviceContext::InvalidateState() and then manually restore all required states via
+        ///           appropriate Diligent API calls.
+        ID3D12GraphicsCommandList** GetD3D12CommandList(IDeviceContextD3D12*);
+    }
+}
+
+struct IDeviceContextD3D12Vtbl { IDeviceContextD3D12Methods DeviceContextD3D12; }
+struct IDeviceContextD3D12 { IDeviceContextD3D12Vtbl* pVtbl; }
+
+void* IDeviceContextD3D12_TransitionTextureState(IDeviceContextD3D12* deviceContext,
                                                 ITexture*             pTexture,
-                                                D3D12_RESOURCE_STATES State) PURE;
+                                                D3D12_RESOURCE_STATES state) {
+    return deviceContext.pVtbl.DeviceContextD3D12.TransitionTextureState(deviceContext, pTexture, state);
+}
 
-    /// Transitions internal D3D12 buffer object to a specified state
-
-    /// \param [in] pBuffer - Buffer to transition
-    /// \param [in] State - D3D12 resource state this buffer to transition to
-    VIRTUAL voidTransitionBufferState(THIS_
+void* IDeviceContextD3D12_TransitionBufferState(IDeviceContextD3D12* deviceContext,
                                                IBuffer*              pBuffer,
-                                               D3D12_RESOURCE_STATES State) PURE;
+                                               D3D12_RESOURCE_STATES state) {
+    return deviceContext.pVtbl.DeviceContextD3D12.TransitionBufferState(deviceContext, pBuffer, state);
+}
 
-    /// Returns a pointer to Direct3D12 graphics command list that is currently being recorded
-
-    /// \return - a pointer to the current command list
-    ///
-    /// \remarks  Any command on the device context may potentially submit the command list for
-    ///           execution into the command queue and make it invalid. An application should
-    ///           never cache the pointer and should instead request the command list every time it
-    ///           needs it.
-    ///
-    ///           The engine manages the lifetimes of all command buffers, so an application must
-    ///           not call AddRef/Release methods on the returned interface.
-    ///
-    ///           Diligent Engine internally keeps track of all resource state changes (vertex and index
-    ///           buffers, pipeline states, render targets, etc.). If an application changes any of these
-    ///           states in the command list, it must invalidate the engine's internal state tracking by
-    ///           calling IDeviceContext::InvalidateState() and then manually restore all required states via
-    ///           appropriate Diligent API calls.
-    VIRTUAL ID3D12GraphicsCommandList*GetD3D12CommandList(THIS) PURE;
-};
-DILIGENT_END_INTERFACE
-
-#include "../../../Primitives/interface/UndefInterfaceHelperMacros.h"
-
-#if DILIGENT_C_INTERFACE
-
-#    define IDeviceContextD3D12_TransitionTextureState(This, ...) CALL_IFACE_METHOD(DeviceContextD3D12, TransitionTextureState,This, __VA_ARGS__)
-#    define IDeviceContextD3D12_TransitionBufferState(This, ...)  CALL_IFACE_METHOD(DeviceContextD3D12, TransitionBufferState, This, __VA_ARGS__)
-#    define IDeviceContextD3D12_GetD3D12CommandList(This)         CALL_IFACE_METHOD(DeviceContextD3D12, GetD3D12CommandList,   This)
-
-#endif
-
-
+ID3D12GraphicsCommandList** IDeviceContextD3D12_GetD3D12CommandList(IDeviceContextD3D12* deviceContext) {
+    return deviceContext.pVtbl.DeviceContextD3D12.GetD3D12CommandList(deviceContext); 
+}

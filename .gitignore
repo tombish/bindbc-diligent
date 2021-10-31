@@ -25,3 +25,8 @@ DiligentCore/
 
 # Code coverage
 *.lst
+D.poseidon
+.vs/ProjectSettings.json
+.vs/slnx.sqlite
+.vs/VSWorkspaceState.json
+.vs/bindbc-diligent/v16/.suo

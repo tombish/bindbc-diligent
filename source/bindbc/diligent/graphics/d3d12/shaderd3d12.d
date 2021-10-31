@@ -36,47 +36,15 @@ module bindbc.diligent.graphics.d3d12.shaderd3d12;
 /// \file
 /// Definition of the Diligent::IShaderD3D12 interface
 
-#include "../../GraphicsEngineD3DBase/interface/ShaderD3D.h"
+import bindbc.diligent.graphics.d3dbase.shaderd3d;
 
 // {C059B160-7F31-4029-943D-0996B98EE79A}
 static const INTERFACE_ID IID_ShaderD3D12 =
-    {0xc059b160, 0x7f31, 0x4029, {0x94, 0x3d, 0x9, 0x96, 0xb9, 0x8e, 0xe7, 0x9a}};
+    INTERFACE_ID(0xc059b160, 0x7f31, 0x4029, [0x94, 0x3d, 0x9, 0x96, 0xb9, 0x8e, 0xe7, 0x9a]);
 
-#define DILIGENT_INTERFACE_NAME IShaderD3D12
-#include "../../../Primitives/interface/DefineInterfaceHelperMacros.h"
+struct IShaderD3D12Vtbl {}
 
-#define IShaderD3D12InclusiveMethods \
-    IShaderD3DInclusiveMethods       \
-    /*IShaderD3D12Methods ShaderD3D12*/
-
-#if DILIGENT_CPP_INTERFACE
-
-/// Exposes Direct3D12-specific functionality of a shader object.
-DILIGENT_BEGIN_INTERFACE(IShaderD3D12, IShaderD3D){
-    /// Returns a pointer to the ID3D12DeviceChild interface of the internal Direct3D12 object.
-
-    /// The method does *NOT* increment the reference counter of the returned object,
-    /// so Release() must not be called.
-    //virtual ID3D12DeviceChild* GetD3D12Shader() = 0;
-};
-DILIGENT_END_INTERFACE
-
-#endif
-
-#include "../../../Primitives/interface/UndefInterfaceHelperMacros.h"
-
-#if DILIGENT_C_INTERFACE
-
-struct IShaderD3D12Vtbl
+struct IShaderD3D12
 {
-    IShaderD3D12InclusiveMethods;
-};
-
-typedef struct IShaderD3D12
-{
-    struct IShaderD3D12Vtbl* pVtbl;
-} IShaderD3D12;
-
-#endif
-
-
+    IShaderD3D12Vtbl* pVtbl;
+}

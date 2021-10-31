@@ -36,33 +36,24 @@ module bindbc.diligent.graphics.d3d12.textureviewd3d12;
 /// \file
 /// Definition of the Diligent::ITextureViewD3D12 interface
 
-#include "../../GraphicsEngine/interface/TextureView.h"
+import bindbc.diligent.graphics.textureview;
 
 // {BDFBD325-0699-4720-BC0E-BF84086EC033}
 static const INTERFACE_ID IID_TextureViewD3D12 =
-    {0xbdfbd325, 0x699, 0x4720, {0xbc, 0xe, 0xbf, 0x84, 0x8, 0x6e, 0xc0, 0x33}};
-
-#define DILIGENT_INTERFACE_NAME ITextureViewD3D12
-#include "../../../Primitives/interface/DefineInterfaceHelperMacros.h"
-
-#define ITextureViewD3D12InclusiveMethods \
-    ITextureViewInclusiveMethods;         \
-    ITextureViewD3D12Methods TextureViewD3D12
+    INTERFACE_ID(0xbdfbd325, 0x699, 0x4720, [0xbc, 0xe, 0xbf, 0x84, 0x8, 0x6e, 0xc0, 0x33]);
 
 /// Exposes Direct3D12-specific functionality of a texture view object.
-DILIGENT_BEGIN_INTERFACE(ITextureViewD3D12, ITextureView)
+struct ITextureViewD3D12Methods
 {
-    /// Returns CPU descriptor handle of the texture view.
-    VIRTUAL D3D12_CPU_DESCRIPTOR_HANDLEGetCPUDescriptorHandle(THIS) PURE;
-};
-DILIGENT_END_INTERFACE
+    extern(C) @nogc nothrow {
+        /// Returns CPU descriptor handle of the texture view.
+        D3D12_CPU_DESCRIPTOR_HANDLE* GetCPUDescriptorHandle(ITextureViewD3D12*);
+    }
+}
 
-#include "../../../Primitives/interface/UndefInterfaceHelperMacros.h"
+struct ITextureViewD3D12Vtbl { ITextureViewD3D12Methods TextureViewD3D12; }
+struct ITextureViewD3D12 { ITextureViewD3D12Vtbl* pVtbl; }
 
-#if DILIGENT_C_INTERFACE
-
-#    define ITextureViewD3D12_GetCPUDescriptorHandle(This) CALL_IFACE_METHOD(TextureViewD3D12, GetCPUDescriptorHandle, This)
-
-#endif
-
-
+D3D12_CPU_DESCRIPTOR_HANDLE* ITextureViewD3D12_GetCPUDescriptorHandle(ITextureViewD3D12* textureView) {
+    return textureView.pVtbl.TextureViewD3D12.GetCPUDescriptorHandle(textureView);
+}

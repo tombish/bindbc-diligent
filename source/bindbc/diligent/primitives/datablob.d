@@ -44,8 +44,7 @@ static const INTERFACE_ID IID_DataBlob =
 
 struct IDataBlobMethods
 {
-    extern(C) @nogc nothrow 
-    {
+    extern(C) @nogc nothrow {
         /// Sets the size of the internal data buffer
         void* Resize(IDataBlob*, size_t NewSize);
 

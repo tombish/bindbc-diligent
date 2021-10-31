@@ -36,51 +36,45 @@ module bindbc.diligent.graphics.d3d12.textured3d12;
 /// \file
 /// Definition of the Diligent::ITextureD3D12 interface
 
-#include "../../GraphicsEngine/interface/Texture.h"
+import bindbc.diligent.graphics.texture;
 
 // {CF5522EF-8116-4D76-ADF1-5CC8FB31FF66}
 static const INTERFACE_ID IID_TextureD3D12 =
-    {0xcf5522ef, 0x8116, 0x4d76, {0xad, 0xf1, 0x5c, 0xc8, 0xfb, 0x31, 0xff, 0x66}};
-
-#define DILIGENT_INTERFACE_NAME ITextureD3D12
-#include "../../../Primitives/interface/DefineInterfaceHelperMacros.h"
-
-#define ITextureD3D12InclusiveMethods \
-    ITextureInclusiveMethods;         \
-    ITextureD3D12Methods TextureD3D12
+    INTERFACE_ID(0xcf5522ef, 0x8116, 0x4d76, [0xad, 0xf1, 0x5c, 0xc8, 0xfb, 0x31, 0xff, 0x66]);
 
 /// Exposes Direct3D12-specific functionality of a texture object.
-DILIGENT_BEGIN_INTERFACE(ITextureD3D12, ITexture)
+struct ITextureD3D12Methods
 {
-    /// Returns a pointer to the ID3D12Resource interface of the internal Direct3D12 object.
+    extern(C) @nogc nothrow {
+        /// Returns a pointer to the ID3D12Resource interface of the internal Direct3D12 object.
 
-    /// The method does *NOT* increment the reference counter of the returned object,
-    /// so Release() must not be called.
-    VIRTUAL ID3D12Resource*GetD3D12Texture(THIS) PURE;
+        /// The method does *NOT* increment the reference counter of the returned object,
+        /// so Release() must not be called.
+        ID3D12Resource** GetD3D12Texture(ITextureD3D12*);
 
-    /// Sets the texture usage state
+        /// Sets the texture usage state
 
-    /// \param [in] state - D3D12 resource state to be set for this texture
-    VIRTUAL voidSetD3D12ResourceState(THIS_
-                                               D3D12_RESOURCE_STATES state) PURE;
+        /// \param [in] state - D3D12 resource state to be set for this texture
+        void* SetD3D12ResourceState(ITextureD3D12*, D3D12_RESOURCE_STATES state);
 
-    /// Returns current D3D12 texture state.
-    /// If the state is unknown to the engine (Diligent::RESOURCE_STATE_UNKNOWN),
-    /// returns D3D12_RESOURCE_STATE_COMMON (0).
-    VIRTUAL D3D12_RESOURCE_STATESGetD3D12ResourceState(THIS) CONST PURE;
-};
-DILIGENT_END_INTERFACE
+        /// Returns current D3D12 texture state.
+        /// If the state is unknown to the engine (Diligent::RESOURCE_STATE_UNKNOWN),
+        /// returns D3D12_RESOURCE_STATE_COMMON (0).
+        D3D12_RESOURCE_STATES* GetD3D12ResourceState(ITextureD3D12*);
+    }
+}
 
-#include "../../../Primitives/interface/UndefInterfaceHelperMacros.h"
+struct ITextureD3D12Vtbl { ITextureD3D12Methods TextureD3D12; }
+struct ITextureD3D12 { ITextureD3D12Vtbl* pVtbl; }
 
-#if DILIGENT_C_INTERFACE
+ID3D12Resource** ITextureD3D12_GetD3D12Texture(ITextureD3D12* texture) {
+    return texture.pVtbl.TextureD3D12.GetD3D12Texture(texture);
+}
 
-#    define ITextureD3D12_GetD3D12Texture(This)            CALL_IFACE_METHOD(TextureD3D12, GetD3D12Texture,       This)
-#    define ITextureD3D12_SetD3D12ResourceState(This, ...) CALL_IFACE_METHOD(TextureD3D12, SetD3D12ResourceState, This, __VA_ARGS__)
-#    define ITextureD3D12_GetD3D12ResourceState(This)      CALL_IFACE_METHOD(TextureD3D12, GetD3D12ResourceState, This)
+void* ITextureD3D12_SetD3D12ResourceState(ITextureD3D12* texture, D3D12_RESOURCE_STATES state) {
+    return texture.pVtbl.TextureD3D12.SetD3D12ResourceState(texture, state);
+}
 
-s
-
-#endif
-
-
+D3D12_RESOURCE_STATES* ITextureD3D12_GetD3D12ResourceState(ITextureD3D12* texture) {
+    return texture.pVtbl.TextureD3D12.GetD3D12ResourceState(texture);
+}

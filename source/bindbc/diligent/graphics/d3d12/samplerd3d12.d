@@ -36,36 +36,27 @@ module bindbc.diligent.graphics.d3d12.samplerd3d12;
 /// \file
 /// Definition of the Diligent::ISamplerD3D12 interface
 
-#include "../../GraphicsEngine/interface/Sampler.h"
+import bindbc.diligent.graphics.sampler;
 
 // {31A3BFAF-738E-4D8C-AD18-B021C5D948DD}
 static const INTERFACE_ID IID_SamplerD3D12 =
-    {0x31a3bfaf, 0x738e, 0x4d8c, {0xad, 0x18, 0xb0, 0x21, 0xc5, 0xd9, 0x48, 0xdd}};
-
-#define DILIGENT_INTERFACE_NAME ISamplerD3D12
-#include "../../../Primitives/interface/DefineInterfaceHelperMacros.h"
-
-#define ISamplerD3D12InclusiveMethods \
-    ISamplerInclusiveMethods;         \
-    ISamplerD3D12Methods SamplerD3D12
+    INTERFACE_ID(0x31a3bfaf, 0x738e, 0x4d8c, [0xad, 0x18, 0xb0, 0x21, 0xc5, 0xd9, 0x48, 0xdd]);
 
 /// Exposes Direct3D12-specific functionality of a sampler object.
-DILIGENT_BEGIN_INTERFACE(ISamplerD3D12, ISampler)
+struct ISamplerD3D12Methods
 {
-    /// Returns a CPU descriptor handle of the D3D12 sampler object
+    extern(C) @nogc nothrow {
+        /// Returns a CPU descriptor handle of the D3D12 sampler object
 
-    /// The method does *NOT* increment the reference counter of the returned object,
-    /// so Release() must not be called.
-    VIRTUAL D3D12_CPU_DESCRIPTOR_HANDLEGetCPUDescriptorHandle(THIS) PURE;
-};
-DILIGENT_END_INTERFACE
+        /// The method does *NOT* increment the reference counter of the returned object,
+        /// so Release() must not be called.
+        D3D12_CPU_DESCRIPTOR_HANDLE* GetCPUDescriptorHandle(ISamplerD3D12*);
+    }
+}
 
-#include "../../../Primitives/interface/UndefInterfaceHelperMacros.h"
+struct ISamplerD3D12Vtbl { ISamplerD3D12Methods SamplerD3D12; }
+struct ISamplerD3D12 { ISamplerD3D12Vtbl* pVtbl; }
 
-#if DILIGENT_C_INTERFACE
-
-#    define ISamplerD3D12_GetCPUDescriptorHandle(This) CALL_IFACE_METHOD(SamplerD3D12, GetCPUDescriptorHandle, This)
-
-#endif
-
-
+D3D12_CPU_DESCRIPTOR_HANDLE* ISamplerD3D12_GetCPUDescriptorHandle(ISamplerD3D12* sampler) {
+    return sampler.pVtbl.SamplerD3D12.GetCPUDescriptorHandle(sampler);
+}

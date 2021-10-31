@@ -46,17 +46,17 @@ static const INTERFACE_ID IID_BottomLevelASD3D12 =
 /// Exposes Direct3D12-specific functionality of a bottom-level acceleration structure object.
 struct IBottomLevelASD3D12Methods
 {
-    /// Returns ID3D12Resource interface of the internal D3D12 acceleration structure object.
+    extern(C) @nogc nothrow {
+        /// Returns ID3D12Resource interface of the internal D3D12 acceleration structure object.
 
-    /// The method does *NOT* increment the reference counter of the returned object,
-    /// so Release() must not be called.
-    ID3D12Resource** GetD3D12BLAS(IBottomLevelASD3D12*);
+        /// The method does *NOT* increment the reference counter of the returned object,
+        /// so Release() must not be called.
+        ID3D12Resource** GetD3D12BLAS(IBottomLevelASD3D12*);
+    }
 }
 
 struct IBottomLevelASD3D12Vtbl { IBottomLevelASD3D12Methods BottomLevelASD3D12; }
 struct IBottomLevelASD3D12 { IBottomLevelASD3D12Vtbl* pVtbl; }
-
-// #    define IBottomLevelASD3D12_GetD3D12BLAS(This)  CALL_IFACE_METHOD(BottomLevelASD3D12, GetD3D12BLAS, This)
 
 ID3D12Resource** IBottomLevelASD3D12_GetD3D12BLAS(IBottomLevelASD3D12* bottomLevelAS) {
     return bottomLevelAS.pVtbl.BottomLevelASD3D12.GetD3D12BLAS(bottomLevelAS);

@@ -45,15 +45,15 @@ static const INTERFACE_ID IID_BufferViewD3D12 =
 /// Exposes Direct3D12-specific functionality of a buffer view object.
 struct IBufferViewD3D12Methods
 {
+    extern(C) @nogc nothrow {
     /// Returns CPU descriptor handle of the buffer view.
     D3D12_CPU_DESCRIPTOR_HANDLE* GetCPUDescriptorHandle(IBufferViewD3D12*);
+    }
 }
-
 
 struct IBufferViewD3D12Vtbl { IBufferViewD3D12Methods BufferViewD3D12; }
 struct IBufferViewD3D12 { IBufferViewD3D12Vtbl* pVtbl; }
 
-// #    define IBufferViewD3D12_GetCPUDescriptorHandle(This) CALL_IFACE_METHOD(BufferViewD3D12, GetCPUDescriptorHandle, This)
 D3D12_CPU_DESCRIPTOR_HANDLE* IBufferViewD3D12_GetCPUDescriptorHandle(IBufferViewD3D12* bufferView) {
     return bufferView.pVtbl.BufferViewD3D12.GetCPUDescriptorHandle(bufferView);
 }

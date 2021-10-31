@@ -45,26 +45,28 @@ static const INTERFACE_ID IID_CommandQueueD3D12 =
 /// Command queue interface
 struct ICommandQueueD3D12Methods
 {
-    /// Submits command lists for execution.
+    extern(C) @nogc nothrow {
+        /// Submits command lists for execution.
 
-    /// \param[in]  NumCommandLists - The number of command lists to submit.
-    /// \param[in]  ppCommandLists  - A pointer to the array of NumCommandLists command
-    ///                               lists to submit.
-    ///
-    /// \return Fence value associated with the executed command lists.
-    ulong* Submit(ICommandQueueD3D12*, uint NumCommandLists, const ID3D12CommandList** ppCommandLists);
+        /// \param[in]  NumCommandLists - The number of command lists to submit.
+        /// \param[in]  ppCommandLists  - A pointer to the array of NumCommandLists command
+        ///                               lists to submit.
+        ///
+        /// \return Fence value associated with the executed command lists.
+        ulong* Submit(ICommandQueueD3D12*, uint NumCommandLists, const ID3D12CommandList** ppCommandLists);
 
-    /// Returns D3D12 command queue. May return null if queue is anavailable
-    ID3D12CommandQueue** GetD3D12CommandQueue(ICommandQueueD3D12*);
+        /// Returns D3D12 command queue. May return null if queue is anavailable
+        ID3D12CommandQueue** GetD3D12CommandQueue(ICommandQueueD3D12*);
 
-    /// Signals the given fence
-    void* EnqueueSignal(ICommandQueueD3D12*, ID3D12Fence* pFence, ulong Value);
+        /// Signals the given fence
+        void* EnqueueSignal(ICommandQueueD3D12*, ID3D12Fence* pFence, ulong Value);
 
-    /// Instructs the GPU to wait until the fence reaches the specified value
-    void* WaitFence(ICommandQueueD3D12*, ID3D12Fence* pFence, ulong Value);
+        /// Instructs the GPU to wait until the fence reaches the specified value
+        void* WaitFence(ICommandQueueD3D12*, ID3D12Fence* pFence, ulong Value);
 
-    /// Returns the Direct3D12 command queue description
-    const D3D12_COMMAND_QUEUE_DESC** GetD3D12CommandQueueDesc(ICommandQueueD3D12*);
+        /// Returns the Direct3D12 command queue description
+        const D3D12_COMMAND_QUEUE_DESC** GetD3D12CommandQueueDesc(ICommandQueueD3D12*);
+    }
 }
 
 struct ICommandQueueD3D12Vtbl { ICommandQueueD3D12Methods CommandQueueD3D12; }

@@ -37,19 +37,14 @@ module bindbc.diligent.primitives.memoryallocator;
 
 struct IMemoryAllocatorMethods
 {
-    void* function(IMemoryAllocator*, size_t Size, const(char)* dbgDescription, const(char)* dbgFileName, const int dbgLineNumber) Allocate;
-    void function(IMemoryAllocator*, void* Ptr) Free;
+    extern(C) @nogc nothrow {
+        void* function(IMemoryAllocator*, size_t Size, const(char)* dbgDescription, const(char)* dbgFileName, const int dbgLineNumber) Allocate;
+        void function(IMemoryAllocator*, void* Ptr) Free;
+    }
 }
 
-struct IMemoryAllocatorVtbl
-{
-    IMemoryAllocatorMethods MemoryAllocator;
-}
-
-struct IMemoryAllocator
-{
-    IMemoryAllocatorVtbl* pVtbl;
-}
+struct IMemoryAllocatorVtbl{ IMemoryAllocatorMethods MemoryAllocator; }
+struct IMemoryAllocator { IMemoryAllocatorVtbl* pVtbl; }
 
 void* IMemoryAllocator_Allocate(IMemoryAllocator* memAllocator, size_t size, const(char)* dbgDescription, const(char)* dbgFileName, const int dbgLineNumber) {
     return memAllocator.pVtbl.MemoryAllocator.Allocate(memAllocator, size, dbgDescription, dbgFileName, dbgLineNumber);

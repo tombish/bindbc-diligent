@@ -36,102 +36,120 @@ module bindbc.diligent.graphics.d3d12.renderdeviced3d12;
 /// \file
 /// Definition of the Diligent::IRenderDeviceD3D12 interface
 
-#include "../../GraphicsEngine/interface/RenderDevice.h"
+import bindbc.diligent.graphics.renderdevice;
 
 // {C7987C98-87FE-4309-AE88-E98F044B00F6}
 static const INTERFACE_ID IID_RenderDeviceD3D12 =
-    {0xc7987c98, 0x87fe, 0x4309, {0xae, 0x88, 0xe9, 0x8f, 0x4, 0x4b, 0x0, 0xf6}};
-
-#define DILIGENT_INTERFACE_NAME IRenderDeviceD3D12
-#include "../../../Primitives/interface/DefineInterfaceHelperMacros.h"
-
-#define IRenderDeviceD3D12InclusiveMethods \
-    IRenderDeviceInclusiveMethods;         \
-    IRenderDeviceD3D12Methods RenderDeviceD3D12
+    INTERFACE_ID(0xc7987c98, 0x87fe, 0x4309, [0xae, 0x88, 0xe9, 0x8f, 0x4, 0x4b, 0x0, 0xf6]);
 
 /// Exposes Direct3D12-specific functionality of a render device.
-DILIGENT_BEGIN_INTERFACE(IRenderDeviceD3D12, IRenderDevice)
+struct IEngineFactoryD3D12Methods
 {
-    /// Returns ID3D12Device interface of the internal Direct3D12 device object.
+    extern(C) @nogc nothrow {
+        /// Returns ID3D12Device interface of the internal Direct3D12 device object.
 
-    /// The method does *NOT* increment the reference counter of the returned object,
-    /// so Release() must not be called.
-    VIRTUAL ID3D12Device*GetD3D12Device(THIS) PURE;
+        /// The method does *NOT* increment the reference counter of the returned object,
+        /// so Release() must not be called.
+        ID3D12Device** GetD3D12Device(IRenderDeviceD3D12*);
 
-    /// Creates a texture object from native d3d12 resource
+        /// Creates a texture object from native d3d12 resource
 
-    /// \param [in]  pd3d12Texture - pointer to the native D3D12 texture
-    /// \param [in]  InitialState  - Initial texture state. See Diligent::RESOURCE_STATE.
-    /// \param [out] ppTexture     - Address of the memory location where the pointer to the
-    ///                              texture interface will be stored.
-    ///                              The function calls AddRef(), so that the new object will contain
-    ///                              one reference.
-    VIRTUAL voidCreateTextureFromD3DResource(THIS_
-                                                      ID3D12Resource* pd3d12Texture,
-                                                      RESOURCE_STATE  InitialState,
-                                                      ITexture**      ppTexture) PURE;
+        /// \param [in]  pd3d12Texture - pointer to the native D3D12 texture
+        /// \param [in]  InitialState  - Initial texture state. See Diligent::RESOURCE_STATE.
+        /// \param [out] ppTexture     - Address of the memory location where the pointer to the
+        ///                              texture interface will be stored.
+        ///                              The function calls AddRef(), so that the new object will contain
+        ///                              one reference.
+        void* CreateTextureFromD3DResource(IRenderDeviceD3D12*,
+                                            ID3D12Resource* pd3d12Texture,
+                                            RESOURCE_STATE  InitialState,
+                                            ITexture**      ppTexture);
 
-    /// Creates a buffer object from native d3d12 resource
+        /// Creates a buffer object from native d3d12 resource
 
-    /// \param [in]  pd3d12Buffer - Pointer to the native d3d12 buffer resource
-    /// \param [in]  BuffDesc     - Buffer description. The system can recover buffer size, but
-    ///                             the rest of the fields need to be populated by the client
-    ///                             as they cannot be recovered from d3d12 resource description
-    /// \param [in]  InitialState - Initial buffer state. See Diligent::RESOURCE_STATE.
-    /// \param [out] ppBuffer     - Address of the memory location where the pointer to the
-    ///                             buffer interface will be stored.
-    ///                             The function calls AddRef(), so that the new object will contain
-    ///                             one reference.
-    VIRTUAL voidCreateBufferFromD3DResource(THIS_
-                                                     ID3D12Resource*      pd3d12Buffer,
-                                                     const BufferDesc REF BuffDesc,
-                                                     RESOURCE_STATE       InitialState,
-                                                     IBuffer**            ppBuffer) PURE;
-    
-    /// Creates a bottom-level AS object from native d3d12 resource
+        /// \param [in]  pd3d12Buffer - Pointer to the native d3d12 buffer resource
+        /// \param [in]  BuffDesc     - Buffer description. The system can recover buffer size, but
+        ///                             the rest of the fields need to be populated by the client
+        ///                             as they cannot be recovered from d3d12 resource description
+        /// \param [in]  InitialState - Initial buffer state. See Diligent::RESOURCE_STATE.
+        /// \param [out] ppBuffer     - Address of the memory location where the pointer to the
+        ///                             buffer interface will be stored.
+        ///                             The function calls AddRef(), so that the new object will contain
+        ///                             one reference.
+        void* CreateBufferFromD3DResource(IRenderDeviceD3D12*,
+                                            ID3D12Resource*     pd3d12Buffer,
+                                            const(BufferDesc)*   BuffDesc,
+                                            RESOURCE_STATE      InitialState,
+                                            IBuffer**           ppBuffer);
+        
+        /// Creates a bottom-level AS object from native d3d12 resource
 
-    /// \param [in]  pd3d12BLAS   - Pointer to the native d3d12 acceleration structure resource
-    /// \param [in]  Desc         - Bottom-level AS description.
-    /// \param [in]  InitialState - Initial BLAS state. Can be RESOURCE_STATE_UNKNOWN, RESOURCE_STATE_BUILD_AS_READ, RESOURCE_STATE_BUILD_AS_WRITE.
-    ///                             See Diligent::RESOURCE_STATE.
-    /// \param [out] ppBLAS       - Address of the memory location where the pointer to the
-    ///                             bottom-level AS interface will be stored.
-    ///                             The function calls AddRef(), so that the new object will contain
-    ///                             one reference.
-    VIRTUAL voidCreateBLASFromD3DResource(THIS_
-                                                   ID3D12Resource*             pd3d12BLAS,
-                                                   const BottomLevelASDesc REF Desc,
-                                                   RESOURCE_STATE              InitialState,
-                                                   IBottomLevelAS**            ppBLAS) PURE;
+        /// \param [in]  pd3d12BLAS   - Pointer to the native d3d12 acceleration structure resource
+        /// \param [in]  Desc         - Bottom-level AS description.
+        /// \param [in]  InitialState - Initial BLAS state. Can be RESOURCE_STATE_UNKNOWN, RESOURCE_STATE_BUILD_AS_READ, RESOURCE_STATE_BUILD_AS_WRITE.
+        ///                             See Diligent::RESOURCE_STATE.
+        /// \param [out] ppBLAS       - Address of the memory location where the pointer to the
+        ///                             bottom-level AS interface will be stored.
+        ///                             The function calls AddRef(), so that the new object will contain
+        ///                             one reference.
+        void* CreateBLASFromD3DResource(IRenderDeviceD3D12*,
+                                        ID3D12Resource*             pd3d12BLAS,
+                                        const(BottomLevelASDesc)*    Desc,
+                                        RESOURCE_STATE              InitialState,
+                                        IBottomLevelAS**            ppBLAS);
 
-    /// Creates a top-level AS object from native d3d12 resource
+        /// Creates a top-level AS object from native d3d12 resource
 
-    /// \param [in]  pd3d12TLAS   - Pointer to the native d3d12 acceleration structure resource
-    /// \param [in]  Desc         - Top-level AS description.
-    /// \param [in]  InitialState - Initial TLAS state. Can be RESOURCE_STATE_UNKNOWN, RESOURCE_STATE_BUILD_AS_READ, RESOURCE_STATE_BUILD_AS_WRITE, RESOURCE_STATE_RAY_TRACING.
-    ///                             See Diligent::RESOURCE_STATE.
-    /// \param [out] ppTLAS       - Address of the memory location where the pointer to the
-    ///                             top-level AS interface will be stored.
-    ///                             The function calls AddRef(), so that the new object will contain
-    ///                             one reference.
-    VIRTUAL voidCreateTLASFromD3DResource(THIS_
+        /// \param [in]  pd3d12TLAS   - Pointer to the native d3d12 acceleration structure resource
+        /// \param [in]  Desc         - Top-level AS description.
+        /// \param [in]  InitialState - Initial TLAS state. Can be RESOURCE_STATE_UNKNOWN, RESOURCE_STATE_BUILD_AS_READ, RESOURCE_STATE_BUILD_AS_WRITE, RESOURCE_STATE_RAY_TRACING.
+        ///                             See Diligent::RESOURCE_STATE.
+        /// \param [out] ppTLAS       - Address of the memory location where the pointer to the
+        ///                             top-level AS interface will be stored.
+        ///                             The function calls AddRef(), so that the new object will contain
+        ///                             one reference.
+        void* CreateTLASFromD3DResource(IRenderDeviceD3D12*,
+                                           ID3D12Resource*          pd3d12TLAS,
+                                           const(TopLevelASDesc)*    Desc,
+                                           RESOURCE_STATE           InitialState,
+                                           ITopLevelAS**            ppTLAS);
+    }
+}
+
+struct IRenderDeviceD3D12Vtbl { IRenderDeviceD3D12Methods RenderDeviceD3D12; }
+struct IRenderDeviceD3D12 { IRenderDeviceD3D12Vtbl* pVtbl; }
+
+ID3D12Device** IRenderDeviceD3D12_GetD3D12Device(IRenderDeviceD3D12* renderDevice) {
+    return renderDevice.pVtbl.RenderDeviceD3D12.GetD3D12Device(renderDevice);
+}
+
+void* IRenderDeviceD3D12_CreateTextureFromD3DResource(IRenderDeviceD3D12*   renderDevice,
+                                                        ID3D12Resource*     pd3d12Texture,
+                                                        RESOURCE_STATE      InitialState,
+                                                        ITexture**          ppTexture) {
+    return renderDevice.pVtbl.RenderDeviceD3D12.CreateTLASFromD3DResource(renderDevice, pd3d12Texture, InitialState, ppTexture);
+}
+
+void* IRenderDeviceD3D12_CreateBufferFromD3DResource(IRenderDeviceD3D12*    renderDevice,
+                                                    ID3D12Resource*         pd3d12Buffer,
+                                                    const(BufferDesc)*      BuffDesc,
+                                                    RESOURCE_STATE          InitialState,
+                                                    IBuffer**               ppBuffer) {
+    return renderDevice.pVtbl.RenderDeviceD3D12.CreateBufferFromD3DResource(renderDevice, pd3d12Buffer, BuffDesc,InitialState, ppBuffer); 
+}
+
+void* IRenderDeviceD3D12_CreateBLASFromD3DResource(IRenderDeviceD3D12*          renderDevice,
+                                                    ID3D12Resource*             pd3d12BLAS,
+                                                    const(BottomLevelASDesc)*   Desc,
+                                                    RESOURCE_STATE              InitialState,
+                                                    IBottomLevelAS**            ppBLAS) {
+    return renderDevice.pVtbl.RenderDeviceD3D12.CreateBLASFromD3DResource(renderDevice, pd3d12BLAS, Desc,InitialState, ppBLAS); 
+}
+
+void* IRenderDeviceD3D12_CreateTLASFromD3DResource(IRenderDeviceD3D12*      renderDevice,
                                                    ID3D12Resource*          pd3d12TLAS,
-                                                   const TopLevelASDesc REF Desc,
+                                                   const(TopLevelASDesc)*   Desc,
                                                    RESOURCE_STATE           InitialState,
-                                                   ITopLevelAS**            ppTLAS) PURE;
-};
-DILIGENT_END_INTERFACE
-
-#include "../../../Primitives/interface/UndefInterfaceHelperMacros.h"
-
-#if DILIGENT_C_INTERFACE
-
-#    define IRenderDeviceD3D12_GetD3D12Device(This)                    CALL_IFACE_METHOD(RenderDeviceD3D12, GetD3D12Device,               This)
-#    define IRenderDeviceD3D12_CreateTextureFromD3DResource(This, ...) CALL_IFACE_METHOD(RenderDeviceD3D12, CreateTextureFromD3DResource, This, __VA_ARGS__)
-#    define IRenderDeviceD3D12_CreateBufferFromD3DResource(This, ...)  CALL_IFACE_METHOD(RenderDeviceD3D12, CreateBufferFromD3DResource,  This, __VA_ARGS__)
-#    define IRenderDeviceD3D12_CreateBLASFromD3DResource(This, ...)    CALL_IFACE_METHOD(RenderDeviceD3D12, CreateBLASFromD3DResource,    This, __VA_ARGS__)
-#    define IRenderDeviceD3D12_CreateTLASFromD3DResource(This, ...)    CALL_IFACE_METHOD(RenderDeviceD3D12, CreateTLASFromD3DResource,    This, __VA_ARGS__)
-
-#endif
-
-
+                                                   ITopLevelAS**            ppTLAS) {
+    return renderDevice.pVtbl.RenderDeviceD3D12.CreateTLASFromD3DResource(renderDevice, pd3d12TLAS, Desc,InitialState, ppTLAS); 
+}

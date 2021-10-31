@@ -36,37 +36,30 @@ module bindbc.diligent.graphics.d3d12.shaderbindingtabled3d12;
 /// \file
 /// Definition of the Diligent::IShaderBindingTableD3D12 interface
 
-#include "../../GraphicsEngine/interface/ShaderBindingTable.h"
-#include "DeviceContextD3D12.h"
+import bindbc.diligent.graphics.shaderbindingtable;
+import bindbc.diligent.graphics.d3d12.devicecontextd3d12;
 
 // {DCA2FAD9-2C41-4419-9D16-79731C0ED9D8}
 static const INTERFACE_ID IID_ShaderBindingTableD3D12 =
-    {0xdca2fad9, 0x2c41, 0x4419, {0x9d, 0x16, 0x79, 0x73, 0x1c, 0xe, 0xd9, 0xd8}};
-
-#define DILIGENT_INTERFACE_NAME IShaderBindingTableD3D12
-#include "../../../Primitives/interface/DefineInterfaceHelperMacros.h"
-
-#define IShaderBindingTableD3D12InclusiveMethods \
-    IShaderBindingTableInclusiveMethods;         \
-    IShaderBindingTableD3D12Methods ShaderBindingTableD3D12
+    INTERFACE_ID(0xdca2fad9, 0x2c41, 0x4419, [0x9d, 0x16, 0x79, 0x73, 0x1c, 0xe, 0xd9, 0xd8]);
 
 /// Exposes Direct3D12-specific functionality of a shader binding table object.
-DILIGENT_BEGIN_INTERFACE(IShaderBindingTableD3D12, IShaderBindingTable)
+struct IShaderBindingTableD3D12Methods
 {
-    /// Returns the structure that can be used with ID3D12GraphicsCommandList4::DispatchRays() call.
-    /// 
-    /// \remarks  The method is not thread-safe. An application must externally synchronize the access
-    ///           to the shader binding table.
-    VIRTUAL const D3D12_DISPATCH_RAYS_DESC REFGetD3D12BindingTable(THIS) CONST PURE;
-};
-DILIGENT_END_INTERFACE
+    extern(C) @nogc nothrow {
+        /// Returns the structure that can be used with ID3D12GraphicsCommandList4::DispatchRays() call.
+        /// 
+        /// \remarks  The method is not thread-safe. An application must externally synchronize the access
+        ///           to the shader binding table.
+        const D3D12_DISPATCH_RAYS_DESC** GetD3D12BindingTable(IShaderBindingTableD3D12*);
+    }
+}
 
-#include "../../../Primitives/interface/UndefInterfaceHelperMacros.h"
+struct IShaderBindingTableD3D12Vtbl { IShaderBindingTableD3D12Methods ShaderBindingTableD3D12; }
+struct IShaderBindingTableD3D12 { IShaderBindingTableD3D12Vtbl* pVtbl; }
 
-#if DILIGENT_C_INTERFACE
+//#    define IShaderBindingTableD3D12_GetD3D12BindingTable(This) CALL_IFACE_METHOD(ShaderBindingTableD3D12, GetD3D12BindingTable, This)
 
-#    define IShaderBindingTableD3D12_GetD3D12BindingTable(This) CALL_IFACE_METHOD(ShaderBindingTableD3D12, GetD3D12BindingTable, This)
-
-#endif
-
-
+const D3D12_DISPATCH_RAYS_DESC** IShaderBindingTableD3D12_GetD3D12BindingTable(IShaderBindingTableD3D12* shaderBindTbl) {
+    return shaderBindTbl.pVtbl.ShaderBindingTableD3D12.GetD3D12BindingTable(shaderBindTbl);
+}

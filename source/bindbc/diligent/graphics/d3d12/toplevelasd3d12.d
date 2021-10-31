@@ -36,44 +36,38 @@ module bindbc.diligent.graphics.d3d12.toplevelasd3d12;
 /// \file
 /// Definition of the Diligent::ITopLevelASD3D12 interface
 
-#include "../../GraphicsEngine/interface/TopLevelAS.h"
-#include "../../GraphicsEngine/interface/DeviceContext.h"
+import bindbc.diligent.graphics.toplevelas;
+import bindbc.diligent.graphics.devicecontext;
 
 // {46334F12-64CB-4F7C-BB71-31515B6F386D}
 static const INTERFACE_ID IID_TopLevelASD3D12 =
-    {0x46334f12, 0x64cb, 0x4f7c, {0xbb, 0x71, 0x31, 0x51, 0x5b, 0x6f, 0x38, 0x6d}};
-
-#define DILIGENT_INTERFACE_NAME ITopLevelASD3D12
-#include "../../../Primitives/interface/DefineInterfaceHelperMacros.h"
-
-#define ITopLevelASD3D12InclusiveMethods \
-    ITopLevelASInclusiveMethods;         \
-    ITopLevelASD3D12Methods TopLevelASD3D12
+    INTERFACE_ID(0x46334f12, 0x64cb, 0x4f7c, [0xbb, 0x71, 0x31, 0x51, 0x5b, 0x6f, 0x38, 0x6d]);
 
 /// Exposes Direct3D12-specific functionality of a top-level acceleration structure object.
-DILIGENT_BEGIN_INTERFACE(ITopLevelASD3D12, ITopLevelAS)
+struct ITopLevelASD3D12Methods
 {
-    /// Returns ID3D12Resource interface of the internal D3D12 acceleration structure object.
-    
-    /// The method does *NOT* increment the reference counter of the returned object,
-    /// so Release() must not be called.
-    VIRTUAL ID3D12Resource*GetD3D12TLAS(THIS) PURE;
-    
-    /// Returns a CPU descriptor handle of the D3D12 acceleration structure
+    extern(C) @nogc nothrow {
+        /// Returns ID3D12Resource interface of the internal D3D12 acceleration structure object.
+        
+        /// The method does *NOT* increment the reference counter of the returned object,
+        /// so Release() must not be called.
+        ID3D12Resource** GetD3D12TLAS(ITopLevelASD3D12*);
+        
+        /// Returns a CPU descriptor handle of the D3D12 acceleration structure
 
-    /// The method does *NOT* increment the reference counter of the returned object,
-    /// so Release() must not be called.
-    VIRTUAL D3D12_CPU_DESCRIPTOR_HANDLEGetCPUDescriptorHandle(THIS) PURE;
-};
-DILIGENT_END_INTERFACE
+        /// The method does *NOT* increment the reference counter of the returned object,
+        /// so Release() must not be called.
+        D3D12_CPU_DESCRIPTOR_HANDLE* GetCPUDescriptorHandle(ITopLevelASD3D12*);
+    }
+}
 
-#include "../../../Primitives/interface/UndefInterfaceHelperMacros.h"
+struct ITopLevelASD3D12Vtbl { ITopLevelASD3D12Methods TopLevelASD3D12; }
+struct ITopLevelASD3D12 { ITopLevelASD3D12Vtbl* pVtbl; }
 
-#if DILIGENT_C_INTERFACE
+ID3D12Resource** ITopLevelASD3D12_GetD3D12TLAS(ITopLevelASD3D12* topLevelAS) {
+    return topLevelAS.pVtbl.TopLevelASD3D12.GetD3D12TLAS(topLevelAS);
+}
 
-#    define ITopLevelASD3D12_GetD3D12TLAS(This)            CALL_IFACE_METHOD(TopLevelASD3D12, GetD3D12TLAS,           This)
-#    define ITopLevelASD3D12_GetCPUDescriptorHandle(This)  CALL_IFACE_METHOD(TopLevelASD3D12, GetCPUDescriptorHandle, This)
-
-#endif
-
-
+D3D12_CPU_DESCRIPTOR_HANDLE* ITopLevelASD3D12_GetCPUDescriptorHandle(ITopLevelASD3D12* topLevelAS) {
+    return topLevelAS.pVtbl.TopLevelASD3D12.GetCPUDescriptorHandle(topLevelAS);
+}

@@ -43,13 +43,15 @@ struct IObject;
 
 struct IReferenceCountersMethods
 {
-    ReferenceCounterValueType function(IReferenceCounters*) AddStrongRef;
-    ReferenceCounterValueType function(IReferenceCounters*) ReleaseStrongRef;
-    ReferenceCounterValueType function(IReferenceCounters*) AddWeakRef;
-    ReferenceCounterValueType function(IReferenceCounters*) ReleaseWeakRef;
-    void function(IReferenceCounters*, IObject** ppObject) GetObject;
-    ReferenceCounterValueType function(IReferenceCounters*) GetNumStrongRefs;
-    ReferenceCounterValueType function(IReferenceCounters*) GetNumWeakRefs;
+    extern(C) @nogc nothrow {
+        ReferenceCounterValueType function(IReferenceCounters*) AddStrongRef;
+        ReferenceCounterValueType function(IReferenceCounters*) ReleaseStrongRef;
+        ReferenceCounterValueType function(IReferenceCounters*) AddWeakRef;
+        ReferenceCounterValueType function(IReferenceCounters*) ReleaseWeakRef;
+        void function(IReferenceCounters*, IObject** ppObject) GetObject;
+        ReferenceCounterValueType function(IReferenceCounters*) GetNumStrongRefs;
+        ReferenceCounterValueType function(IReferenceCounters*) GetNumWeakRefs;
+    }
 }
 
 struct IReferenceCountersVtbl { IReferenceCountersMethods ReferenceCounters; }

@@ -36,43 +36,36 @@ module bindbc.diligent.graphics.d3d12.queryd3d12;
 /// \file
 /// Definition of the Diligent::IQueryD3D12 interface
 
-#include "../../GraphicsEngine/interface/Query.h"
+import bindbc.diligent.graphics.query;
 
 // {72D109BE-7D70-4E54-84EF-C649DA190B2C}
 static const INTERFACE_ID IID_QueryD3D12 =
-    {0x72d109be, 0x7d70, 0x4e54, {0x84, 0xef, 0xc6, 0x49, 0xda, 0x19, 0xb, 0x2c}};
-
-#define DILIGENT_INTERFACE_NAME IQueryD3D12
-#include "../../../Primitives/interface/DefineInterfaceHelperMacros.h"
-
-#define IQueryD3D12InclusiveMethods \
-    IQueryInclusiveMethods;         \
-    IQueryD3D12Methods QueryD3D12
+    INTERFACE_ID(0x72d109be, 0x7d70, 0x4e54, [0x84, 0xef, 0xc6, 0x49, 0xda, 0x19, 0xb, 0x2c]);
 
 /// Exposes Direct3D12-specific functionality of a Query object.
-DILIGENT_BEGIN_INTERFACE(IQueryD3D12, IQuery)
+struct IQueryD3D12Methods
 {
-    /// Returns the Direct3D12 query heap that internal query object resides in.
-    VIRTUAL ID3D12QueryHeap*GetD3D12QueryHeap(THIS) PURE;
+    extern(C) @nogc nothrow {
+        /// Returns the Direct3D12 query heap that internal query object resides in.
+        ID3D12QueryHeap** GetD3D12QueryHeap(IQueryD3D12*);
 
-    /// Returns the index of a query object in Direct3D12 query heap.
+        /// Returns the index of a query object in Direct3D12 query heap.
 
-    /// \param [in] QueryId - Query Id. For most query types this must be 0. An exception is
-    ///                       QUERY_TYPE_DURATION, in which case allowed values are 0 for the
-    ///                       beginning timestamp query, and 1 for the ending query.
-    /// \return the index of a query object in Direct3D12 query heap
-    VIRTUAL Uint32GetQueryHeapIndex(THIS_
-                                             Uint32 QueryId) CONST PURE;
-};
-DILIGENT_END_INTERFACE
+        /// \param [in] QueryId - Query Id. For most query types this must be 0. An exception is
+        ///                       QUERY_TYPE_DURATION, in which case allowed values are 0 for the
+        ///                       beginning timestamp query, and 1 for the ending query.
+        /// \return the index of a query object in Direct3D12 query heap
+        uint* GetQueryHeapIndex(IQueryD3D12*, uint QueryId);
+    }
+}
 
-#include "../../../Primitives/interface/UndefInterfaceHelperMacros.h"
+struct IQueryD3D12Vtbl { IQueryD3D12Methods QueryD3D12; }
+struct IQueryD3D12 { IQueryD3D12Vtbl* pVtbl; }
 
-#if DILIGENT_C_INTERFACE
+ID3D12QueryHeap** IQueryD3D12_GetD3D12QueryHeap(IQueryD3D12* query) {
+    return query.pVtbl.QueryD3D12.GetD3D12QueryHeap(query);
+}
 
-#    define IQueryD3D12_GetD3D12QueryHeap(This)      CALL_IFACE_METHOD(QueryD3D12, GetD3D12QueryHeap, This)
-#    define IQueryD3D12_GetQueryHeapIndex(This, ...) CALL_IFACE_METHOD(QueryD3D12, GetQueryHeapIndex, This, __VA_ARGS__)
-
-#endif
-
-
+uint* IQueryD3D12_GetQueryHeapIndex(IQueryD3D12* query, uint queryID) {
+    return query.pVtbl.QueryD3D12.GetQueryHeapIndex(query, queryID);
+}

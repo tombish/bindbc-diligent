@@ -36,39 +36,30 @@ module bindbc.diligent.graphics.d3d12.swapchaind3d12;
 /// \file
 /// Definition of the Diligent::ISwapChainD3D12 interface
 
-#include <dxgi1_4.h>
+import directx.dxgi1_4;
 
-#include "../../GraphicsEngine/interface/SwapChain.h"
-#include "TextureViewD3D12.h"
+import bindbc.diligent.graphics.swapchain;
+import bindbc.diligent.graphics.d3d12.textured3d12;
 
 // {C9F8384D-A45E-4970-8447-394177E5B0EE}
 static const INTERFACE_ID IID_SwapChainD3D12 =
-    {0xc9f8384d, 0xa45e, 0x4970, {0x84, 0x47, 0x39, 0x41, 0x77, 0xe5, 0xb0, 0xee}};
-
-#define DILIGENT_INTERFACE_NAME ISwapChainD3D12
-#include "../../../Primitives/interface/DefineInterfaceHelperMacros.h"
-
-#define ISwapChainD3D12InclusiveMethods \
-    ISwapChainInclusiveMethods;         \
-    ISwapChainD3D12Methods SwapChainD3D12
+    INTERFACE_ID(0xc9f8384d, 0xa45e, 0x4970, [0x84, 0x47, 0x39, 0x41, 0x77, 0xe5, 0xb0, 0xee]);
 
 /// Exposes Direct3D12-specific functionality of a swap chain.
-DILIGENT_BEGIN_INTERFACE(ISwapChainD3D12, ISwapChain)
+struct ISwapChainD3D12Methods
 {
-    /// Returns a pointer to the IDXGISwapChain interface of the internal DXGI object.
+    extern(C) @nogc nothrow {
+        /// Returns a pointer to the IDXGISwapChain interface of the internal DXGI object.
 
-    /// The method does *NOT* increment the reference counter of the returned object,
-    /// so Release() must not be called.
-    VIRTUAL IDXGISwapChain*GetDXGISwapChain(THIS) PURE;
-};
-DILIGENT_END_INTERFACE
+        /// The method does *NOT* increment the reference counter of the returned object,
+        /// so Release() must not be called.
+        IDXGISwapChain** GetDXGISwapChain(ISwapChainD3D12*);
+    }
+}
 
-#include "../../../Primitives/interface/UndefInterfaceHelperMacros.h"
+struct ISwapChainD3D12Vtbl { ISwapChainD3D12Methods SwapChainD3D12; }
+struct ISwapChainD3D12 { ISwapChainD3D12Vtbl* pVtbl; }
 
-#if DILIGENT_C_INTERFACE
-
-#    define ISwapChainD3D12_GetDXGISwapChain(This)  CALL_IFACE_METHOD(SwapChainD3D12, GetDXGISwapChain, This)
-
-#endif
-
-
+IDXGISwapChain** ISwapChainD3D12_GetDXGISwapChain(ISwapChainD3D12* swapchain) {
+    return swapchain.pVtbl.SwapChainD3D12.GetDXGISwapChain(swapchain);
+}

@@ -36,41 +36,15 @@ module bindbc.diligent.graphics.d3d12.shaderresourcebindingd3d12;
 /// \file
 /// Definition of the Diligent::IShaderResourceBindingD3D12 interface and related data structures
 
-#include "../../GraphicsEngine/interface/ShaderResourceBinding.h"
+import bindbc.diligent.graphics.shaderresourcebinding;
 
 // {70DD5C7C-81FA-4D9A-942F-D1B91423FAAC}
 static const INTERFACE_ID IID_ShaderResourceBindingD3D12 =
-    {0x70dd5c7c, 0x81fa, 0x4d9a, {0x94, 0x2f, 0xd1, 0xb9, 0x14, 0x23, 0xfa, 0xac}};
+    INTERFACE_ID(0x70dd5c7c, 0x81fa, 0x4d9a, [0x94, 0x2f, 0xd1, 0xb9, 0x14, 0x23, 0xfa, 0xac]);
 
-#define DILIGENT_INTERFACE_NAME IShaderResourceBindingD3D12
-#include "../../../Primitives/interface/DefineInterfaceHelperMacros.h"
+struct IShaderResourceBindingD3D12Vtbl {}
 
-#define IShaderResourceBindingD3D12InclusiveMethods \
-    IShaderResourceBindingInclusiveMethods          \
-    /*IShaderResourceBindingD3D12Methods ShaderResourceBindingD3D12*/
-
-#if DILIGENT_CPP_INTERFACE
-
-/// Exposes Direct3D12-specific functionality of a shader resource binding.
-DILIGENT_BEGIN_INTERFACE(IShaderResourceBindingD3D12, IShaderResourceBinding){};
-DILIGENT_END_INTERFACE
-
-#endif
-
-#include "../../../Primitives/interface/UndefInterfaceHelperMacros.h"
-
-#if DILIGENT_C_INTERFACE
-
-struct IShaderResourceBindingD3D12Vtbl
+struct IShaderResourceBindingD3D12
 {
-    IShaderResourceBindingD3D12InclusiveMethods;
-};
-
-typedef struct IShaderResourceBindingD3D12
-{
-    struct IShaderResourceBindingD3D12Vtbl* pVtbl;
-} IShaderResourceBindingD3D12;
-
-#endif
-
-
+    IShaderResourceBindingD3D12Vtbl* pVtbl;
+}

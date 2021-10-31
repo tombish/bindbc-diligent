@@ -36,50 +36,47 @@ module bindbc.diligent.graphics.d3d12.pipelinestated3d12;
 /// \file
 /// Definition of the Diligent::IPipeplineStateD3D12 interface
 
-#include "../../GraphicsEngine/interface/PipelineState.h"
+import bindbc.diligent.graphics.pipelinestate;
 
 // {33C9BE4B-6F23-4F83-A665-5AC1836DF35A}
 static const INTERFACE_ID IID_PipelineStateD3D12 =
-    {0x33c9be4b, 0x6f23, 0x4f83, {0xa6, 0x65, 0x5a, 0xc1, 0x83, 0x6d, 0xf3, 0x5a}};
-
-#define DILIGENT_INTERFACE_NAME IPipelineStateD3D12
-#include "../../../Primitives/interface/DefineInterfaceHelperMacros.h"
-
-#define IPipelineStateD3D12InclusiveMethods \
-    IPipelineStateInclusiveMethods;         \
-    IPipelineStateD3D12Methods PipelineStateD3D12
+    INTERFACE_ID(0x33c9be4b, 0x6f23, 0x4f83, [0xa6, 0x65, 0x5a, 0xc1, 0x83, 0x6d, 0xf3, 0x5a]);
 
 /// Exposes Direct3D12-specific functionality of a pipeline state object.
-DILIGENT_BEGIN_INTERFACE(IPipelineStateD3D12, IPipelineState)
+struct IPipelineStateD3D12Methods
 {
-    /// Returns ID3D12PipelineState interface of the internal D3D12 pipeline state object object.
+    extern(C) @nogc nothrow {
+        /// Returns ID3D12PipelineState interface of the internal D3D12 pipeline state object object.
 
-    /// The method does *NOT* increment the reference counter of the returned object,
-    /// so Release() must not be called.
-    VIRTUAL ID3D12PipelineState*GetD3D12PipelineState(THIS) CONST PURE;
+        /// The method does *NOT* increment the reference counter of the returned object,
+        /// so Release() must not be called.
+        ID3D12PipelineState** GetD3D12PipelineState(IPipelineStateD3D12*);
 
-    /// Returns ID3D12StateObject interface of the internal D3D12 state object for ray tracing.
+        /// Returns ID3D12StateObject interface of the internal D3D12 state object for ray tracing.
 
-    /// The method does *NOT* increment the reference counter of the returned object,
-    /// so Release() must not be called.
-    VIRTUAL ID3D12StateObject*GetD3D12StateObject(THIS) CONST PURE;
+        /// The method does *NOT* increment the reference counter of the returned object,
+        /// so Release() must not be called.
+        ID3D12StateObject** GetD3D12StateObject(IPipelineStateD3D12*);
 
-    /// Returns a pointer to the root signature object associated with this pipeline state.
+        /// Returns a pointer to the root signature object associated with this pipeline state.
 
-    /// The method does *NOT* increment the reference counter of the returned object,
-    /// so Release() must not be called.
-    VIRTUAL ID3D12RootSignature*GetD3D12RootSignature(THIS) CONST PURE;
-};
-DILIGENT_END_INTERFACE
+        /// The method does *NOT* increment the reference counter of the returned object,
+        /// so Release() must not be called.
+        ID3D12RootSignature** GetD3D12RootSignature(IPipelineStateD3D12*);
+    }
+}
 
-#include "../../../Primitives/interface/UndefInterfaceHelperMacros.h"
+struct IPipelineStateD3D12Vtbl { IPipelineStateD3D12Methods PipelineStateD3D12; }
+struct IPipelineStateD3D12 { IPipelineStateD3D12Vtbl* pVtbl; }
 
-#if DILIGENT_C_INTERFACE
+ID3D12PipelineState** IPipelineStateD3D12_GetD3D12PipelineState(IPipelineStateD3D12* pipelineState) {
+    return pipelineState.pVtbl.PipelineStateD3D12.GetD3D12PipelineState(pipelineState);
+}
 
-#    define IPipelineStateD3D12_GetD3D12PipelineState(This) CALL_IFACE_METHOD(PipelineStateD3D12, GetD3D12PipelineState, This)
-#    define IPipelineStateD3D12_GetD3D12StateObject(This)   CALL_IFACE_METHOD(PipelineStateD3D12, GetD3D12StateObject,   This)
-#    define IPipelineStateD3D12_GetD3D12RootSignature(This) CALL_IFACE_METHOD(PipelineStateD3D12, GetD3D12RootSignature, This)
+ID3D12StateObject** IPipelineStateD3D12_GetD3D12StateObject(IPipelineStateD3D12* pipelineState) {
+    return pipelineState.pVtbl.PipelineStateD3D12.GetD3D12StateObject(pipelineState);
+}
 
-#endif
-
-
+ID3D12RootSignature** IPipelineStateD3D12_GetD3D12RootSignature(IPipelineStateD3D12* pipelineState) {
+    return pipelineState.pVtbl.PipelineStateD3D12.GetD3D12RootSignature(pipelineState);
+}

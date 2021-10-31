@@ -46,26 +46,28 @@ static const INTERFACE_ID IID_BufferD3D12 =
 /// Exposes Direct3D12-specific functionality of a buffer object.
 struct IBufferD3D12Methods
 {
-    /// Returns a pointer to the ID3D12Resource interface of the internal Direct3D12 object.
+    extern(C) @nogc nothrow {
+        /// Returns a pointer to the ID3D12Resource interface of the internal Direct3D12 object.
 
-    /// The method does *NOT* increment the reference counter of the returned object,
-    /// so Release() must not be called.
-    /// \param [in] DataStartByteOffset - Offset from the beginning of the buffer
-    ///                            to the start of the data. This parameter
-    ///                            is required for dynamic buffers, which are
-    ///                            suballocated in a dynamic upload heap
-    /// \param [in] pContext - Device context within which address of the buffer is requested.
-    ID3D12Resource** GetD3D12Buffer(IBufferD3D12*, ulong* DataStartByteOffset, IDeviceContext* pContext);
+        /// The method does *NOT* increment the reference counter of the returned object,
+        /// so Release() must not be called.
+        /// \param [in] DataStartByteOffset - Offset from the beginning of the buffer
+        ///                            to the start of the data. This parameter
+        ///                            is required for dynamic buffers, which are
+        ///                            suballocated in a dynamic upload heap
+        /// \param [in] pContext - Device context within which address of the buffer is requested.
+        ID3D12Resource** GetD3D12Buffer(IBufferD3D12*, ulong* DataStartByteOffset, IDeviceContext* pContext);
 
-    /// Sets the buffer usage state
+        /// Sets the buffer usage state
 
-    /// \param [in] state - D3D12 resource state to be set for this buffer
-    void* SetD3D12ResourceState(IBufferD3D12*, D3D12_RESOURCE_STATES state);
+        /// \param [in] state - D3D12 resource state to be set for this buffer
+        void* SetD3D12ResourceState(IBufferD3D12*, D3D12_RESOURCE_STATES state);
 
-    /// Returns current D3D12 buffer state.
-    /// If the state is unknown to the engine (Diligent::RESOURCE_STATE_UNKNOWN),
-    /// returns D3D12_RESOURCE_STATE_COMMON (0).
-    ID3D12Resource**  GetD3D12ResourceState(IBufferD3D12*);
+        /// Returns current D3D12 buffer state.
+        /// If the state is unknown to the engine (Diligent::RESOURCE_STATE_UNKNOWN),
+        /// returns D3D12_RESOURCE_STATE_COMMON (0).
+        ID3D12Resource**  GetD3D12ResourceState(IBufferD3D12*);
+    }
 }
 
 struct IBufferD3D12Vtbl { IBufferD3D12Methods BufferD3D12; }
