@@ -36,62 +36,64 @@ module bindbc.diligent.graphics.engine.texture;
 /// \file
 /// Definition of the Diligent::ITexture interface and related data structures
 
-#include "GraphicsTypes.h"
-#include "DeviceObject.h"
-#include "TextureView.h"
+import bindbc.diligent.graphics.graphicstypes;
+import bindbc.diligent.graphics.deviceobject;
+import bindbc.diligent.graphics.textureview;
 
 // {A64B0E60-1B5E-4CFD-B880-663A1ADCBE98}
 static const INTERFACE_ID IID_Texture =
-    {0xa64b0e60, 0x1b5e, 0x4cfd,{0xb8, 0x80, 0x66, 0x3a, 0x1a, 0xdc, 0xbe, 0x98}};
+    INTERFACE_ID(0xa64b0e60, 0x1b5e, 0x4cfd,[0xb8, 0x80, 0x66, 0x3a, 0x1a, 0xdc, 0xbe, 0x98]);
 
 /// Texture description
-struct TextureDesc DILIGENT_DERIVE(DeviceObjectAttribs)
+struct TextureDesc
+{
+    DeviceObjectAttribs _DeviceObjectAttribs;
 
     /// Texture type. See Diligent::RESOURCE_DIMENSION for details.
-    RESOURCE_DIMENSION Type DEFAULT_INITIALIZER(RESOURCE_DIM_UNDEFINED);
+    RESOURCE_DIMENSION Type = RESOURCE_DIMENSION.RESOURCE_DIM_UNDEFINED;
 
     /// Texture width, in pixels.
-    Uint32 Width            DEFAULT_INITIALIZER(0);
+    uint Width = 0;
 
     /// Texture height, in pixels.
-    Uint32 Height           DEFAULT_INITIALIZER(0);
+    uint Height = 0;
 
     union
     {
         /// For a 1D array or 2D array, number of array slices
-        Uint32 ArraySize    DEFAULT_INITIALIZER(1);
+        uint ArraySize = 1;
 
         /// For a 3D texture, number of depth slices
-        Uint32 Depth;
+        uint Depth;
     };
 
     /// Texture format, see Diligent::TEXTURE_FORMAT.
-    TEXTURE_FORMAT Format       DEFAULT_INITIALIZER(TEX_FORMAT_UNKNOWN);
+    TEXTURE_FORMAT Format = TEXTURE_FORMAT.TEX_FORMAT_UNKNOWN;
 
     /// Number of Mip levels in the texture. Multisampled textures can only have 1 Mip level.
     /// Specify 0 to create full mipmap chain.
-    Uint32          MipLevels   DEFAULT_INITIALIZER(1);
+    uint MipLevels = 1;
 
     /// Number of samples.\n
     /// Only 2D textures or 2D texture arrays can be multisampled.
-    Uint32          SampleCount DEFAULT_INITIALIZER(1);
+    uint SampleCount = 1;
 
     /// Texture usage. See Diligent::USAGE for details.
-    USAGE           Usage       DEFAULT_INITIALIZER(USAGE_DEFAULT);
+    USAGE Usage = USAGE.USAGE_DEFAULT;
 
     /// Bind flags, see Diligent::BIND_FLAGS for details. \n
     /// The following bind flags are allowed:
     /// Diligent::BIND_SHADER_RESOURCE, Diligent::BIND_RENDER_TARGET, Diligent::BIND_DEPTH_STENCIL,
     /// Diligent::and BIND_UNORDERED_ACCESS. \n
     /// Multisampled textures cannot have Diligent::BIND_UNORDERED_ACCESS flag set
-    BIND_FLAGS      BindFlags   DEFAULT_INITIALIZER(BIND_NONE);
+    BIND_FLAGS BindFlags = BIND_FLAGS.BIND_NONE;
 
     /// CPU access flags or 0 if no CPU access is allowed, 
     /// see Diligent::CPU_ACCESS_FLAGS for details.
-    CPU_ACCESS_FLAGS CPUAccessFlags     DEFAULT_INITIALIZER(CPU_ACCESS_NONE);
+    CPU_ACCESS_FLAGS CPUAccessFlags = CPU_ACCESS_FLAGS.CPU_ACCESS_NONE;
 
     /// Miscellaneous flags, see Diligent::MISC_TEXTURE_FLAGS for details.
-    MISC_TEXTURE_FLAGS MiscFlags        DEFAULT_INITIALIZER(MISC_TEXTURE_FLAG_NONE);
+    MISC_TEXTURE_FLAGS MiscFlags = MISC_TEXTURE_FLAGS.MISC_TEXTURE_FLAG_NONE;
 
     /// Optimized clear value
     OptimizedClearValue ClearValue;
@@ -105,139 +107,45 @@ struct TextureDesc DILIGENT_DERIVE(DeviceObjectAttribs)
     ///
     /// \remarks    Only specify these bits that will indicate those immediate contexts where the texture
     ///             will actually be used. Do not set unncessary bits as this will result in extra overhead.
-    Uint64 ImmediateContextMask         DEFAULT_INITIALIZER(1);
+    ulong ImmediateContextMask = 1;
 
-#if DILIGENT_CPP_INTERFACE
-    TextureDesc()noexcept{}
-
-    TextureDesc(const Char*         _Name,
-                RESOURCE_DIMENSION  _Type, 
-                Uint32              _Width,
-                Uint32              _Height,
-                Uint32              _ArraySizeOrDepth,
-                TEXTURE_FORMAT      _Format,
-                Uint32              _MipLevels            = TextureDesc{}.MipLevels,
-                Uint32              _SampleCount          = TextureDesc{}.SampleCount,
-                USAGE               _Usage                = TextureDesc{}.Usage,
-                BIND_FLAGS          _BindFlags            = TextureDesc{}.BindFlags,
-                CPU_ACCESS_FLAGS    _CPUAccessFlags       = TextureDesc{}.CPUAccessFlags,
-                MISC_TEXTURE_FLAGS  _MiscFlags            = TextureDesc{}.MiscFlags,
-                OptimizedClearValue _ClearValue           = TextureDesc{}.ClearValue,
-                Uint64              _ImmediateContextMask = TextureDesc{}.ImmediateContextMask) noexcept : 
-        DeviceObjectAttribs  {_Name            },
-        Type                 {_Type            }, 
-        Width                {_Width           },
-        Height               {_Height          },
-        ArraySize            {_ArraySizeOrDepth},
-        Format               {_Format          },
-        MipLevels            {_MipLevels       },
-        SampleCount          {_SampleCount     },
-        Usage                {_Usage           },
-        BindFlags            {_BindFlags       },
-        CPUAccessFlags       {_CPUAccessFlags  },
-        MiscFlags            {_MiscFlags       },
-        ClearValue           {_ClearValue      },
-        ImmediateContextMask {_ImmediateContextMask}
-    {}
-
-    /// Tests if two structures are equivalent
-
-    /// \param [in] RHS - reference to the structure to perform comparison with
-    /// \return 
-    /// - True if all members of the two structures except for the Name are equal.
-    /// - False otherwise.
-    /// The operator ignores DeviceObjectAttribs::Name field as it does not affect 
-    /// the texture description state.
-    bool operator ==(const TextureDesc& RHS)const
-    {
-                // Name is primarily used for debug purposes and does not affect the state.
-                // It is ignored in comparison operation.
-        return  // strcmp(Name, RHS.Name) == 0          &&
-                Type                 == RHS.Type           &&
-                Width                == RHS.Width          &&
-                Height               == RHS.Height         &&
-                ArraySize            == RHS.ArraySize      &&
-                Format               == RHS.Format         &&
-                MipLevels            == RHS.MipLevels      &&
-                SampleCount          == RHS.SampleCount    &&
-                Usage                == RHS.Usage          &&
-                BindFlags            == RHS.BindFlags      &&
-                CPUAccessFlags       == RHS.CPUAccessFlags &&
-                MiscFlags            == RHS.MiscFlags      &&
-                ClearValue           == RHS.ClearValue     &&
-                ImmediateContextMask == RHS.ImmediateContextMask;
-    }
-#endif
-};
-typedef struct TextureDesc TextureDesc;
+}
 
 /// Describes data for one subresource
 struct TextureSubResData
 {
     /// Pointer to the subresource data in CPU memory.
     /// If provided, pSrcBuffer must be null
-    const void* pData           DEFAULT_INITIALIZER(nullptr);
+    const(void)* pData = null;
 
     /// Pointer to the GPU buffer that contains subresource data.
     /// If provided, pData must be null
-    struct IBuffer* pSrcBuffer   DEFAULT_INITIALIZER(nullptr);
+    IBuffer* pSrcBuffer = null;
 
     /// When updating data from the buffer (pSrcBuffer is not null),
     /// offset from the beginning of the buffer to the data start
-    Uint32 SrcOffset            DEFAULT_INITIALIZER(0);
+    uint SrcOffset = 0;
 
     /// For 2D and 3D textures, row stride in bytes
-    Uint32 Stride               DEFAULT_INITIALIZER(0);
+    uint Stride = 0;
 
     /// For 3D textures, depth slice stride in bytes
     /// \note On OpenGL, this must be a multiple of Stride
-    Uint32 DepthStride          DEFAULT_INITIALIZER(0);
-
-#if DILIGENT_CPP_INTERFACE
-    /// Initializes the structure members with default values
-
-    /// Default values:
-    /// Member          | Default value
-    /// ----------------|--------------
-    /// pData           | nullptr
-    /// SrcOffset       | 0
-    /// Stride          | 0
-    /// DepthStride     | 0
-    TextureSubResData()noexcept{}
-    
-    /// Initializes the structure members to perform copy from the CPU memory
-    TextureSubResData(const void* _pData, Uint32 _Stride, Uint32 _DepthStride = 0)noexcept :
-        pData       (_pData),
-        pSrcBuffer  (nullptr),
-        SrcOffset   (0),
-        Stride      (_Stride),
-        DepthStride (_DepthStride)
-    {}
-
-    /// Initializes the structure members to perform copy from the GPU buffer
-    TextureSubResData(IBuffer* _pBuffer, Uint32 _SrcOffset, Uint32 _Stride, Uint32 _DepthStride = 0)noexcept :
-        pData       {nullptr     },
-        pSrcBuffer  {_pBuffer    },
-        SrcOffset   {_SrcOffset  },
-        Stride      {_Stride     },
-        DepthStride {_DepthStride}
-    {}
-#endif
-};
-typedef struct TextureSubResData TextureSubResData;
+    uint DepthStride = 0;
+}
 
 /// Describes the initial data to store in the texture
 struct TextureData
 {
     /// Pointer to the array of the TextureSubResData elements containing
     /// information about each subresource.
-    TextureSubResData* pSubResources    DEFAULT_INITIALIZER(nullptr);
+    TextureSubResData* pSubResources = null;
 
     /// Number of elements in pSubResources array.
     /// NumSubresources must exactly match the number
     /// of subresources in the texture. Otherwise an error
     /// occurs.
-    Uint32             NumSubresources  DEFAULT_INITIALIZER(0);
+    uint NumSubresources = 0;
 
     /// Defines which device context will be used to initialize the texture.
 
@@ -246,57 +154,19 @@ struct TextureData
     /// must synchronize the access to the texture using fence.
     /// When null is provided, the first context enabled by ImmediateContextMask
     /// will be used.
-    struct IDeviceContext* pContext     DEFAULT_INITIALIZER(nullptr);
-
-#if DILIGENT_CPP_INTERFACE
-    TextureData() noexcept {}
-
-    TextureData(TextureSubResData* _pSubResources,
-                Uint32             _NumSubresources,
-                IDeviceContext*    _pContext = nullptr) noexcept :
-        pSubResources   {_pSubResources  },
-        NumSubresources {_NumSubresources},
-        pContext        {_pContext       }
-    {}
-#endif
-};
-typedef struct TextureData TextureData;
+    IDeviceContext* pContext = null;
+}
 
 struct MappedTextureSubresource
 {
-    PVoid  pData       DEFAULT_INITIALIZER(nullptr);
-    Uint32 Stride      DEFAULT_INITIALIZER(0);
-    Uint32 DepthStride DEFAULT_INITIALIZER(0);
-
-#if DILIGENT_CPP_INTERFACE
-    MappedTextureSubresource() noexcept {}
-
-    MappedTextureSubresource(PVoid  _pData,
-                             Uint32 _Stride,
-                             Uint32 _DepthStride = 0) noexcept :
-        pData       {_pData      },
-        Stride      {_Stride     },
-        DepthStride {_DepthStride}
-    {}
-#endif
-};
-typedef struct MappedTextureSubresource MappedTextureSubresource;
-
-#define DILIGENT_INTERFACE_NAME ITexture
-#include "../../../Primitives/interface/DefineInterfaceHelperMacros.h"
-
-#define ITextureInclusiveMethods   \
-    IDeviceObjectInclusiveMethods; \
-    ITextureMethods Texture
+    void*  pData = null;
+    uint Stride = 0;
+    uint DepthStride = 0;
+}
 
 /// Texture interface
-DILIGENT_BEGIN_INTERFACE(ITexture, IDeviceObject)
+struct ITextureMethods
 {
-#if DILIGENT_CPP_INTERFACE
-    /// Returns the texture description used to create the object
-    virtual const TextureDesc&GetDesc()const override = 0;
-#endif
-
     /// Creates a new texture view
 
     /// \param [in] ViewDesc - View description. See Diligent::TextureViewDesc for details.
@@ -316,9 +186,7 @@ DILIGENT_BEGIN_INTERFACE(ITexture, IDeviceObject)
     ///          until all views are released.\n
     ///          The function calls AddRef() for the created interface, so it must be released by
     ///          a call to Release() when it is no longer needed.
-    VIRTUAL voidCreateView(THIS_
-                                    const TextureViewDesc REF ViewDesc,
-                                    ITextureView**            ppView) PURE;
+    void* CreateView(ITexture*, const(TextureViewDesc)* ViewDesc, ITextureView** ppView);
 
     /// Returns the pointer to the default view.
     
@@ -327,15 +195,14 @@ DILIGENT_BEGIN_INTERFACE(ITexture, IDeviceObject)
     ///
     /// \note The function does not increase the reference counter for the returned interface, so
     ///       Release() must *NOT* be called.
-    VIRTUAL ITextureView*GetDefaultView(THIS_
-                                                 TEXTURE_VIEW_TYPE ViewType) PURE;
+    ITextureView** GetDefaultView(ITexture*, TEXTURE_VIEW_TYPE ViewType);
 
     /// Returns native texture handle specific to the underlying graphics API
 
     /// \return pointer to ID3D11Resource interface, for D3D11 implementation\n
     ///         pointer to ID3D12Resource interface, for D3D12 implementation\n
     ///         GL buffer handle, for GL implementation
-    VIRTUAL void*GetNativeHandle(THIS) PURE;
+    void** GetNativeHandle(ITexture*);
 
     /// Sets the usage state for all texture subresources.
 
@@ -344,26 +211,35 @@ DILIGENT_BEGIN_INTERFACE(ITexture, IDeviceObject)
     ///       This method should be used after the application finished
     ///       manually managing the texture state and wants to hand over
     ///       state management back to the engine.
-    VIRTUAL voidSetState(THIS_
-                                  RESOURCE_STATE State) PURE;
+    void* SetState(ITexture*, RESOURCE_STATE State);
 
     /// Returns the internal texture state
-    VIRTUAL RESOURCE_STATEGetState(THIS) CONST PURE;
-};
-DILIGENT_END_INTERFACE
+    RESOURCE_STATE* GetState(ITexture*);
+}
 
-#include "../../../Primitives/interface/UndefInterfaceHelperMacros.h"
+struct ITextureVtbl { ITextureMethods Texture; }
+struct ITexture { ITextureVtbl* pVtbl; }
 
-#if DILIGENT_C_INTERFACE
+TextureDesc* ITexture_GetDesc(ITexture* object) {
+    cast(const(TextureDesc)*)IDeviceObject_GetDesc(object);
+}
 
-#    define ITexture_GetDesc(This) (const struct TextureDesc*)IDeviceObject_GetDesc(This)
+void* ITexture_CreateView(ITexture* texture, const(TextureViewDesc)* viewDesc, ITextureView** ppView) {
+    return texture.pVtbl.Texture.CreateView(texture, viewDesc, ppView);
+}
 
-#    define ITexture_CreateView(This, ...)     CALL_IFACE_METHOD(Texture, CreateView,      This, __VA_ARGS__)
-#    define ITexture_GetDefaultView(This, ...) CALL_IFACE_METHOD(Texture, GetDefaultView,  This, __VA_ARGS__)
-#    define ITexture_GetNativeHandle(This)     CALL_IFACE_METHOD(Texture, GetNativeHandle, This)
-#    define ITexture_SetState(This, ...)       CALL_IFACE_METHOD(Texture, SetState,        This, __VA_ARGS__)
-#    define ITexture_GetState(This)            CALL_IFACE_METHOD(Texture, GetState,        This)
+ITextureView** ITexture_GetDefaultView(ITexture* texture, TEXTURE_VIEW_TYPE viewType) {
+    return texture.pVtbl.Texture.GetDefaultView(texture, viewType);
+}
 
-#endif
+void** ITexture_GetNativeHandle(ITexture* texture) {
+    return texture.pVtbl.Texture.GetNativeHandle(texture);
+}
 
+void* ITexture_SetState(ITexture* texture, RESOURCE_STATE state) {
+    return texture.pVtbl.Texture.SetState(texture, state);
+}
 
+RESOURCE_STATE* ITexture_GetState(ITexture* texture){
+    return texture.pVtbl.Texture.GetState(texture);
+}

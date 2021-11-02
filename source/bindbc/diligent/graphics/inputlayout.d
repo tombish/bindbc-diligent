@@ -33,6 +33,8 @@
  *  of the possibility of such damages.
  */
 
+module bindbc.diligent.graphics.inputlayout;
+
 /// \file
 /// Definition input layout
 

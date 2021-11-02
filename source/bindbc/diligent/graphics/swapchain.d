@@ -36,32 +36,24 @@ module bindbc.diligent.graphics.engine.swapchain;
 /// \file
 /// Definition of the Diligent::ISwapChain interface and related data structures
 
-#include "../../../Primitives/interface/Object.h"
-#include "TextureView.h"
-#include "GraphicsTypes.h"
+import bindbc.diligent.primitives.object;
+import bindbc.diligent.graphics.textureview;
+import bindbc.diligent.graphics.graphicstypes;
 
 // {1C703B77-6607-4EEC-B1FE-15C82D3B4130}
 static const INTERFACE_ID IID_SwapChain =
-    {0x1c703b77, 0x6607, 0x4eec, {0xb1, 0xfe, 0x15, 0xc8, 0x2d, 0x3b, 0x41, 0x30}};
-
-#define DILIGENT_INTERFACE_NAME ISwapChain
-#include "../../../Primitives/interface/DefineInterfaceHelperMacros.h"
-
-#define ISwapChainInclusiveMethods \
-    IObjectInclusiveMethods;       \
-    ISwapChainMethods SwapChain
+    INTERFACE_ID(0x1c703b77, 0x6607, 0x4eec, [0xb1, 0xfe, 0x15, 0xc8, 0x2d, 0x3b, 0x41, 0x30]);
 
 /// Swap chain interface
 
 /// The swap chain is created by a platform-dependent function
-DILIGENT_BEGIN_INTERFACE(ISwapChain, IObject)
+struct ISwapChainMethods
 {
     /// Presents a rendered image to the user
-    VIRTUAL voidPresent(THIS_
-                                 Uint32 SyncInterval DEFAULT_VALUE(1)) PURE;
+    void* Present(ISwapChain*, uint SyncInterval = 1);
 
     /// Returns the swap chain desctription
-    VIRTUAL const SwapChainDesc REFGetDesc(THIS) CONST PURE;
+    const(SwapChainDesc)** GetDesc(ISwapChain*);
 
     /// Changes the swap chain size
 
@@ -79,16 +71,16 @@ DILIGENT_BEGIN_INTERFACE(ISwapChain, IObject)
     ///       the most optimal pre-transform. However SURFACE_TRANSFORM_ROTATE_90 will also work in
     ///       the scenario above. After the swap chain has been resized, its actual width will be 1080,
     ///       actual height will be 1920, and PreTransform will be SURFACE_TRANSFORM_ROTATE_90.
-    VIRTUAL voidResize(THIS_
-                                Uint32            NewWidth,
-                                Uint32            NewHeight,
-                                SURFACE_TRANSFORM NewTransform DEFAULT_VALUE(SURFACE_TRANSFORM_OPTIMAL)) PURE;
+    void* Resize(ISwapChain*,
+                                uint            NewWidth,
+                                uint            NewHeight,
+                                SURFACE_TRANSFORM NewTransform = SURFACE_TRANSFORM.SURFACE_TRANSFORM_OPTIMAL);
 
     /// Sets fullscreen mode (only supported on Win32 platform)
-    VIRTUAL voidSetFullscreenMode(THIS_ const DisplayModeAttribs REF DisplayMode) PURE;
+    void* SetFullscreenMode(ISwapChain*, const(DisplayModeAttribs)* DisplayMode);
 
     /// Sets windowed mode (only supported on Win32 platform)
-    VIRTUAL voidSetWindowedMode(THIS) PURE;
+    void* SetWindowedMode(ISwapChain*);
     
     /// Sets the maximum number of frames that the swap chain is allowed to queue for rendering.
 
@@ -97,8 +89,7 @@ DILIGENT_BEGIN_INTERFACE(ISwapChain, IObject)
     /// swap chain, the CPU can enqueue frames 0 and 1, but Present command of frame 2
     /// will block until frame 0 is presented. If in the example above the maximum frame latency is set
     /// to 1, then Present command of frame 1 will block until Present of frame 0 is complete.
-    VIRTUAL voidSetMaximumFrameLatency(THIS_
-                                                Uint32 MaxLatency) PURE;
+    void* SetMaximumFrameLatency(ISwapChain*, uint MaxLatency);
 
     /// Returns render target view of the current back buffer in the swap chain
 
@@ -110,29 +101,49 @@ DILIGENT_BEGIN_INTERFACE(ISwapChain, IObject)
     ///
     /// The method does *NOT* increment the reference counter of the returned object,
     /// so Release() must not be called.
-    VIRTUAL ITextureView*GetCurrentBackBufferRTV(THIS) PURE;
+    ITextureView** GetCurrentBackBufferRTV(ISwapChain*);
 
     /// Returns depth-stencil view of the depth buffer
 
     /// The method does *NOT* increment the reference counter of the returned object,
     /// so Release() must not be called.
-    VIRTUAL ITextureView*GetDepthBufferDSV(THIS) PURE;
-};
-DILIGENT_END_INTERFACE
+    ITextureView** GetDepthBufferDSV(ISwapChain*);
+}
 
-#include "../../../Primitives/interface/UndefInterfaceHelperMacros.h"
+struct ISwapChainVtbl { ISwapChainMethods SwapChain; }
+struct ISwapChain { ISwapChainVtbl* pVtbl; }
 
-#if DILIGENT_C_INTERFACE
+void* ISwapChain_Present(ISwapChain* swapchain, uint syncInterval = 1) {
+    return swapchain.pVtbl.SwapChain.Present(swapchain, syncInterval);
+}
 
-#    define ISwapChain_Present(This, ...)                CALL_IFACE_METHOD(SwapChain, Present,                 This, __VA_ARGS__)
-#    define ISwapChain_GetDesc(This)                     CALL_IFACE_METHOD(SwapChain, GetDesc,                 This)
-#    define ISwapChain_Resize(This, ...)                 CALL_IFACE_METHOD(SwapChain, Resize,                  This, __VA_ARGS__)
-#    define ISwapChain_SetFullscreenMode(This, ...)      CALL_IFACE_METHOD(SwapChain, SetFullscreenMode,       This, __VA_ARGS__)
-#    define ISwapChain_SetWindowedMode(This)             CALL_IFACE_METHOD(SwapChain, SetWindowedMode,         This)
-#    define ISwapChain_SetMaximumFrameLatency(This, ...) CALL_IFACE_METHOD(SwapChain, SetMaximumFrameLatency,  This, __VA_ARGS__)
-#    define ISwapChain_GetCurrentBackBufferRTV(This)     CALL_IFACE_METHOD(SwapChain, GetCurrentBackBufferRTV, This)
-#    define ISwapChain_GetDepthBufferDSV(This)           CALL_IFACE_METHOD(SwapChain, GetDepthBufferDSV,       This)
+const(SwapChainDesc)** ISwapChain_GetDesc(ISwapChain* swapchain) {
+    return swapchain.pVtbl.SwapChain.GetDesc(swapchain);
+}
 
-#endif
+void* ISwapChain_Resize(ISwapChain* swapchain,
+                                uint newWidth,
+                                uint newHeight,
+                                SURFACE_TRANSFORM newTransform = SURFACE_TRANSFORM.SURFACE_TRANSFORM_OPTIMAL) {
+    return swapchain.pVtbl.SwapChain.Resize(swapchain, newWidth, newHeight, newTransform);
+}
 
+void* ISwapChain_SetFullscreenMode(ISwapChain* swapchain, const(DisplayModeAttribs)* displayMode) {
+    return swapchain.pVtbl.SwapChain.SetFullscreenMode(swapchain, displayMode);
+}
 
+void* ISwapChain_SetWindowedMode(ISwapChain* swapchain) {
+    return swapchain.pVtbl.SwapChain.SetWindowedMode(swapchain);
+}
+
+void* ISwapChain_SetMaximumFrameLatency(ISwapChain* swapchain, uint maxLatency) {
+    return swapchain.pVtbl.SwapChain.SetMaximumFrameLatency(swapchain, maxLatency);
+}
+
+ITextureView** ISwapChain_GetCurrentBackBufferRTV(ISwapChain* swapchain) {
+    return swapchain.pVtbl.SwapChain.GetCurrentBackBufferRTV(swapchain);
+}
+
+ITextureView** ISwapChain_GetDepthBufferDSV(ISwapChain* swapchain) {
+    return swapchain.pVtbl.SwapChain.GetDepthBufferDSV(swapchain);
+}
