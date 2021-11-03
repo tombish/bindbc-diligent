@@ -36,18 +36,16 @@ module bindbc.diligent.graphics.engine.shaderresourcevariable;
 /// \file
 /// Definition of the Diligent::IShaderResourceVariable interface and related data structures
 
-#include "../../../Primitives/interface/BasicTypes.h"
-#include "../../../Primitives/interface/Object.h"
-#include "../../../Primitives/interface/FlagEnum.h"
-#include "DeviceObject.h"
-#include "Shader.h"
+import bindbc.diligent.primitives.object;
+import bindbc.diligent.graphics.deviceobject;
+import bindbc.diligent.graphics.shader;
 
 // {0D57DF3F-977D-4C8F-B64C-6675814BC80C}
 static const INTERFACE_ID IID_ShaderResourceVariable =
-    {0xd57df3f, 0x977d, 0x4c8f, {0xb6, 0x4c, 0x66, 0x75, 0x81, 0x4b, 0xc8, 0xc}};
+    INTERFACE_ID(0xd57df3f, 0x977d, 0x4c8f, [0xb6, 0x4c, 0x66, 0x75, 0x81, 0x4b, 0xc8, 0xc]);
 
 /// Describes the type of the shader resource variable
-DILIGENT_TYPED_ENUM(SHADER_RESOURCE_VARIABLE_TYPE, Uint8)
+enum SHADER_RESOURCE_VARIABLE_TYPE : ubyte
 {
     /// Shader resource bound to the variable is the same for all SRB instances.
     /// It must be set *once* directly through Pipeline State object.
@@ -65,10 +63,10 @@ DILIGENT_TYPED_ENUM(SHADER_RESOURCE_VARIABLE_TYPE, Uint8)
 
     /// Total number of shader variable types
     SHADER_RESOURCE_VARIABLE_TYPE_NUM_TYPES
-};
+}
 
 /// Shader resource variable type flags
-DILIGENT_TYPED_ENUM(SHADER_RESOURCE_VARIABLE_TYPE_FLAGS, Uint32)
+enum SHADER_RESOURCE_VARIABLE_TYPE_FLAGS : uint
 {
     /// No flags
     SHADER_RESOURCE_VARIABLE_TYPE_FLAG_NONE    = 0x00,
@@ -92,11 +90,10 @@ DILIGENT_TYPED_ENUM(SHADER_RESOURCE_VARIABLE_TYPE_FLAGS, Uint32)
         SHADER_RESOURCE_VARIABLE_TYPE_FLAG_STATIC | 
         SHADER_RESOURCE_VARIABLE_TYPE_FLAG_MUTABLE | 
         SHADER_RESOURCE_VARIABLE_TYPE_FLAG_DYNAMIC
-};
-DEFINE_FLAG_ENUM_OPERATORS(SHADER_RESOURCE_VARIABLE_TYPE_FLAGS);
+}
 
 /// Shader resource binding flags
-DILIGENT_TYPED_ENUM(BIND_SHADER_RESOURCES_FLAGS, Uint32)
+enum BIND_SHADER_RESOURCES_FLAGS : uint
 {
     /// Indicates that static shader variable bindings are to be updated.
     BIND_SHADER_RESOURCES_UPDATE_STATIC = SHADER_RESOURCE_VARIABLE_TYPE_FLAG_STATIC,
@@ -126,26 +123,17 @@ DILIGENT_TYPED_ENUM(BIND_SHADER_RESOURCES_FLAGS, Uint32)
     ///       BIND_SHADER_RESOURCES_UPDATE_STATIC, BIND_SHADER_RESOURCES_UPDATE_MUTABLE, and
     ///       BIND_SHADER_RESOURCES_UPDATE_DYNAMIC flags.
     BIND_SHADER_RESOURCES_VERIFY_ALL_RESOLVED = 0x10
-};
-DEFINE_FLAG_ENUM_OPERATORS(BIND_SHADER_RESOURCES_FLAGS);
-
-#define DILIGENT_INTERFACE_NAME IShaderResourceVariable
-#include "../../../Primitives/interface/DefineInterfaceHelperMacros.h"
-
-#define IShaderResourceVariableInclusiveMethods \
-    IObjectInclusiveMethods;                    \
-    IShaderResourceVariableMethods ShaderResourceVariable
+}
 
 /// Shader resource variable
-DILIGENT_BEGIN_INTERFACE(IShaderResourceVariable, IObject)
+struct IShaderResourceVariableMethods
 {
     /// Binds resource to the variable
 
     /// \remark The method performs run-time correctness checks.
     ///         For instance, shader resource view cannot
     ///         be assigned to a constant buffer variable.
-    VIRTUAL voidSet(THIS_
-                             IDeviceObject* pObject) PURE;
+    void* Set(IShaderResourceVariable*, IDeviceObject* pObject);
 
     /// Binds resource array to the variable
 
@@ -156,10 +144,10 @@ DILIGENT_BEGIN_INTERFACE(IShaderResourceVariable, IObject)
     /// \remark The method performs run-time correctness checks.
     ///         For instance, shader resource view cannot
     ///         be assigned to a constant buffer variable.
-    VIRTUAL voidSetArray(THIS_
-                                  IDeviceObject* const* ppObjects,
-                                  Uint32                FirstElement,
-                                  Uint32                NumElements) PURE;
+    void* SetArray(IShaderResourceVariable*,
+                                  const(IDeviceObject)** ppObjects,
+                                  uint                FirstElement,
+                                  uint                NumElements);
 
     /// Binds the specified constant buffer range to the variable
 
@@ -175,11 +163,11 @@ DILIGENT_BEGIN_INTERFACE(IShaderResourceVariable, IObject)
     ///
     /// \warning The Offset must be an integer multiple of ConstantBufferOffsetAlignment member
     ///          specified by the device limits (see Diligent::DeviceLimits).
-    VIRTUAL voidSetBufferRange(THIS_
+    void* SetBufferRange(IShaderResourceVariable*,
                                         IDeviceObject* pObject,
-                                        Uint32         Offset,
-                                        Uint32         Size,
-                                        Uint32         ArrayIndex DEFAULT_VALUE(0)) PURE;
+                                        uint         Offset,
+                                        uint         Size,
+                                        uint         ArrayIndex = 0);
 
     /// Sets the constant or structured buffer dynamic offset
 
@@ -203,40 +191,67 @@ DILIGENT_BEGIN_INTERFACE(IShaderResourceVariable, IObject)
     ///          Changing the buffer offset does not require committing the SRB.
     ///          From the engine point of view, buffers with dynamic offsets are treated similar to dynamic
     ///          buffers, and thus affected by DRAW_FLAG_DYNAMIC_RESOURCE_BUFFERS_INTACT flag.
-    VIRTUAL voidSetBufferOffset(THIS_
-                                         Uint32 Offset,
-                                         Uint32 ArrayIndex DEFAULT_VALUE(0)) PURE;
+    void* SetBufferOffset(IShaderResourceVariable*,
+                                         uint Offset,
+                                         uint ArrayIndex = 0);
 
     /// Returns the shader resource variable type
-    VIRTUAL SHADER_RESOURCE_VARIABLE_TYPEGetType(THIS) CONST PURE;
+    SHADER_RESOURCE_VARIABLE_TYPE* GetType(IShaderResourceVariable*);
 
     /// Returns shader resource description. See Diligent::ShaderResourceDesc.
-    VIRTUAL voidGetResourceDesc(THIS_
-                                         ShaderResourceDesc REF ResourceDesc) CONST PURE;
+    void* GetResourceDesc(IShaderResourceVariable*, ShaderResourceDesc* ResourceDesc);
 
     /// Returns the variable index that can be used to access the variable.
-    VIRTUAL Uint32GetIndex(THIS) CONST PURE;
+    uint* GetIndex(IShaderResourceVariable*);
 
     /// Returns a pointer to the resource that is bound to this variable.
 
     /// \param [in] ArrayIndex - Resource array index. Must be 0 for
     ///                          non-array variables.
-    VIRTUAL IDeviceObject*Get(THIS_
-                                       Uint32 ArrayIndex DEFAULT_VALUE(0)) CONST PURE;
-};
-DILIGENT_END_INTERFACE
+    IDeviceObject** Get(IShaderResourceVariable*, uint ArrayIndex = 0) ;
+}
 
-#include "../../../Primitives/interface/UndefInterfaceHelperMacros.h"
+struct IShaderResourceVariableVtbl { IShaderResourceVariableMethods ShaderResourceVariable; }
+struct IShaderResourceVariable { IShaderResourceVariableVtbl* pVtbl; }
 
-#if DILIGENT_C_INTERFACE
+void* IShaderResourceVariable_Set(IShaderResourceVariable* resVariable, IDeviceObject* pObject) {
+    return resVariable.pVtbl.ShaderResourceVariable.Set(resVariable, pObject);
+}
 
-#    define IShaderResourceVariable_Set(This, ...)             CALL_IFACE_METHOD(ShaderResourceVariable, Set,             This, __VA_ARGS__)
-#    define IShaderResourceVariable_SetArray(This, ...)        CALL_IFACE_METHOD(ShaderResourceVariable, SetArray,        This, __VA_ARGS__)
-#    define IShaderResourceVariable_GetType(This)              CALL_IFACE_METHOD(ShaderResourceVariable, GetType,         This)
-#    define IShaderResourceVariable_GetResourceDesc(This, ...) CALL_IFACE_METHOD(ShaderResourceVariable, GetResourceDesc, This, __VA_ARGS__)
-#    define IShaderResourceVariable_GetIndex(This)             CALL_IFACE_METHOD(ShaderResourceVariable, GetIndex,        This)
-#    define IShaderResourceVariable_Get(This, ...)             CALL_IFACE_METHOD(ShaderResourceVariable, Get,             This, __VA_ARGS__)
+void* IShaderResourceVariable_SetArray(IShaderResourceVariable* resVariable,
+                                  const(IDeviceObject)** ppObjects,
+                                  uint                FirstElement,
+                                  uint                NumElements) {
+    return resVariable.pVtbl.ShaderResourceVariable.SetArray(resVariable, ppObjects, FirstElement, NumElements);
+}
 
-#endif
+void* IShaderResourceVariable_SetBufferRange(IShaderResourceVariable* resVariable,
+                                        IDeviceObject* pObject,
+                                        uint         Offset,
+                                        uint         Size,
+                                        uint         ArrayIndex = 0) {
+    return resVariable.pVtbl.ShaderResourceVariable.SetBufferRange(resVariable, pObject, Offset, Size, ArrayIndex);
+}
 
+void* IShaderResourceVariable_SetBufferOffset(IShaderResourceVariable* resVariable,
+                                         uint Offset,
+                                         uint ArrayIndex = 0) {
+    return resVariable.pVtbl.ShaderResourceVariable.SetBufferOffset(resVariable, Offset, ArrayIndex);
+}
 
+SHADER_RESOURCE_VARIABLE_TYPE* IShaderResourceVariable_GetType(IShaderResourceVariable* resVariable) {
+    return resVariable.pVtbl.ShaderResourceVariable.GetType(resVariable);
+
+}
+
+void* IShaderResourceVariable_GetResourceDesc(IShaderResourceVariable* resVariable, ShaderResourceDesc* ResourceDesc) {
+    return resVariable.pVtbl.ShaderResourceVariable.GetResourceDesc(resVariable, ResourceDesc);
+}
+
+uint* IShaderResourceVariable_GetIndex(IShaderResourceVariable* resVariable) {
+    return resVariable.pVtbl.ShaderResourceVariable.GetIndex(resVariable);
+}
+
+IDeviceObject** IShaderResourceVariable_Get(IShaderResourceVariable* resVariable, uint ArrayIndex = 0) {
+    return resVariable.pVtbl.ShaderResourceVariable.Get(resVariable, ArrayIndex);
+}
