@@ -33,33 +33,22 @@ module bindbc.diligent.graphics.metal.bottomlevelasmtl;
 /// \file
 /// Definition of the Diligent::IBottomLevelASMtl interface
 
-#include "../../GraphicsEngine/interface/BottomLevelAS.h"
+import bindbc.diligent.graphics.bottomlevelas;
 
 // {1D88A872-92F1-46D2-9D70-C31E78E42048}
 static const INTERFACE_ID IID_BottomLevelASMtl =
-    {0x1d88a872, 0x92f1, 0x46d2, {0x9d, 0x70, 0xc3, 0x1e, 0x78, 0xe4, 0x20, 0x48}};
-
-#define DILIGENT_INTERFACE_NAME IBottomLevelASMtl
-#include "../../../Primitives/interface/DefineInterfaceHelperMacros.h"
-
-#define IBottomLevelASMtlInclusiveMethods \
-    IBottomLevelASInclusiveMethods;       \
-    IBottomLevelASMtlMethods BottomLevelASMtl
+    INTERFACE_ID(0x1d88a872, 0x92f1, 0x46d2, [0x9d, 0x70, 0xc3, 0x1e, 0x78, 0xe4, 0x20, 0x48]);
 
 /// Exposes Metal-specific functionality of a bottom-level acceleration structure object.
-DILIGENT_BEGIN_INTERFACE(IBottomLevelASMtl, IBottomLevelAS)
+struct IBottomLevelASMtlMethods
 {
     /// Returns a pointer to a Metal acceleration structure object.
-    VIRTUAL id<MTLAccelerationStructure>GetMtlAccelerationStructure(THIS) CONST API_AVAILABLE(ios(14), macosx(11.0)) API_UNAVAILABLE(tvos) PURE;
-};
-DILIGENT_END_INTERFACE
+    MTLAccelerationStructure** GetMtlAccelerationStructure(IBottomLevelASMtl*);
+}
 
-#include "../../../Primitives/interface/UndefInterfaceHelperMacros.h"
+struct IBottomLevelASMtlVtbl { IBottomLevelASMtlMethods BottomLevelASMtl; }
+struct IBottomLevelASMtl { IBottomLevelASMtlVtbl* pVtbl; }
 
-#if DILIGENT_C_INTERFACE
-
-#    define IBottomLevelASMtl_GetMtlAccelerationStructure(This) CALL_IFACE_METHOD(BottomLevelASMtl, GetMtlAccelerationStructure, This)
-
-#endif
-
-
+MTLAccelerationStructure** IBottomLevelASMtl_GetMtlAccelerationStructure(IBottomLevelASMtl* bottomLevelAS) {
+    return bottomLevelAS.pVtbl.BottomLevelASMtl.GetMtlAccelerationStructure(bottomLevelAS);
+}

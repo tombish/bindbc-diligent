@@ -33,32 +33,21 @@ module bindbc.diligent.graphics.metal.bufferviewmtl;
 /// \file
 /// Definition of the Diligent::IBufferViewMtl interface
 
-#include "../../GraphicsEngine/interface/BufferView.h"
+import bindbc.diligent.graphics.bufferview;
 
 // {6D8B8199-1011-42B6-80DF-A9FA8B4F33FF}
 static const INTERFACE_ID IID_BufferViewMtl =
-    {0x6d8b8199, 0x1011, 0x42b6, {0x80, 0xdf, 0xa9, 0xfa, 0x8b, 0x4f, 0x33, 0xff}};
-
-#define DILIGENT_INTERFACE_NAME IBufferViewMtl
-#include "../../../Primitives/interface/DefineInterfaceHelperMacros.h"
-
-#define IBufferViewMtlInclusiveMethods \
-    IBufferViewInclusiveMethods;       \
-    IBufferViewMtlMethods BufferViewMtl
+    INTERFACE_ID(0x6d8b8199, 0x1011, 0x42b6, [0x80, 0xdf, 0xa9, 0xfa, 0x8b, 0x4f, 0x33, 0xff]);
 
 /// Exposes Metal-specific functionality of a buffer view object.
-DILIGENT_BEGIN_INTERFACE(IBufferViewMtl, IBufferView)
+struct IBufferViewMtlMethods
 {
-    VIRTUAL id<MTLTexture>GetMtlTextureView(THIS) CONST PURE;
-};
-DILIGENT_END_INTERFACE
+    MTLTexture** GetMtlTextureView(IBufferViewMtl*);
+}
 
-#include "../../../Primitives/interface/UndefInterfaceHelperMacros.h"
+struct IBufferViewMtlVtbl { IBufferViewMtlMethods BufferViewMtl; }
+struct IBufferViewMtl { IBufferViewMtlVtbl* pVtbl; }
 
-#if DILIGENT_C_INTERFACE
-
-#    define IBufferViewMtl_GetMtlTextureView(This) CALL_IFACE_METHOD(BufferViewMtl, GetMtlTextureView, This)
-
-#endif
-
-
+MTLTexture** IBufferViewMtl_GetMtlTextureView(IBufferViewMtl* bufferView) {
+    return bufferView.pVtbl.BufferViewMtl.GetMtlTextureView(bufferView);
+}

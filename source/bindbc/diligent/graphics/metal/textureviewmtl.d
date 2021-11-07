@@ -33,35 +33,22 @@ module bindbc.diligent.graphics.metal.textureviewmtl;
 /// \file
 /// Definition of the Diligent::ITextureViewMtl interface
 
-#include "../../GraphicsEngine/interface/TextureView.h"
+import bindbc.diligent.graphics.textureview;
 
 // {94C0D9C3-61E7-4358-AB9F-066EAD84D6F1}
 static const INTERFACE_ID IID_TextureViewMtl =
-    {0x94c0d9c3, 0x61e7, 0x4358, {0xab, 0x9f, 0x6, 0x6e, 0xad, 0x84, 0xd6, 0xf1}};
-
-#define DILIGENT_INTERFACE_NAME ITextureViewMtl
-#include "../../../Primitives/interface/DefineInterfaceHelperMacros.h"
-
-#define ITextureViewMtlInclusiveMethods \
-    ITextureViewInclusiveMethods;       \
-    ITextureViewMtlMethods TextureViewMtl
+    INTERFACE_ID(0x94c0d9c3, 0x61e7, 0x4358, [0xab, 0x9f, 0x6, 0x6e, 0xad, 0x84, 0xd6, 0xf1]);
 
 /// Exposes Metal-specific functionality of a texture view object.
-DILIGENT_BEGIN_INTERFACE(ITextureViewMtl, ITextureView)
+struct ITextureViewMtlMethods
 {
     /// Returns a pointer to Metal texture view (MTLTexture)
-    VIRTUAL id<MTLTexture>GetMtlTexture(THIS) CONST PURE;
-};
-DILIGENT_END_INTERFACE
+    MTLTexture** GetMtlTexture(ITextureViewMtl*);
+}
 
-#include "../../../Primitives/interface/UndefInterfaceHelperMacros.h"
+struct ITextureViewMtlVtbl { ITextureViewMtlMethods TextureViewMtl; }
+struct ITextureViewMtl { ITextureViewMtlVtbl* pVtbl; }
 
-#if DILIGENT_C_INTERFACE
-
-#    define ITextureViewMtl_GetMtlTexture(This) CALL_IFACE_METHOD(TextureViewMtl, GetMtlTexture, This)
-
-s
-
-#endif
-
-
+MTLTexture** ITextureViewMtl_GetMtlTexture(ITextureViewMtl* textureView){
+    return textureView.pVtbl.TextureViewMtl.GetMtlTexture(textureView);
+}

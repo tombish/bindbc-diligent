@@ -33,33 +33,22 @@ module bindbc.diligent.graphics.metal.shadermtl;
 /// \file
 /// Definition of the Diligent::IShaderMtl interface
 
-#include "../../GraphicsEngine/interface/Shader.h"
+import bindbc.diligent.graphics.shader;
 
 // {07182C29-CC3B-43B2-99D8-A77F6FECBA82}
 static const INTERFACE_ID IID_ShaderMtl =
     {0x7182c29, 0xcc3b, 0x43b2, {0x99, 0xd8, 0xa7, 0x7f, 0x6f, 0xec, 0xba, 0x82}};
 
-#define DILIGENT_INTERFACE_NAME IShaderMtl
-#include "../../../Primitives/interface/DefineInterfaceHelperMacros.h"
-
-#define IShaderMtlInclusiveMethods \
-    IShaderInclusiveMethods;       \
-    IShaderMtlMethods ShaderMtl
-
 /// Exposes Metal-specific functionality of a shader object.
-DILIGENT_BEGIN_INTERFACE(IShaderMtl, IShader)
+struct IShaderMtlMethods
 {
     /// Returns the point to Metal shader function (MTLFunction)
-    VIRTUAL id<MTLFunction>GetMtlShaderFunction(THIS) CONST PURE;
-};
-DILIGENT_END_INTERFACE
+    MTLFunction** GetMtlShaderFunction(IShaderMtl*);
+}
 
-#include "../../../Primitives/interface/UndefInterfaceHelperMacros.h"
+struct IShaderMtlVtbl { IShaderMtlMethods ShaderMtl; }
+struct IShaderMtl { IShaderMtlVtbl* pVtbl; }
 
-#if DILIGENT_C_INTERFACE
-
-#    define IShaderMtl_GetMtlShaderFunction(This) CALL_IFACE_METHOD(ShaderMtl, GetMtlShaderFunction, This)
-
-#endif
-
-
+MTLFunction** IShaderMtl_GetMtlShaderFunction(IShaderMtl* shader) {
+    return shader.pVtbl.ShaderMtl.GetMtlShaderFunction(shader);
+}

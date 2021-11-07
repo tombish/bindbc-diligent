@@ -33,33 +33,22 @@ module bindbc.diligent.graphics.metal.toplevelasmtl;
 /// \file
 /// Definition of the Diligent::ITopLevelASMtl interface
 
-#include "../../GraphicsEngine/interface/TopLevelAS.h"
+import bindbc.diligent.graphics.toplevelas;
 
 // {2156C051-350D-4FCE-84F3-295B536622D3}
 static const INTERFACE_ID IID_TopLevelASMtl =
-    {0x2156c051, 0x350d, 0x4fce, {0x84, 0xf3, 0x29, 0x5b, 0x53, 0x66, 0x22, 0xd3}};
-
-#define DILIGENT_INTERFACE_NAME ITopLevelASMtl
-#include "../../../Primitives/interface/DefineInterfaceHelperMacros.h"
-
-#define ITopLevelASMtlInclusiveMethods \
-    ITopLevelASInclusiveMethods;       \
-    ITopLevelASMtlMethods TopLevelASMtl
+    INTERFACE_ID(0x2156c051, 0x350d, 0x4fce, [0x84, 0xf3, 0x29, 0x5b, 0x53, 0x66, 0x22, 0xd3]);
 
 /// Exposes Metal-specific functionality of a top-level acceleration structure object.
-DILIGENT_BEGIN_INTERFACE(ITopLevelASMtl, ITopLevelAS)
+struct ITopLevelASMtlMethods
 {
     /// Returns a pointer to a Metal acceleration structure object.
-    VIRTUAL id<MTLAccelerationStructure>GetMtlAccelerationStructure(THIS) CONST API_AVAILABLE(ios(14), macosx(11.0)) API_UNAVAILABLE(tvos) PURE;
-};
-DILIGENT_END_INTERFACE
+    MTLAccelerationStructure** GetMtlAccelerationStructure(ITopLevelASMtl*);
+}
 
-#include "../../../Primitives/interface/UndefInterfaceHelperMacros.h"
+struct ITopLevelASMtlVtbl { ITopLevelASMtlMethods TopLevelASMtl; }
+struct ITopLevelASMtl { ITopLevelASMtlVtbl* pVtbl; }
 
-#if DILIGENT_C_INTERFACE
-
-#    define ITopLevelASMtl_GetMtlAccelerationStructure(This) CALL_IFACE_METHOD(TopLevelASMtl, GetMtlAccelerationStructure, This)
-
-#endif
-
-
+MTLAccelerationStructure** ITopLevelASMtl_GetMtlAccelerationStructure(ITopLevelASMtl* toplevelAS) {
+    return toplevelAS.pVtbl.TopLevelASMtl.GetMtlAccelerationStructure(topLevelAS);
+}

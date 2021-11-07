@@ -33,69 +33,82 @@ module bindbc.diligent.graphics.metal.renderdevicemtl;
 /// \file
 /// Definition of the Diligent::IRenderDeviceMtl interface
 
-#include "../../GraphicsEngine/interface/RenderDevice.h"
-
-#if PLATFORM_TVOS
-@protocol MTLAccelerationStructure; // Not available in tvOS
-#endif
+import bindbc.diligent.graphics.renderdevice;
 
 // {8D483E4A-2D53-47B2-B8D7-276F4CE57F68}
 static const INTERFACE_ID IID_RenderDeviceMtl =
-    {0x8d483e4a, 0x2d53, 0x47b2, {0xb8, 0xd7, 0x27, 0x6f, 0x4c, 0xe5, 0x7f, 0x68}};
-
-#define DILIGENT_INTERFACE_NAME IRenderDeviceMtl
-#include "../../../Primitives/interface/DefineInterfaceHelperMacros.h"
-
-#define IRenderDeviceMtlInclusiveMethods \
-    IRenderDeviceInclusiveMethods;       \
-    IRenderDeviceMtlMethods RenderDeviceMtl
+    INTERFACE_ID(0x8d483e4a, 0x2d53, 0x47b2, [0xb8, 0xd7, 0x27, 0x6f, 0x4c, 0xe5, 0x7f, 0x68]);
 
 /// Exposes Metal-specific functionality of a render device.
-DILIGENT_BEGIN_INTERFACE(IRenderDeviceMtl, IRenderDevice)
+struct IRenderDeviceMtlMethods
 {
     /// Returns the pointer to Metal device (MTLDevice).
-    VIRTUAL id<MTLDevice>GetMtlDevice(THIS) CONST PURE;
+    MTLDevice** GetMtlDevice(IRenderDeviceMtl*);
 
     /// Creates a texture from existing Metal resource
-    VIRTUAL voidCreateTextureFromMtlResource(THIS_
-                                                      id<MTLTexture> mtlTexture,
+    void* CreateTextureFromMtlResource(IRenderDeviceMtl*,
+                                                      MTLTexture*    mtlTexture,
                                                       RESOURCE_STATE InitialState,
-                                                      ITexture**     ppTexture) PURE;
+                                                      ITexture**     ppTexture);
 
     /// Creates a buffer from existing Metal resource
-    VIRTUAL voidCreateBufferFromMtlResource(THIS_
-                                                     id<MTLBuffer>        mtlBuffer,
-                                                     const BufferDesc REF BuffDesc,
-                                                     RESOURCE_STATE       InitialState,
-                                                     IBuffer**            ppBuffer) PURE;
+    void* CreateBufferFromMtlResource(IRenderDeviceMtl*,
+                                                     MTLBuffer*         mtlBuffer,
+                                                     const(BufferDesc)* BuffDesc,
+                                                     RESOURCE_STATE     InitialState,
+                                                     IBuffer**          ppBuffer);
 
     /// Creates a buffer from existing Metal resource
-    VIRTUAL voidCreateBLASFromMtlResource(THIS_
-                                                   id<MTLAccelerationStructure> mtlBLAS,
-                                                   const BottomLevelASDesc REF  Desc,
-                                                   RESOURCE_STATE               InitialState,
-                                                   IBottomLevelAS**             ppBLAS) API_AVAILABLE(ios(14), macosx(11.0)) API_UNAVAILABLE(tvos) PURE;
+    void* CreateBLASFromMtlResource(IRenderDeviceMtl*,
+                                                   MTLAccelerationStructure*  mtlBLAS,
+                                                   const(BottomLevelASDesc)*  Desc,
+                                                   RESOURCE_STATE             InitialState,
+                                                   IBottomLevelAS**           ppBLAS);
 
     /// Creates a buffer from existing Metal resource
-    VIRTUAL voidCreateTLASFromMtlResource(THIS_
-                                                   id<MTLAccelerationStructure> mtlTLAS,
-                                                   const TopLevelASDesc REF     Desc,
-                                                   RESOURCE_STATE               InitialState,
-                                                   ITopLevelAS**                ppTLAS) API_AVAILABLE(ios(14), macosx(11.0)) API_UNAVAILABLE(tvos) PURE;
-};
-DILIGENT_END_INTERFACE
+    void* CreateTLASFromMtlResource(IRenderDeviceMtl*,
+                                                   MTLAccelerationStructure* mtlTLAS,
+                                                   const(TopLevelASDesc)*    Desc,
+                                                   RESOURCE_STATE            InitialState,
+                                                   ITopLevelAS**             ppTLAS);
+}
 
-#include "../../../Primitives/interface/UndefInterfaceHelperMacros.h"
+struct IRenderDeviceMtlVtbl { IRenderDeviceMtlMethods RenderDeviceMtl; }
+struct IRenderDeviceMtl { IRenderDeviceMtlVtbl* pVtbl; }
 
-#if DILIGENT_C_INTERFACE
+MTLDevice** IRenderDeviceMtl_GetMtlDevice(IRenderDeviceMtl* device) {
+    return device.pVtbl.RenderDeviceMtl.GetMtlDevice(device);
+}
 
-#    define IRenderDeviceMtl_GetMtlDevice(This)                      CALL_IFACE_METHOD(RenderDeviceMtl, GetMtlDevice,                 This)
-#    define IRenderDeviceMtl_GetMtlCommandQueue(This)                CALL_IFACE_METHOD(RenderDeviceMtl, GetMtlCommandQueue,           This)
-#    define IRenderDeviceMtl_CreateTextureFromMtlResource(This, ...) CALL_IFACE_METHOD(RenderDeviceMtl, CreateTextureFromMtlResource, This, __VA_ARGS__)
-#    define IRenderDeviceMtl_CreateBufferFromMtlResource(This, ...)  CALL_IFACE_METHOD(RenderDeviceMtl, CreateBufferFromMtlResource,  This, __VA_ARGS__)
-#    define IRenderDeviceMtl_CreateBLASFromMtlResource(This, ...)    CALL_IFACE_METHOD(RenderDeviceMtl, CreateBLASFromMtlResource,    This, __VA_ARGS__)
-#    define IRenderDeviceMtl_CreateTLASFromMtlResource(This, ...)    CALL_IFACE_METHOD(RenderDeviceMtl, CreateTLASFromMtlResource,    This, __VA_ARGS__)
+// void* IRenderDeviceMtl_GetMtlCommandQueue(IRenderDeviceMtl* device) {}
 
-#endif
+void* IRenderDeviceMtl_CreateTextureFromMtlResource(IRenderDeviceMtl* device,
+                                                      MTLTexture*    mtlTexture,
+                                                      RESOURCE_STATE initialState,
+                                                      ITexture**     ppTexture) {
+    return device.pVtbl.RenderDeviceMtl.CreateTextureFromMtlResource(device, mtlTexture, initialState, ppTexture);
+}
 
+void* IRenderDeviceMtl_CreateBufferFromMtlResource(IRenderDeviceMtl* device,
+                                                     MTLBuffer*         mtlBuffer,
+                                                     const(BufferDesc)* buffDesc,
+                                                     RESOURCE_STATE     initialState,
+                                                     IBuffer**          ppBuffer) {
+    return device.pVtbl.RenderDeviceMtl.CreateBufferFromMtlResource(device, mtlBuffer, buffDesc, initialState, ppBuffer);
+}
 
+void* IRenderDeviceMtl_CreateBLASFromMtlResource(IRenderDeviceMtl* device,
+                                                   MTLAccelerationStructure*  mtlBLAS,
+                                                   const(BottomLevelASDesc)*  desc,
+                                                   RESOURCE_STATE             initialState,
+                                                   IBottomLevelAS**           ppBLAS) {
+    return device.pVtbl.RenderDeviceMtl.CreateBLASFromMtlResource(device, mtlBLAS, desc, initialState, ppBLAS);
+}
+
+void* IRenderDeviceMtl_CreateTLASFromMtlResource(IRenderDeviceMtl* device,
+                                                   MTLAccelerationStructure* mtlTLAS,
+                                                   const(TopLevelASDesc)*    desc,
+                                                   RESOURCE_STATE            initialState,
+                                                   ITopLevelAS**             ppTLAS) {
+    return device.pVtbl.RenderDeviceMtl.CreateTLASFromMtlResource(device, mtlTLAS, desc, initialState, ppTLAS);
+}

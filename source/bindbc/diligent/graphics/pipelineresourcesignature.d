@@ -36,13 +36,14 @@ module bindbc.diligent.graphics.engine.pipelineresourcesignature;
 /// \file
 /// Definition of the Diligent::IPipelineResourceSignature interface and related data structures
 
-#include "../../../Primitives/interface/Object.h"
-#include "../../../Platforms/interface/PlatformDefinitions.h"
-#include "GraphicsTypes.h"
-#include "Shader.h"
-#include "Sampler.h"
-#include "ShaderResourceVariable.h"
-#include "ShaderResourceBinding.h"
+import bindbc.diligent.primitives.object;
+//#include "../../../Platforms/interface/PlatformDefinitions.h"
+import bindbc.diligent.graphics.graphicstypes;
+import bindbc.diligent.graphics.shader;
+import bindbc.diligent.graphics.sampler;
+import bindbc.diligent.graphics.shaderresourcevariable;
+import bindbc.diligent.graphics.shaderresourcebinding;
+
 
 /// Immutable sampler description.
 
@@ -52,31 +53,18 @@ module bindbc.diligent.graphics.engine.pipelineresourcesignature;
 struct ImmutableSamplerDesc
 {
     /// Shader stages that this immutable sampler applies to. More than one shader stage can be specified.
-    SHADER_TYPE ShaderStages         DEFAULT_INITIALIZER(SHADER_TYPE_UNKNOWN);
+    SHADER_TYPE ShaderStages          = SHADER_TYPE.SHADER_TYPE_UNKNOWN;
 
     /// The name of the sampler itself or the name of the texture variable that 
     /// this immutable sampler is assigned to if combined texture samplers are used.
-    const Char* SamplerOrTextureName DEFAULT_INITIALIZER(nullptr);
+    const(char)* SamplerOrTextureName = null;
 
     /// Sampler description
-    struct SamplerDesc Desc;
-
-#if DILIGENT_CPP_INTERFACE
-    ImmutableSamplerDesc()noexcept{}
-
-    ImmutableSamplerDesc(SHADER_TYPE        _ShaderStages,
-                         const Char*        _SamplerOrTextureName,
-                         const SamplerDesc& _Desc)noexcept : 
-        ShaderStages        {_ShaderStages        },
-        SamplerOrTextureName{_SamplerOrTextureName},
-        Desc                {_Desc                }
-    {}
-#endif
-};
-typedef struct ImmutableSamplerDesc ImmutableSamplerDesc;
+    SamplerDesc Desc;
+}
 
 /// Pipeline resource property flags.
-DILIGENT_TYPED_ENUM(PIPELINE_RESOURCE_FLAGS, Uint8)
+enum PIPELINE_RESOURCE_FLAGS : ubyte
 {
     /// Resource has no special properties
     PIPELINE_RESOURCE_FLAG_NONE            = 0x00,
@@ -112,68 +100,50 @@ DILIGENT_TYPED_ENUM(PIPELINE_RESOURCE_FLAGS, Uint8)
     PIPELINE_RESOURCE_FLAG_RUNTIME_ARRAY      = 0x08,
     
     PIPELINE_RESOURCE_FLAG_LAST               = PIPELINE_RESOURCE_FLAG_RUNTIME_ARRAY
-};
-DEFINE_FLAG_ENUM_OPERATORS(PIPELINE_RESOURCE_FLAGS);
+}
 
 /// Pipeline resource description.
 struct PipelineResourceDesc
 {
     /// Resource name in the shader
-    const char*                    Name          DEFAULT_INITIALIZER(nullptr);
+    const(char)*                   Name         = null;
 
     /// Shader stages that this resource applies to. When multiple shader stages are specified,
     /// all stages will share the same resource.
     ///
     /// \remarks    There may be multiple resources with the same name in different shader stages,
     ///             but the stages specified for different resources with the same name must not overlap.
-    SHADER_TYPE                    ShaderStages  DEFAULT_INITIALIZER(SHADER_TYPE_UNKNOWN);
+    SHADER_TYPE                    ShaderStages = SHADER_TYPE.SHADER_TYPE_UNKNOWN;
 
     /// Resource array size (must be 1 for non-array resources).
-    Uint32                         ArraySize     DEFAULT_INITIALIZER(1);
+    uint                           ArraySize    = 1;
 
     /// Resource type, see Diligent::SHADER_RESOURCE_TYPE.
-    SHADER_RESOURCE_TYPE           ResourceType  DEFAULT_INITIALIZER(SHADER_RESOURCE_TYPE_UNKNOWN);
+    SHADER_RESOURCE_TYPE           ResourceType = SHADER_RESOURCE_TYPE.SHADER_RESOURCE_TYPE_UNKNOWN;
 
     /// Resource variable type, see Diligent::SHADER_RESOURCE_VARIABLE_TYPE.
-    SHADER_RESOURCE_VARIABLE_TYPE  VarType       DEFAULT_INITIALIZER(SHADER_RESOURCE_VARIABLE_TYPE_MUTABLE);
+    SHADER_RESOURCE_VARIABLE_TYPE  VarType      = SHADER_RESOURCE_VARIABLE_TYPE.SHADER_RESOURCE_VARIABLE_TYPE_MUTABLE;
     
     /// Special resource flags, see Diligent::PIPELINE_RESOURCE_FLAGS.
-    PIPELINE_RESOURCE_FLAGS        Flags         DEFAULT_INITIALIZER(PIPELINE_RESOURCE_FLAG_NONE);
-
-#if DILIGENT_CPP_INTERFACE
-    PipelineResourceDesc()noexcept{}
-
-    PipelineResourceDesc(SHADER_TYPE                   _ShaderStages,
-                         const char*                   _Name,
-                         Uint32                        _ArraySize,
-                         SHADER_RESOURCE_TYPE          _ResourceType,
-                         SHADER_RESOURCE_VARIABLE_TYPE _VarType = SHADER_RESOURCE_VARIABLE_TYPE_MUTABLE,
-                         PIPELINE_RESOURCE_FLAGS       _Flags   = PIPELINE_RESOURCE_FLAG_NONE)noexcept : 
-        Name        {_Name        },
-        ShaderStages{_ShaderStages},
-        ArraySize   {_ArraySize   },
-        ResourceType{_ResourceType},
-        VarType     {_VarType     },
-        Flags       {_Flags       }
-    {}
-#endif
+    PIPELINE_RESOURCE_FLAGS        Flags        = PIPELINE_RESOURCE_FLAGS.PIPELINE_RESOURCE_FLAG_NONE;
 };
-typedef struct PipelineResourceDesc PipelineResourceDesc;
 
 /// Pipeline resource signature description.
-struct PipelineResourceSignatureDesc DILIGENT_DERIVE(DeviceObjectAttribs)
+struct PipelineResourceSignatureDesc
+{
+    DeviceObjectAttribs _DeviceObjectAttribs;
 
     /// A pointer to an array of resource descriptions. See Diligent::PipelineResourceDesc.
-    const PipelineResourceDesc*  Resources  DEFAULT_INITIALIZER(nullptr);
+    const(PipelineResourceDesc)*  Resources  = null;
     
     /// The number of resources in Resources array.
-    Uint32  NumResources  DEFAULT_INITIALIZER(0);
+    uint  NumResources  = 0;
     
     /// A pointer to an array of immutable samplers. See Diligent::ImmutableSamplerDesc.
-    const ImmutableSamplerDesc*  ImmutableSamplers  DEFAULT_INITIALIZER(nullptr);
+    const(ImmutableSamplerDesc)*  ImmutableSamplers  = null;
     
     /// The number of immutable samplers in ImmutableSamplers array.
-    Uint32  NumImmutableSamplers  DEFAULT_INITIALIZER(0);
+    uint  NumImmutableSamplers  = 0;
     
     /// Binding index that this resource signature uses.
 
@@ -181,7 +151,7 @@ struct PipelineResourceSignatureDesc DILIGENT_DERIVE(DeviceObjectAttribs)
     /// The total number of slots is given by MAX_RESOURCE_SIGNATURES constant.
     /// All resource signatures used by a pipeline state must be assigned
     /// to different slots.
-    Uint8  BindingIndex DEFAULT_INITIALIZER(0);
+    ubyte  BindingIndex = 0;
     
     /// If set to true, textures will be combined with texture samplers.
     /// The CombinedSamplerSuffix member defines the suffix added to the texture variable
@@ -189,42 +159,29 @@ struct PipelineResourceSignatureDesc DILIGENT_DERIVE(DeviceObjectAttribs)
     /// the sampler assigned to the shader resource view is automatically set when
     /// the view is bound. Otherwise samplers need to be explicitly set similar to other
     /// shader variables.
-    bool UseCombinedTextureSamplers DEFAULT_INITIALIZER(false);
+    bool UseCombinedTextureSamplers = false;
 
     /// If UseCombinedTextureSamplers is true, defines the suffix added to the
     /// texture variable name to get corresponding sampler name.  For example,
     /// for default value "_sampler", a texture named "tex" will be combined
     /// with sampler named "tex_sampler".
     /// If UseCombinedTextureSamplers is false, this member is ignored.
-    const Char* CombinedSamplerSuffix DEFAULT_INITIALIZER("_sampler");
+    const(char)* CombinedSamplerSuffix = "_sampler";
 
     /// Shader resource binding allocation granularity
 
     /// This member defines the allocation granularity for internal resources required by
     /// the shader resource binding object instances.
-    Uint32 SRBAllocationGranularity DEFAULT_INITIALIZER(1);
-};
-typedef struct PipelineResourceSignatureDesc PipelineResourceSignatureDesc;
+    uint SRBAllocationGranularity = 1;
+}
 
 // {DCE499A5-F812-4C93-B108-D684A0B56118}
 static const INTERFACE_ID IID_PipelineResourceSignature = 
-    {0xdce499a5, 0xf812, 0x4c93, {0xb1, 0x8, 0xd6, 0x84, 0xa0, 0xb5, 0x61, 0x18}};
-
-#define DILIGENT_INTERFACE_NAME IPipelineResourceSignature
-#include "../../../Primitives/interface/DefineInterfaceHelperMacros.h"
-
-#define IPipelineResourceSignatureInclusiveMethods \
-    IDeviceObjectInclusiveMethods;     \
-    IPipelineResourceSignatureMethods PipelineResourceSignature
+    INTERFACE_ID(0xdce499a5, 0xf812, 0x4c93, [0xb1, 0x8, 0xd6, 0x84, 0xa0, 0xb5, 0x61, 0x18]);
 
 /// Pipeline resource signature interface
-DILIGENT_BEGIN_INTERFACE(IPipelineResourceSignature, IDeviceObject)
+struct IPipelineResourceSignatureMethods
 {
-#if DILIGENT_CPP_INTERFACE
-    /// Returns the pipeline resource signature description, see Diligent::PipelineResourceSignatureDesc.
-    virtual const PipelineResourceSignatureDesc&GetDesc() const override = 0;
-#endif
-    
     /// Creates a shader resource binding object
 
     /// \param [out] ppShaderResourceBinding - Memory location where pointer to the new shader resource
@@ -232,9 +189,9 @@ DILIGENT_BEGIN_INTERFACE(IPipelineResourceSignature, IDeviceObject)
     /// \param [in] InitStaticResources      - If set to true, the method will initialize static resources in
     ///                                        the created object, which has the exact same effect as calling 
     ///                                        IPipelineResourceSignature::InitializeStaticSRBResources().
-    VIRTUAL voidCreateShaderResourceBinding(THIS_
+    void* CreateShaderResourceBinding(IPipelineResourceSignature*,
                                                      IShaderResourceBinding** ppShaderResourceBinding,
-                                                     bool                     InitStaticResources DEFAULT_VALUE(false)) PURE;
+                                                     bool                     InitStaticResources = false);
     
 
     /// Binds static resources for the specified shader stages in the pipeline resource signature.
@@ -243,10 +200,10 @@ DILIGENT_BEGIN_INTERFACE(IPipelineResourceSignature, IDeviceObject)
     ///                                Any combination of Diligent::SHADER_TYPE may be used.
     /// \param [in] pResourceMapping - Pointer to the resource mapping interface.
     /// \param [in] Flags            - Additional flags. See Diligent::BIND_SHADER_RESOURCES_FLAGS.
-    VIRTUAL voidBindStaticResources(THIS_
+    void* BindStaticResources(IPipelineResourceSignature*,
                                              SHADER_TYPE                 ShaderStages,
                                              IResourceMapping*           pResourceMapping,
-                                             BIND_SHADER_RESOURCES_FLAGS Flags) PURE;
+                                             BIND_SHADER_RESOURCES_FLAGS Flags);
 
     /// Returns static shader resource variable. If the variable is not found,
     /// returns nullptr.
@@ -268,9 +225,9 @@ DILIGENT_BEGIN_INTERFACE(IPipelineResourceSignature, IDeviceObject)
     ///             The method does not increment the reference counter of the 
     ///             returned interface, and the application must *not* call Release()
     ///             unless it explicitly called AddRef().
-    VIRTUAL IShaderResourceVariable*GetStaticVariableByName(THIS_
+    IShaderResourceVariable** GetStaticVariableByName(IPipelineResourceSignature*,
                                                                      SHADER_TYPE ShaderType,
-                                                                     const Char* Name) PURE;
+                                                                     const(char)* Name);
     
 
     /// Returns static shader resource variable by its index.
@@ -295,9 +252,9 @@ DILIGENT_BEGIN_INTERFACE(IPipelineResourceSignature, IDeviceObject)
     ///             The method does not increment the reference counter of the 
     ///             returned interface, and the application must *not* call Release()
     ///             unless it explicitly called AddRef().
-    VIRTUAL IShaderResourceVariable*GetStaticVariableByIndex(THIS_
+    IShaderResourceVariable** GetStaticVariableByIndex(IPipelineResourceSignature*,
                                                                       SHADER_TYPE ShaderType,
-                                                                      Uint32      Index) PURE;
+                                                                      uint      Index);
     
 
     /// Returns the number of static shader resource variables.
@@ -306,8 +263,7 @@ DILIGENT_BEGIN_INTERFACE(IPipelineResourceSignature, IDeviceObject)
     ///
     /// \remarks   Only static variables (that can be accessed directly through the PSO) are counted.
     ///            Mutable and dynamic variables are accessed through Shader Resource Binding object.
-    VIRTUAL Uint32GetStaticVariableCount(THIS_
-                                                  SHADER_TYPE ShaderType) CONST PURE;
+    uint* GetStaticVariableCount(IPipelineResourceSignature*, SHADER_TYPE ShaderType);
     
     /// Initializes static resources in the shader binding object.
 
@@ -322,33 +278,61 @@ DILIGENT_BEGIN_INTERFACE(IPipelineResourceSignature, IDeviceObject)
     ///
     /// \note   If static resources have already been initialized in the SRB and the method
     ///         is called again, it will have no effect and a warning message will be displayed.
-    VIRTUAL voidInitializeStaticSRBResources(THIS_
-                                                      struct IShaderResourceBinding* pShaderResourceBinding) CONST PURE;
+    void* InitializeStaticSRBResources(IPipelineResourceSignature*, IShaderResourceBinding* pShaderResourceBinding);
 
     /// Returns true if the signature is compatible with another one.
 
     /// \remarks    Two signatures are compatible if they contain identical resources, defined in the samer order
     ///             disregarding their names.
-    VIRTUAL boolIsCompatibleWith(THIS_
-                                          const struct IPipelineResourceSignature* pPRS) CONST PURE;
-};
-DILIGENT_END_INTERFACE
+    bool* IsCompatibleWith(IPipelineResourceSignature*, const(IPipelineResourceSignature)* pPRS);
+}
 
-#include "../../../Primitives/interface/UndefInterfaceHelperMacros.h"
+struct IPipelineResourceSignatureVtbl { IPipelineResourceSignatureMethods PipelineResourceSignature; }
+struct IPipelineResourceSignature { IPipelineResourceSignatureVtbl* pVtbl; }
 
-#if DILIGENT_C_INTERFACE
+PipelineResourceSignatureDesc* IPipelineResourceSignature_GetDesc(IPipelineResourceSignature* object) {
+    cast(const(PipelineResourceSignatureDesc)*)IDeviceObject_GetDesc(object);
+}
 
-#    define IPipelineResourceSignature_GetDesc(This) (const struct PipelineResourceSignatureDesc*)IDeviceObject_GetDesc(This)
+//#    define IPipelineResourceSignature_CreateShaderResourceBinding(This, ...)  CALL_IFACE_METHOD(PipelineResourceSignature, CreateShaderResourceBinding, This, __VA_ARGS__)
+//#    define IPipelineResourceSignature_BindStaticResources(This, ...)          CALL_IFACE_METHOD(PipelineResourceSignature, BindStaticResources,         This, __VA_ARGS__)
+//#    define IPipelineResourceSignature_GetStaticVariableByName(This, ...)      CALL_IFACE_METHOD(PipelineResourceSignature, GetStaticVariableByName,     This, __VA_ARGS__)
+//#    define IPipelineResourceSignature_GetStaticVariableByIndex(This, ...)     CALL_IFACE_METHOD(PipelineResourceSignature, GetStaticVariableByIndex,    This, __VA_ARGS__)
+//#    define IPipelineResourceSignature_GetStaticVariableCount(This, ...)       CALL_IFACE_METHOD(PipelineResourceSignature, GetStaticVariableCount,      This, __VA_ARGS__)
+//#    define IPipelineResourceSignature_InitializeStaticSRBResources(This, ...) CALL_IFACE_METHOD(PipelineResourceSignature, InitializeStaticSRBResources,This, __VA_ARGS__)
+//#    define IPipelineResourceSignature_IsCompatibleWith(This, ...)             CALL_IFACE_METHOD(PipelineResourceSignature, IsCompatibleWith,            This, __VA_ARGS__)
 
-#    define IPipelineResourceSignature_CreateShaderResourceBinding(This, ...)  CALL_IFACE_METHOD(PipelineResourceSignature, CreateShaderResourceBinding, This, __VA_ARGS__)
-#    define IPipelineResourceSignature_BindStaticResources(This, ...)          CALL_IFACE_METHOD(PipelineResourceSignature, BindStaticResources,         This, __VA_ARGS__)
-#    define IPipelineResourceSignature_GetStaticVariableByName(This, ...)      CALL_IFACE_METHOD(PipelineResourceSignature, GetStaticVariableByName,     This, __VA_ARGS__)
-#    define IPipelineResourceSignature_GetStaticVariableByIndex(This, ...)     CALL_IFACE_METHOD(PipelineResourceSignature, GetStaticVariableByIndex,    This, __VA_ARGS__)
-#    define IPipelineResourceSignature_GetStaticVariableCount(This, ...)       CALL_IFACE_METHOD(PipelineResourceSignature, GetStaticVariableCount,      This, __VA_ARGS__)
-#    define IPipelineResourceSignature_InitializeStaticSRBResources(This, ...) CALL_IFACE_METHOD(PipelineResourceSignature, InitializeStaticSRBResources,This, __VA_ARGS__)
-#    define IPipelineResourceSignature_IsCompatibleWith(This, ...)             CALL_IFACE_METHOD(PipelineResourceSignature, IsCompatibleWith,            This, __VA_ARGS__)
+void* IPipelineResourceSignature_CreateShaderResourceBinding(IPipelineResourceSignature* signature, IShaderResourceBinding** ppShaderResourceBinding, bool initStaticResources = false) {
+    return signature.pVtbl.PipelineResourceSignature.CreateShaderResourceBinding(signature, ppShaderResourceBinding, initStaticResources);
+}
 
-#endif
+void* IPipelineResourceSignature_BindStaticResources(IPipelineResourceSignature* signature,
+                                             SHADER_TYPE                 shaderStages,
+                                             IResourceMapping*           pResourceMapping,
+                                             BIND_SHADER_RESOURCES_FLAGS flags) {
+    return signature.pVtbl.PipelineResourceSignature.BindStaticResources(signature,ShaderStages, pResourceMapping, flags);
+}
 
-DILIGENT_END_NAMESPACE
+IShaderResourceVariable** IPipelineResourceSignature_GetStaticVariableByName(IPipelineResourceSignature* signature,
+                                                                     SHADER_TYPE shaderType,
+                                                                     const(char)* name) {
+    return signature.pVtbl.PipelineResourceSignature.GetStaticVariableByName(signature, shaderType, name);
+}
 
+IShaderResourceVariable** IPipelineResourceSignature_GetStaticVariableByIndex(IPipelineResourceSignature* signature,
+                                                                      SHADER_TYPE shaderType,
+                                                                      uint      index) {
+    return signature.pVtbl.PipelineResourceSignature.GetStaticVariableByIndex(signature, shaderType, index);
+}
+
+uint* IPipelineResourceSignature_GetStaticVariableCount(IPipelineResourceSignature* signature, SHADER_TYPE shaderType) {
+    return signature.pVtbl.PipelineResourceSignature.GetStaticVariableCount(signature, shaderType);
+}
+
+void* IPipelineResourceSignature_InitializeStaticSRBResources(IPipelineResourceSignature* signature, IShaderResourceBinding* pShaderResourceBinding) {
+    return signature.pVtbl.PipelineResourceSignature.InitializeStaticSRBResources(signature, pShaderResourceBinding);
+}
+
+bool* IPipelineResourceSignature_IsCompatibleWith(IPipelineResourceSignature* signature, const(IPipelineResourceSignature)* pPRS) {
+    return signature.pVtbl.PipelineResourceSignature.IsCompatibleWith(signature, pPRS);
+}

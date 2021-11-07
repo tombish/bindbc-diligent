@@ -36,42 +36,24 @@ module bindbc.diligent.graphics.engine.resourcemapping;
 /// \file
 /// Definition of the Diligent::IResourceMapping interface and related data structures
 
-#include "DeviceObject.h"
+import bindbc.diligent.graphics.deviceobject;
 
 // {6C1AC7A6-B429-4139-9433-9E54E93E384A}
 static const INTERFACE_ID IID_ResourceMapping =
-    {0x6c1ac7a6, 0xb429, 0x4139, {0x94, 0x33, 0x9e, 0x54, 0xe9, 0x3e, 0x38, 0x4a}};
+    INTERFACE_ID(0x6c1ac7a6, 0xb429, 0x4139, [0x94, 0x33, 0x9e, 0x54, 0xe9, 0x3e, 0x38, 0x4a]);
 
 /// Describes the resourse mapping object entry
 struct ResourceMappingEntry
-{
-    
-
+{ 
     /// Object name
-    const Char* Name        DEFAULT_INITIALIZER(nullptr);
+    const(char)* Name = null;
 
     /// Pointer to the object's interface
-    IDeviceObject* pObject  DEFAULT_INITIALIZER(nullptr);
+    IDeviceObject* pObject = null;
 
-    Uint32 ArrayIndex       DEFAULT_INITIALIZER(0);
+    uint ArrayIndex = 0;
+}
 
-#if DILIGENT_CPP_INTERFACE
-    ResourceMappingEntry() noexcept {}
-
-    /// Initializes the structure members
-
-    /// \param [in] _Name       - Object name.
-    /// \param [in] _pObject    - Pointer to the object.
-    /// \param [in] _ArrayIndex - For array resources, index in the array
-    ResourceMappingEntry (const Char* _Name, IDeviceObject* _pObject, Uint32 _ArrayIndex = 0)noexcept : 
-        Name      { _Name     }, 
-        pObject   { _pObject  },
-        ArrayIndex{_ArrayIndex}
-    {}
-    
-#endif
-};
-typedef struct ResourceMappingEntry ResourceMappingEntry;
 
 /// Resource mapping description
 struct ResourceMappingDesc
@@ -79,32 +61,15 @@ struct ResourceMappingDesc
     /// Pointer to the array of resource mapping entries.
     /// The last element in the array must be default value
     /// created by ResourceMappingEntry::ResourceMappingEntry()
-    ResourceMappingEntry* pEntries DEFAULT_INITIALIZER(nullptr);
-
-#if DILIGENT_CPP_INTERFACE
-    ResourceMappingDesc() noexcept
-    {}
-
-    explicit ResourceMappingDesc(ResourceMappingEntry* _pEntries) noexcept :
-        pEntries{_pEntries}
-    {}
-#endif
-};
-typedef struct ResourceMappingDesc ResourceMappingDesc;
-
-#define DILIGENT_INTERFACE_NAME IResourceMapping
-#include "../../../Primitives/interface/DefineInterfaceHelperMacros.h"
-
-#define IResourceMappingInclusiveMethods \
-    IObjectInclusiveMethods;             \
-    IResourceMappingMethods ResourceMapping
+    ResourceMappingEntry* pEntries = null;
+}
 
 /// Resource mapping
 
 /// This interface provides mapping between literal names and resource pointers.
 /// It is created by IRenderDevice::CreateResourceMapping().
 /// \remarks Resource mapping holds strong references to all objects it keeps.
-DILIGENT_BEGIN_INTERFACE(IResourceMapping, IObject)
+struct IResourceMappingMethods
 {
     /// Adds a resource to the mapping.
 
@@ -116,10 +81,10 @@ DILIGENT_BEGIN_INTERFACE(IResourceMapping, IObject)
     ///
     /// \remarks Resource mapping increases the reference counter for referenced objects. So an
     ///          object will not be released as long as it is in the resource mapping.
-    VIRTUAL voidAddResource(THIS_
-                                     const Char*    Name,
+    void* AddResource(IResourceMapping*,
+                                     const(char)*   Name,
                                      IDeviceObject* pObject,
-                                     bool           bIsUnique) PURE;
+                                     bool           bIsUnique);
 
     /// Adds resource array to the mapping.
 
@@ -133,20 +98,18 @@ DILIGENT_BEGIN_INTERFACE(IResourceMapping, IObject)
     ///
     /// \remarks Resource mapping increases the reference counter for referenced objects. So an
     ///          object will not be released as long as it is in the resource mapping.
-    VIRTUAL voidAddResourceArray(THIS_
-                                          const Char*           Name,
-                                          Uint32                StartIndex,
-                                          IDeviceObject* const* ppObjects,
-                                          Uint32                NumElements,
-                                          bool                  bIsUnique) PURE;
+    void* AddResourceArray(IResourceMapping*,
+                                          const(char)*           Name,
+                                          uint                   StartIndex,
+                                          const(IDeviceObject)** ppObjects,
+                                          uint                   NumElements,
+                                          bool                   bIsUnique);
 
     /// Removes a resource from the mapping using its literal name.
 
     /// \param [in] Name - Name of the resource to remove.
     /// \param [in] ArrayIndex - For array resources, index in the array
-    VIRTUAL voidRemoveResourceByName(THIS_
-                                              const Char* Name,
-                                              Uint32      ArrayIndex DEFAULT_VALUE(0)) PURE;
+    void* RemoveResourceByName(IResourceMapping*, const(char)* Name, uint ArrayIndex = 0);
 
     /// Finds a resource in the mapping.
 
@@ -159,25 +122,39 @@ DILIGENT_BEGIN_INTERFACE(IResourceMapping, IObject)
     ///          of the returned object, so Release() must not be called.
     ///          The pointer is guaranteed to be valid until the object is removed
     ///          from the resource mapping, or the mapping is destroyed.
-    VIRTUAL IDeviceObject*GetResource(THIS_
-                                               const Char* Name,
-                                               Uint32      ArrayIndex DEFAULT_VALUE(0)) PURE;
+    IDeviceObject** GetResource(IResourceMapping*, const(char)* Name, uint ArrayIndex = 0);
 
     /// Returns the size of the resource mapping, i.e. the number of objects.
-    VIRTUAL size_tGetSize(THIS) PURE;
-};
-DILIGENT_END_INTERFACE
+    size_t* GetSize(IResourceMapping*);
+}
 
-#include "../../../Primitives/interface/UndefInterfaceHelperMacros.h"
+struct IResourceMappingVtbl { IResourceMappingMethods ResourceMapping; }
+struct IResourceMapping { IResourceMappingVtbl* pVtbl; }
 
-#if DILIGENT_C_INTERFACE
+void* IResourceMapping_AddResource(IResourceMapping* resMapping,
+                                     const(char)*   name,
+                                     IDeviceObject* pObject,
+                                     bool           isUnique) {
+    return resMapping.pVtbl.ResourceMapping.AddResource(resMapping, name, pObject, isUnique);
+}
 
-#    define IResourceMapping_AddResource(This, ...)          CALL_IFACE_METHOD(ResourceMapping, AddResource,          This, __VA_ARGS__)
-#    define IResourceMapping_AddResourceArray(This, ...)     CALL_IFACE_METHOD(ResourceMapping, AddResourceArray,     This, __VA_ARGS__)
-#    define IResourceMapping_RemoveResourceByName(This, ...) CALL_IFACE_METHOD(ResourceMapping, RemoveResourceByName, This, __VA_ARGS__)
-#    define IResourceMapping_GetResource(This, ...)          CALL_IFACE_METHOD(ResourceMapping, GetResource,          This, __VA_ARGS__)
-#    define IResourceMapping_GetSize(This)                   CALL_IFACE_METHOD(ResourceMapping, GetSize,              This)
+void* IResourceMapping_AddResourceArray(IResourceMapping* resMapping,
+                                          const(char)*           name,
+                                          uint                   startIndex,
+                                          const(IDeviceObject)** ppObjects,
+                                          uint                   numElements,
+                                          bool                   bIsUnique) {
+    return resMapping.pVtbl.ResourceMapping.AddResourceArray(resMapping, name, startIndex, ppObjects, numElements, bIsUnique);
+}
 
-#endif
+void* IResourceMapping_RemoveResourceByName(IResourceMapping* resMapping, const(char)* name, uint arrayIndex = 0) {
+    return resMapping.pVtbl.ResourceMapping.RemoveResourceByName(resMapping, name, arrayIndex);
+}
 
+IDeviceObject** IResourceMapping_GetResource(IResourceMapping* resMapping, const(char)* name, uint arrayIndex = 0) {
+    return resMapping.pVtbl.ResourceMapping.GetResource(resMapping, name, arrayIndex);
+}
 
+size_t* IResourceMapping_GetSize(IResourceMapping* resMapping) {
+    return resMapping.pVtbl.ResourceMapping.GetSize(resMapping);
+}

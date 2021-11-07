@@ -33,33 +33,22 @@ module bindbc.diligent.graphics.metal.fencemtl;
 /// \file
 /// Definition of the Diligent::IFenceMtl interface
 
-#include "../../GraphicsEngine/interface/Fence.h"
+import bindbc.diligent.graphics.fence;
 
 // {54FE9F8F-FBBF-4ABB-8280-D980982DA364}
 static const INTERFACE_ID IID_FenceMtl =
-    {0x54fe9f8f, 0xfbbf, 0x4abb, {0x82, 0x80, 0xd9, 0x80, 0x98, 0x2d, 0xa3, 0x64}};
-
-#define DILIGENT_INTERFACE_NAME IFenceMtl
-#include "../../../Primitives/interface/DefineInterfaceHelperMacros.h"
-
-#define IFenceMtlInclusiveMethods \
-    IFenceInclusiveMethods;       \
-    IFenceMtlMethods FenceMtl
+    INTERFACE_ID(0x54fe9f8f, 0xfbbf, 0x4abb, [0x82, 0x80, 0xd9, 0x80, 0x98, 0x2d, 0xa3, 0x64]);
 
 /// Exposes Metal-specific functionality of a fence object.
-DILIGENT_BEGIN_INTERFACE(IFenceMtl, IFence)
+struct IFenceMtlMethods
 {
     /// Returns a pointer to Metal shared event (MTLSharedEvent)
-    VIRTUAL id<MTLSharedEvent>GetMtlSharedEvent(THIS) CONST API_AVAILABLE(ios(12), macosx(10.14), tvos(12.0)) PURE;
-};
-DILIGENT_END_INTERFACE
+    MTLSharedEvent** GetMtlSharedEvent(IFenceMtl*);
+}
 
-#include "../../../Primitives/interface/UndefInterfaceHelperMacros.h"
+struct IFenceMtlVtbl { IFenceMtlMethods FenceMtl; }
+struct IFenceMtl { IFenceMtlVtbl* pVtbl; }
 
-#if DILIGENT_C_INTERFACE
-
-#    define IFenceMtl_GetMtlSharedEvent(This)    CALL_IFACE_METHOD(FenceMtl, GetMtlSharedEvent, This)
-
-#endif
-
-
+MTLSharedEvent** IFenceMtl_GetMtlSharedEvent(IFenceMtl* fence) {
+    return fence.pVtbl.FenceMtl.GetMtlSharedEvent(fence);
+}

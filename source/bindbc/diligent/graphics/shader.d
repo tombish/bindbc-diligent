@@ -41,7 +41,7 @@ import bindbc.diligent.graphics.deviceobject;
 
 // {2989B45C-143D-4886-B89C-C3271C2DCC5D}
 static const INTERFACE_ID IID_Shader =
-    {0x2989b45c, 0x143d, 0x4886, {0xb8, 0x9c, 0xc3, 0x27, 0x1c, 0x2d, 0xcc, 0x5d}};
+    INTERFACE_ID(0x2989b45c, 0x143d, 0x4886, [0xb8, 0x9c, 0xc3, 0x27, 0x1c, 0x2d, 0xcc, 0x5d]);
 
 alias ShaderVersion = Version;
 
@@ -112,7 +112,7 @@ enum CREATE_SHADER_SOURCE_INPUT_STREAM_FLAGS : int
 /// Shader description
 struct ShaderDesc
 {
-    struct _DeviceObjectAttribs;
+    DeviceObjectAttribs _DeviceObjectAttribs;
 
     /// Shader type. See Diligent::SHADER_TYPE.
     SHADER_TYPE ShaderType = SHADER_TYPE.SHADER_TYPE_UNKNOWN;
@@ -120,64 +120,49 @@ struct ShaderDesc
 
 // {3EA98781-082F-4413-8C30-B9BA6D82DBB7}
 static const INTERFACE_ID IID_IShaderSourceInputStreamFactory =
-    {0x3ea98781, 0x82f, 0x4413, {0x8c, 0x30, 0xb9, 0xba, 0x6d, 0x82, 0xdb, 0xb7}};
+    INTERFACE_ID(0x3ea98781, 0x82f, 0x4413, [0x8c, 0x30, 0xb9, 0xba, 0x6d, 0x82, 0xdb, 0xb7]);
 
-
-#define DILIGENT_INTERFACE_NAME IShaderSourceInputStreamFactory
-#include "../../../Primitives/interface/DefineInterfaceHelperMacros.h"
-
-#define IShaderSourceInputStreamFactoryInclusiveMethods \
-    IObjectInclusiveMethods;                            \
-    IShaderSourceInputStreamFactoryMethods ShaderSourceInputStreamFactory
 
 /// Shader source stream factory interface
-DILIGENT_BEGIN_INTERFACE(IShaderSourceInputStreamFactory, IObject)
+struct IShaderSourceInputStreamFactoryMethods
 {
-    VIRTUAL void METHOD(CreateInputStream)(THIS_
-                                           const Char*   Name,
-                                           IFileStream** ppStream) PURE;
+    void* CreateInputStream(IShaderSourceInputStreamFactory*,
+                                           const(char)* Name,
+                                           IFileStream** ppStream);
 
-    VIRTUAL void METHOD(CreateInputStream2)(THIS_
-                                            const Char*                             Name,
+    void* CreateInputStream2(IShaderSourceInputStreamFactory*,
+                                            const(char)*                            Name,
                                             CREATE_SHADER_SOURCE_INPUT_STREAM_FLAGS Flags,
-                                            IFileStream**                           ppStream) PURE;
-};
-DILIGENT_END_INTERFACE
+                                            IFileStream**                           ppStream);
+}
 
-#include "../../../Primitives/interface/UndefInterfaceHelperMacros.h"
+struct IShaderSourceInputStreamFactoryVtbl { IShaderSourceInputStreamFactoryMethods ShaderSourceInputStreamFactory; }
+struct IShaderSourceInputStreamFactory { IShaderSourceInputStreamFactoryVtbl* pVtbl; }
 
-#if DILIGENT_C_INTERFACE
+//#    define IShaderSourceInputStreamFactory_CreateInputStream(This, ...)  CALL_IFACE_METHOD(ShaderSourceInputStreamFactory, CreateInputStream, This, __VA_ARGS__)
+//#    define IShaderSourceInputStreamFactory_CreateInputStream2(This, ...) CALL_IFACE_METHOD(ShaderSourceInputStreamFactory, CreateInputStream2, This, __VA_ARGS__)
+void* IShaderSourceInputStreamFactory_CreateInputStream(ShaderSourceInputStreamFactory* factory,
+                                           const(char)* name,
+                                           IFileStream** ppStream) {
+    factory.pVtbl.CreateInputStream(factory, name, ppStream);
+}
 
-// clang-format on
-
-#    define IShaderSourceInputStreamFactory_CreateInputStream(This, ...)  CALL_IFACE_METHOD(ShaderSourceInputStreamFactory, CreateInputStream, This, __VA_ARGS__)
-#    define IShaderSourceInputStreamFactory_CreateInputStream2(This, ...) CALL_IFACE_METHOD(ShaderSourceInputStreamFactory, CreateInputStream2, This, __VA_ARGS__)
-
-#endif
+void* IShaderSourceInputStreamFactory_CreateInputStream2(IShaderSourceInputStreamFactory* factory,
+                                            const(char)*                            name,
+                                            CREATE_SHADER_SOURCE_INPUT_STREAM_FLAGS flags,
+                                            IFileStream**                           ppStream) {
+    factory.pVtbl.CreateInputStream(factory, name, flags, ppStream);
+}
 
 
 struct ShaderMacro
 {
-    const Char* Name       DEFAULT_INITIALIZER(nullptr);
-    const Char* Definition DEFAULT_INITIALIZER(nullptr);
-
-#if DILIGENT_CPP_INTERFACE
-    ShaderMacro() noexcept
-    {}
-    ShaderMacro(const Char* _Name,
-                const Char* _Def) noexcept :
-        Name{_Name},
-        Definition{_Def}
-    {}
-#endif
-};
-typedef struct ShaderMacro ShaderMacro;
-
-
-// clang-format off
+    const(char)* Name = null;
+    const(char)* Definition = null;
+}
 
 /// Shader compilation flags
-DILIGENT_TYPED_ENUM(SHADER_COMPILE_FLAGS, Uint32)
+enum SHADER_COMPILE_FLAGS : uint
 {
     /// No flags.
     SHADER_COMPILE_FLAG_NONE = 0x0,
@@ -186,11 +171,7 @@ DILIGENT_TYPED_ENUM(SHADER_COMPILE_FLAGS, Uint32)
     SHADER_COMPILE_FLAG_ENABLE_UNBOUNDED_ARRAYS = 0x01,
 
     SHADER_COMPILE_FLAG_LAST = SHADER_COMPILE_FLAG_ENABLE_UNBOUNDED_ARRAYS
-};
-DEFINE_FLAG_ENUM_OPERATORS(SHADER_COMPILE_FLAGS);
-
-// clang-format on
-
+}
 
 /// Shader creation attributes
 struct ShaderCreateInfo
@@ -198,13 +179,13 @@ struct ShaderCreateInfo
     /// Source file path
 
     /// If source file path is provided, Source and ByteCode members must be null
-    const Char* FilePath DEFAULT_INITIALIZER(nullptr);
+    const(char)* FilePath = null;
 
     /// Pointer to the shader source input stream factory.
 
     /// The factory is used to load the shader source file if FilePath is not null.
     /// It is also used to create additional input streams for shader include files
-    IShaderSourceInputStreamFactory* pShaderSourceStreamFactory DEFAULT_INITIALIZER(nullptr);
+    IShaderSourceInputStreamFactory* pShaderSourceStreamFactory = null;
 
     /// HLSL->GLSL conversion stream
 
@@ -217,12 +198,12 @@ struct ShaderCreateInfo
     /// the first time and will use it in all subsequent times.
     /// For all subsequent conversions, FilePath member must be the same, or
     /// new stream will be created and warning message will be displayed.
-    struct IHLSL2GLSLConversionStream** ppConversionStream DEFAULT_INITIALIZER(nullptr);
+    IHLSL2GLSLConversionStream** ppConversionStream = null;;
 
     /// Shader source
 
     /// If shader source is provided, FilePath and ByteCode members must be null
-    const Char* Source DEFAULT_INITIALIZER(nullptr);
+    const(char)* Source = null;
 
     /// Compiled shader bytecode.
 
@@ -233,22 +214,22 @@ struct ShaderCreateInfo
     ///        The bytecode must contain reflection information. If shaders were compiled
     ///        using fxc, make sure that /Qstrip_reflect option is *not* specified.
     ///        HLSL shaders need to be compiled against 4.0 profile or higher.
-    const void* ByteCode DEFAULT_INITIALIZER(nullptr);
+    const(void)* ByteCode = null;
 
     /// Size of the compiled shader bytecode
 
     /// Byte code size (in bytes) must be provided if ByteCode is not null
-    size_t ByteCodeSize DEFAULT_INITIALIZER(0);
+    size_t ByteCodeSize = 0;
 
     /// Shader entry point
 
     /// This member is ignored if ByteCode is not null
-    const Char* EntryPoint DEFAULT_INITIALIZER("main");
+    const(char)* EntryPoint = "main";
 
     /// Shader macros
 
     /// This member is ignored if ByteCode is not null
-    const ShaderMacro* Macros DEFAULT_INITIALIZER(nullptr);
+    const ShaderMacro* Macros = null;
 
     /// If set to true, textures will be combined with texture samplers.
     /// The CombinedSamplerSuffix member defines the suffix added to the texture variable
@@ -257,7 +238,7 @@ struct ShaderCreateInfo
     /// the view is bound. Otherwise samplers need to be explicitly set similar to other
     /// shader variables.
     /// This member has no effect if the shader is used in the PSO that uses pipeline resource signature(s).
-    bool UseCombinedTextureSamplers DEFAULT_INITIALIZER(false);
+    bool UseCombinedTextureSamplers = false;
 
     /// If UseCombinedTextureSamplers is true, defines the suffix added to the
     /// texture variable name to get corresponding sampler name.  For example,
@@ -265,16 +246,16 @@ struct ShaderCreateInfo
     /// with sampler named "tex_sampler".
     /// If UseCombinedTextureSamplers is false, this member is ignored.
     /// This member has no effect if the shader is used in the PSO that uses pipeline resource signature(s).
-    const Char* CombinedSamplerSuffix DEFAULT_INITIALIZER("_sampler");
+    const(char)* CombinedSamplerSuffix = "_sampler";
 
     /// Shader description. See Diligent::ShaderDesc.
     ShaderDesc Desc;
 
     /// Shader source language. See Diligent::SHADER_SOURCE_LANGUAGE.
-    SHADER_SOURCE_LANGUAGE SourceLanguage DEFAULT_INITIALIZER(SHADER_SOURCE_LANGUAGE_DEFAULT);
+    SHADER_SOURCE_LANGUAGE SourceLanguage = SHADER_SOURCE_LANGUAGE.SHADER_SOURCE_LANGUAGE_DEFAULT;
 
     /// Shader compiler. See Diligent::SHADER_COMPILER.
-    SHADER_COMPILER ShaderCompiler DEFAULT_INITIALIZER(SHADER_COMPILER_DEFAULT);
+    SHADER_COMPILER ShaderCompiler = SHADER_COMPILER.SHADER_COMPILER_DEFAULT;
 
     /// HLSL shader model to use when compiling the shader. When default value
     /// is given (0, 0), the engine will attempt to use the highest HLSL shader model
@@ -282,33 +263,31 @@ struct ShaderCreateInfo
     /// has no effect.
     ///
     /// \note When HLSL source is converted to GLSL, corresponding GLSL/GLESSL version will be used.
-    ShaderVersion HLSLVersion DEFAULT_INITIALIZER({});
+    ShaderVersion HLSLVersion = {};
 
     /// GLSL version to use when creating the shader. When default value
     /// is given (0, 0), the engine will attempt to use the highest GLSL version
     /// supported by the device.
-    ShaderVersion GLSLVersion DEFAULT_INITIALIZER({});
+    ShaderVersion GLSLVersion = {};;
 
     /// GLES shading language version to use when creating the shader. When default value
     /// is given (0, 0), the engine will attempt to use the highest GLESSL version
     /// supported by the device.
-    ShaderVersion GLESSLVersion DEFAULT_INITIALIZER({});
+    ShaderVersion GLESSLVersion = {};
 
     /// Shader compile flags (see Diligent::SHADER_COMPILE_FLAGS).
-    SHADER_COMPILE_FLAGS CompileFlags DEFAULT_INITIALIZER(SHADER_COMPILE_FLAG_NONE);
+    SHADER_COMPILE_FLAGS CompileFlags = SHADER_COMPILE_FLAGS.SHADER_COMPILE_FLAG_NONE;
 
     /// Memory address where pointer to the compiler messages data blob will be written
 
     /// The buffer contains two null-terminated strings. The first one is the compiler
     /// output message. The second one is the full shader source code including definitions added
     /// by the engine. Data blob object must be released by the client.
-    IDataBlob** ppCompilerOutput DEFAULT_INITIALIZER(nullptr);
-};
-typedef struct ShaderCreateInfo ShaderCreateInfo;
+    IDataBlob** ppCompilerOutput = null;
+}
 
-// clang-format off
 /// Describes shader resource type
-DILIGENT_TYPED_ENUM(SHADER_RESOURCE_TYPE, Uint8)
+enum SHADER_RESOURCE_TYPE : ubyte
 {
     /// Shader resource type is unknown
     SHADER_RESOURCE_TYPE_UNKNOWN = 0,
@@ -338,78 +317,42 @@ DILIGENT_TYPED_ENUM(SHADER_RESOURCE_TYPE, Uint8)
     SHADER_RESOURCE_TYPE_ACCEL_STRUCT,
 
     SHADER_RESOURCE_TYPE_LAST = SHADER_RESOURCE_TYPE_ACCEL_STRUCT
-};
-// clang-format on
+}
 
 /// Shader resource description
 struct ShaderResourceDesc
 {
-#if DILIGENT_CPP_INTERFACE
-    ShaderResourceDesc() noexcept
-    {}
-
-    ShaderResourceDesc(const char*          _Name,
-                       SHADER_RESOURCE_TYPE _Type,
-                       Uint32               _ArraySize) noexcept :
-        Name{_Name},
-        Type{_Type},
-        ArraySize{_ArraySize}
-    {}
-#endif
-
-    // clang-format off
     /// Shader resource name
-    const char*          Name      DEFAULT_INITIALIZER(nullptr);
+    const(char)* Name = null;
 
     /// Shader resource type, see Diligent::SHADER_RESOURCE_TYPE.
-    SHADER_RESOURCE_TYPE Type      DEFAULT_INITIALIZER(SHADER_RESOURCE_TYPE_UNKNOWN);
+    SHADER_RESOURCE_TYPE Type = SHADER_RESOURCE_TYPE.SHADER_RESOURCE_TYPE_UNKNOWN;
 
     /// Array size. For non-array resource this value is 1.
-    Uint32               ArraySize DEFAULT_INITIALIZER(0);
-    // clang-format on
-};
-typedef struct ShaderResourceDesc ShaderResourceDesc;
-
-#define DILIGENT_INTERFACE_NAME IShader
-#include "../../../Primitives/interface/DefineInterfaceHelperMacros.h"
-
-#define IShaderInclusiveMethods    \
-    IDeviceObjectInclusiveMethods; \
-    IShaderMethods Shader
-
-// clang-format off
+    uint ArraySize = 0;
+}
 
 /// Shader interface
-DILIGENT_BEGIN_INTERFACE(IShader, IDeviceObject)
+struct IShaderMethods
 {
-#if DILIGENT_CPP_INTERFACE
-    /// Returns the shader description
-    virtual const ShaderDesc& METHOD(GetDesc)() const override = 0;
-#endif
-
     /// Returns the total number of shader resources
-    VIRTUAL Uint32 METHOD(GetResourceCount)(THIS) CONST PURE;
+    uint* GetResourceCount(IShader*);
 
     /// Returns the pointer to the array of shader resources
-    VIRTUAL void METHOD(GetResourceDesc)(THIS_
-                                         Uint32 Index,
-                                         ShaderResourceDesc REF ResourceDesc) CONST PURE;
-};
-DILIGENT_END_INTERFACE
+    void* GetResourceDesc(IShader*, uint Index, ShaderResourceDesc* ResourceDesc);
+}
 
-#include "../../../Primitives/interface/UndefInterfaceHelperMacros.h"
+struct IShaderVtbl { IShaderMethods Shader; }
+struct IShader { IShaderVtbl* pVtbl; }
 
-#if DILIGENT_C_INTERFACE
+ShaderDesc* IShader_GetDesc(IShader* object) {
+    cast(const(ShaderDesc)*)IDeviceObject_GetDesc(object);
+}
 
-// clang-format off
+uint* IShader_GetResourceCount(IShader* shader) {
+    return shader.pVtbl.Shader.GetResourceCount(shader);
+}
 
-#    define IShader_GetDesc(This) (const struct ShaderDesc*)IDeviceObject_GetDesc(This)
-
-#    define IShader_GetResourceCount(This)     CALL_IFACE_METHOD(Shader, GetResourceCount, This)
-#    define IShader_GetResourceDesc(This, ...) CALL_IFACE_METHOD(Shader, GetResourceDesc,  This, __VA_ARGS__)
-
-// clang-format on
-
-#endif
-
-DILIGENT_END_NAMESPACE // namespace Diligent
+void* IShader_GetResourceDesc(IShader* shader, uint index, ShaderResourceDesc* resourceDesc) {
+    return shader.pVtbl.Shader.GetResourceDesc(shader, index, resourceDesc);
+}

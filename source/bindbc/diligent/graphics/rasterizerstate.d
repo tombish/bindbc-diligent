@@ -36,7 +36,7 @@ module bindbc.diligent.graphics.engine.rasterizerstate;
 /// \file
 /// Rasterizer state description
 
-#include "GraphicsTypes.h"
+import bindbc.diligent.graphics.graphicstypes;
 
 /// Fill mode
 
@@ -44,7 +44,7 @@ module bindbc.diligent.graphics.engine.rasterizerstate;
 /// [D3D12_FILL_MODE]: https://msdn.microsoft.com/en-us/library/windows/desktop/dn770366(v=vs.85).aspx
 /// This enumeration determines the fill mode to use when rendering triangles and mirrors the 
 /// [D3D11_FILL_MODE][]/[D3D12_FILL_MODE][] enum. It is used by RasterizerStateDesc structure to define the fill mode.
-DILIGENT_TYPED_ENUM(FILL_MODE, Int8)
+enum FILL_MODE : byte
 {
     /// Undefined fill mode.
     FILL_MODE_UNDEFINED = 0,
@@ -59,7 +59,7 @@ DILIGENT_TYPED_ENUM(FILL_MODE, Int8)
 
     /// Helper value that stores the total number of fill modes in the enumeration.
     FILL_MODE_NUM_MODES     
-};
+}
 
 /// Cull mode
 
@@ -67,7 +67,7 @@ DILIGENT_TYPED_ENUM(FILL_MODE, Int8)
 /// [D3D12_CULL_MODE]: https://msdn.microsoft.com/en-us/library/windows/desktop/dn770354(v=vs.85).aspx
 /// This enumeration defines which triangles are not drawn during the rasterization and mirrors
 /// [D3D11_CULL_MODE][]/[D3D12_CULL_MODE][] enum. It is used by RasterizerStateDesc structure to define the polygon cull mode.
-DILIGENT_TYPED_ENUM(CULL_MODE, Int8)
+enum CULL_MODE : byte
 {
     /// Undefined cull mode.
     CULL_MODE_UNDEFINED = 0,
@@ -88,7 +88,7 @@ DILIGENT_TYPED_ENUM(CULL_MODE, Int8)
 
     /// Helper value that stores the total number of cull modes in the enumeration.
     CULL_MODE_NUM_MODES
-};
+}
 
 /// Rasterizer state description
 
@@ -97,90 +97,41 @@ struct RasterizerStateDesc
 {
     /// Determines triangle fill mode, see Diligent::FILL_MODE for details.
     /// Default value: Diligent::FILL_MODE_SOLID.
-    FILL_MODE FillMode              DEFAULT_INITIALIZER(FILL_MODE_SOLID);
+    FILL_MODE FillMode              = FILL_MODE.FILL_MODE_SOLID;
 
     /// Determines triangle cull mode, see Diligent::CULL_MODE for details.
     /// Default value: Diligent::CULL_MODE_BACK.
-    CULL_MODE CullMode              DEFAULT_INITIALIZER(CULL_MODE_BACK);
+    CULL_MODE CullMode              = CULL_MODE. CULL_MODE_BACK;
 
     /// Determines if a triangle is front- or back-facing. If this parameter is True, 
     /// a triangle will be considered front-facing if its vertices are counter-clockwise 
     /// on the render target and considered back-facing if they are clockwise. 
     /// If this parameter is False, the opposite is true.
     /// Default value: False.
-    Bool      FrontCounterClockwise DEFAULT_INITIALIZER(False);
+    bool      FrontCounterClockwise = false;
 
     /// Enable clipping against near and far clip planes.
     /// Default value: True.
-    Bool      DepthClipEnable       DEFAULT_INITIALIZER(True);
+    bool      DepthClipEnable       = true;
 
     /// Enable scissor-rectangle culling. All pixels outside an active scissor rectangle are culled.
     /// Default value: False.
-    Bool      ScissorEnable         DEFAULT_INITIALIZER(False);
+    bool      ScissorEnable         = false;
 
     /// Specifies whether to enable line antialiasing.
     /// Default value: False.
-    Bool      AntialiasedLineEnable DEFAULT_INITIALIZER(False);
+    bool      AntialiasedLineEnable = false;
 
     /// Constant value added to the depth of a given pixel.
     /// Default value: 0.
-    Int32     DepthBias             DEFAULT_INITIALIZER(0);
+    int     DepthBias               = 0;
 
     /// Maximum depth bias of a pixel.
     /// \warning Depth bias clamp is not available in OpenGL
     /// Default value: 0.
-    Float32   DepthBiasClamp        DEFAULT_INITIALIZER(0.f);
+    float   DepthBiasClamp          = 0.f;
 
     /// Scalar that scales the given pixel's slope before adding to the pixel's depth.
     /// Default value: 0.
-    Float32   SlopeScaledDepthBias  DEFAULT_INITIALIZER(0.f);
-
-#if DILIGENT_CPP_INTERFACE
-
-    RasterizerStateDesc()noexcept{}
-
-    RasterizerStateDesc(FILL_MODE _FillMode,
-                        CULL_MODE _CullMode,
-                        Bool      _FrontCounterClockwise = RasterizerStateDesc{}.FrontCounterClockwise,
-                        Bool      _DepthClipEnable       = RasterizerStateDesc{}.DepthClipEnable,
-                        Bool      _ScissorEnable         = RasterizerStateDesc{}.ScissorEnable,
-                        Bool      _AntialiasedLineEnable = RasterizerStateDesc{}.AntialiasedLineEnable,
-                        Int32     _DepthBias             = RasterizerStateDesc{}.DepthBias,
-                        Float32   _DepthBiasClamp        = RasterizerStateDesc{}.DepthBiasClamp,
-                        Float32   _SlopeScaledDepthBias  = RasterizerStateDesc{}.SlopeScaledDepthBias)noexcept : 
-        FillMode              {_FillMode             },
-        CullMode              {_CullMode             },
-        FrontCounterClockwise {_FrontCounterClockwise},
-        DepthClipEnable       {_DepthClipEnable      },
-        ScissorEnable         {_ScissorEnable        },
-        AntialiasedLineEnable {_AntialiasedLineEnable},
-        DepthBias             {_DepthBias            },
-        DepthBiasClamp        {_DepthBiasClamp       },
-        SlopeScaledDepthBias  {_SlopeScaledDepthBias }
-    {
-    }
-
-    /// Tests if two structures are equivalent
-
-    /// \param [in] RHS - reference to the structure to perform comparison with
-    /// \return 
-    /// - True if all members of the two structures are equal.
-    /// - False otherwise
-    bool operator == (const RasterizerStateDesc& RHS)const
-    {
-        return  FillMode              == RHS.FillMode              &&
-                CullMode              == RHS.CullMode              &&
-                FrontCounterClockwise == RHS.FrontCounterClockwise &&
-                DepthBias             == RHS.DepthBias             &&
-                DepthBiasClamp        == RHS.DepthBiasClamp        &&
-                SlopeScaledDepthBias  == RHS.SlopeScaledDepthBias  &&
-                DepthClipEnable       == RHS.DepthClipEnable       &&
-                ScissorEnable         == RHS.ScissorEnable         &&
-                AntialiasedLineEnable == RHS.AntialiasedLineEnable;
-    }
-#endif
-};
-typedef struct RasterizerStateDesc RasterizerStateDesc;
-
-DILIGENT_END_NAMESPACE
-
+    float   SlopeScaledDepthBias    = 0.f;
+}

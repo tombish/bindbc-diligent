@@ -35,40 +35,31 @@ module bindbc.diligent.graphics.metal.commandqueuemtl;
 /// \file
 /// Definition of the Diligent::ICommandQueueMtl interface
 
-#include "../../GraphicsEngine/interface/CommandQueue.h"
+import bindbc.diligent.graphics.commandqueue;
 
 // {1C0013CB-41B8-453D-8983-4D935F5973B0}
 static const INTERFACE_ID IID_CommandQueueMtl =
-    {0x1c0013cb, 0x41b8, 0x453d, {0x89, 0x83, 0x4d, 0x93, 0x5f, 0x59, 0x73, 0xb0}};
-
-#define DILIGENT_INTERFACE_NAME ICommandQueueMtl
-#include "../../../Primitives/interface/DefineInterfaceHelperMacros.h"
-
-#define ICommandQueueMtlInclusiveMethods \
-    ICommandQueueInclusiveMethods;       \
-    ICommandQueueMtlMethods CommandQueueMtl
+    INTERFACE_ID(0x1c0013cb, 0x41b8, 0x453d, [0x89, 0x83, 0x4d, 0x93, 0x5f, 0x59, 0x73, 0xb0]);
 
 /// Command queue interface
-DILIGENT_BEGIN_INTERFACE(ICommandQueueMtl, ICommandQueue)
+struct ICommandQueueMtlMethods
 {
     /// Returns a pointer to Metal command queue (MTLCommandQueue)
-    VIRTUAL id<MTLCommandQueue>GetMtlCommandQueue(THIS) CONST PURE;
+    MTLCommandQueue** GetMtlCommandQueue(ICommandQueueMtl*);
 
     /// Submits a given command buffer to the command queue
 
     /// \return Fence value associated with the submitted command buffer
-    VIRTUAL Uint64Submit(THIS_
-                                  id<MTLCommandBuffer> mtlCommandBuffer) PURE;
-};
-DILIGENT_END_INTERFACE
+    ulong* Submit(ICommandQueueMtl*, MTLCommandBuffer** mtlCommandBuffer);
+}
 
-#include "../../../Primitives/interface/UndefInterfaceHelperMacros.h"
+struct ICommandQueueMtlVtbl { ICommandQueueMtlMethods CommandQueueMtl; }
+struct ICommandQueueMtl { ICommandQueueMtlVtbl* pVtbl; }
 
-#if DILIGENT_C_INTERFACE
+MTLCommandQueue** ICommandQueueMtl_GetMtlCommandQueue(ICommandQueueMtl* queue) {
+    return queue.pVtbl.CommandQueueMtl.GetMtlCommandQueue(queue);
+}
 
-#    define ICommandQueueMtl_GetMtlCommandQueue(This)  CALL_IFACE_METHOD(CommandQueueMtl, GetMtlCommandQueue, This)
-#    define ICommandQueueMtl_Submit(This, ...)         CALL_IFACE_METHOD(CommandQueueMtl, Submit,             This, __VA_ARGS__)
-
-#endif
-
-
+ulong* ICommandQueueMtl_Submit(ICommandQueueMtl* queue, MTLCommandBuffer** mtlCommandBuffer) {
+    return queue.pVtbl.CommandQueueMtl.Submit(queue, mtlCommandBuffer);
+}

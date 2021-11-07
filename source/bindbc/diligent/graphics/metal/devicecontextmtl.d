@@ -33,22 +33,15 @@ module bindbc.diligent.graphics.metal.devicecontextmtl;
 /// \file
 /// Definition of the Diligent::IDeviceContextMtl interface
 
-#include "../../GraphicsEngine/interface/DeviceContext.h"
-#include "CommandQueueMtl.h"
+import bindbc.diligent.graphics.devicecontext;
+import bindbc.diligent.graphics.metal.commandqueuemtl;
 
 // {2DEA7704-C586-4BA7-B938-93B239DFA268}
 static const INTERFACE_ID IID_DeviceContextMtl =
-    {0x2dea7704, 0xc586, 0x4ba7, {0xb9, 0x38, 0x93, 0xb2, 0x39, 0xdf, 0xa2, 0x68}};
-
-#define DILIGENT_INTERFACE_NAME IDeviceContextMtl
-#include "../../../Primitives/interface/DefineInterfaceHelperMacros.h"
-
-#define IDeviceContextMtlInclusiveMethods \
-    IDeviceContextInclusiveMethods;       \
-    IDeviceContextMtlMethods DeviceContextMtl
+    INTERFACE_ID(0x2dea7704, 0xc586, 0x4ba7, [0xb9, 0x38, 0x93, 0xb2, 0x39, 0xdf, 0xa2, 0x68]);
 
 /// Exposes Metal-specific functionality of a device context.
-DILIGENT_BEGIN_INTERFACE(IDeviceContextMtl, IDeviceContext)
+struct IDeviceContextMtlMethods
 {
     /// Returns a command buffer pointer that is currently being recorded
 
@@ -66,36 +59,33 @@ DILIGENT_BEGIN_INTERFACE(IDeviceContextMtl, IDeviceContext)
     ///           appropriate Diligent API calls.
     ///
     ///           Engine will end all active encoders.
-    VIRTUAL id<MTLCommandBuffer>GetMtlCommandBuffer(THIS) PURE;
+    MTLCommandBuffer** GetMtlCommandBuffer(IDeviceContextMtl*);
 
     /// Sets the size of a block of threadgroup memory.
 
     /// \param [in] Length - The size of the threadgroup memory, in bytes. Must be a multiple of 16 bytes.
     /// \param [in] Index  - The index in the threadgroup memory argument table.
-    VIRTUAL voidSetComputeThreadgroupMemoryLength(THIS_
-                                                           Uint32 Length,
-                                                           Uint32 Index) PURE;
+    void* SetComputeThreadgroupMemoryLength(IDeviceContextMtl*, uint Length, uint Index);
 
     /// Sets the size of a threadgroup memory buffer for the tile function at an index in the argument table.
 
     /// \param [in] Length - The threadgroup memory length, in bytes.
     /// \param [in] Offset - The distance, in bytes, between the start of the data and the start of the threadgroup memory.
     /// \param [in] Index  - The argument table index.
-    VIRTUAL voidSetTileThreadgroupMemoryLength(THIS_
-                                                        Uint32 Length,
-                                                        Uint32 Offset,
-                                                        Uint32 Index) API_AVAILABLE(ios(11), macosx(11.0), tvos(14.5)) PURE;
-};
-DILIGENT_END_INTERFACE
+    void* SetTileThreadgroupMemoryLength(IDeviceContextMtl*, uint Length, uint Offset, uint Index);
+}
 
-#include "../../../Primitives/interface/UndefInterfaceHelperMacros.h"
+struct IDeviceContextMtlVtbl { IDeviceContextMtlMethods DeviceContextMtl; }
+struct IDeviceContextMtl { IDeviceContextMtlVtbl* pVtbl; }
 
-#if DILIGENT_C_INTERFACE
+MTLCommandBuffer** IDeviceContextMtl_GetMtlCommandBuffer(IDeviceContextMtl* context) {
+    return context.pVtbl.DeviceContextMtl.GetMtlCommandBuffer(context);
+}
 
-#    define IDeviceContextMtl_GetMtlCommandBuffer(This)                     CALL_IFACE_METHOD(DeviceContextMtl, GetMtlCommandBuffer,   This)
-#    define IDeviceContextMtl_SetComputeThreadgroupMemoryLength(This, ...)  CALL_IFACE_METHOD(DeviceContextMtl, SetComputeThreadgroupMemoryLength, This, __VA_ARGS__)
-#    define IDeviceContextMtl_SetTileThreadgroupMemoryLength(This, ...)     CALL_IFACE_METHOD(DeviceContextMtl, SetTileThreadgroupMemoryLength,    This, __VA_ARGS__)
+void* IDeviceContextMtl_SetComputeThreadgroupMemoryLength(IDeviceContextMtl* context, uint length, uint index) {
+    return context.pVtbl.DeviceContextMtl.SetComputeThreadgroupMemoryLength(context, length, index);
+}
 
-#endif
-
-
+void* IDeviceContextMtl_SetTileThreadgroupMemoryLength(IDeviceContextMtl* context, uint length, uint offset, uint index) {
+    return context.pVtbl.DeviceContextMtl.SetTileThreadgroupMemoryLength(context, length, offset, index);
+}

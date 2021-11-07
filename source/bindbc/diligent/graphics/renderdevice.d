@@ -39,7 +39,7 @@ import bindbc.diligent.graphics.buffer;
 
 struct IRenderDeviceMethods
 {
-    void *CreateBuffer(IRenderDevice*, const BufferDesc* BuffDesc, const BufferData* pBuffData, IBuffer** ppBuffer);
+    void* CreateBuffer(IRenderDevice*, const(BufferDesc)* BuffDesc, const(BufferData)* pBuffData, IBuffer** ppBuffer);
 }
 
 struct IRenderDeviceVtbl { IRenderDeviceMethods RenderDevice; }

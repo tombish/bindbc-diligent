@@ -33,33 +33,22 @@ module bindbc.diligent.graphics.metal.buffermtl;
 /// \file
 /// Definition of the Diligent::IBufferMtl interface
 
-#include "../../GraphicsEngine/interface/Buffer.h"
+import bindbc.diligent.graphics.buffer;
 
 // {F8A1A3AC-923A-419D-AB9D-FE9E35DC654B}
 static const INTERFACE_ID IID_BufferMtl =
-    {0xf8a1a3ac, 0x923a, 0x419d, {0xab, 0x9d, 0xfe, 0x9e, 0x35, 0xdc, 0x65, 0x4b}};
-
-#define DILIGENT_INTERFACE_NAME IBufferMtl
-#include "../../../Primitives/interface/DefineInterfaceHelperMacros.h"
-
-#define IBufferMtlInclusiveMethods \
-    IBufferInclusiveMethods;       \
-    IBufferMtlMethods BufferMtl
+    INTERFACE_ID(0xf8a1a3ac, 0x923a, 0x419d, [0xab, 0x9d, 0xfe, 0x9e, 0x35, 0xdc, 0x65, 0x4b]);
 
 /// Exposes Metal-specific functionality of a buffer object.
-DILIGENT_BEGIN_INTERFACE(IBufferMtl, IBuffer)
+struct IBufferMtlMethods
 {
     /// Returns a pointer to a Metal buffer object.
-    VIRTUAL id<MTLBuffer>GetMtlResource(THIS) CONST PURE;
-};
-DILIGENT_END_INTERFACE
+    MTLBuffer** GetMtlResource(IBufferMtl*);
+}
 
-#include "../../../Primitives/interface/UndefInterfaceHelperMacros.h"
+struct IBufferMtlVtbl { IBufferMtlMethods BufferMtl; }
+struct IBufferMtl { IBufferMtlVtbl* pVtbl; }
 
-#if DILIGENT_C_INTERFACE
-
-#    define IBufferMtl_GetMtlResource(This) CALL_IFACE_METHOD(BufferMtl, GetMtlResource, This)
-
-#endif
-
-
+MTLBuffer** IBufferMtl_GetMtlResource(IBufferMtl* buffer) {
+    return buffer.pVtbl.BufferMtl.GetMtlResource(buffer);
+}

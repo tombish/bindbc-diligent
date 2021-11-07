@@ -33,36 +33,24 @@ module bindbc.diligent.graphics.metal.texturemtl;
 /// \file
 /// Definition of the Diligent::ITextureMtl interface
 
-#include "../../GraphicsEngine/interface/Texture.h"
+import bindbc.diligent.graphics.texture;
 
 // {D3A85032-224D-45E5-9825-3AABD61A5EA5}
 static const INTERFACE_ID IID_TextureMtl =
-    {0xd3a85032, 0x224d, 0x45e5, {0x98, 0x25, 0x3a, 0xab, 0xd6, 0x1a, 0x5e, 0xa5}};
-
-#define DILIGENT_INTERFACE_NAME ITextureMtl
-#include "../../../Primitives/interface/DefineInterfaceHelperMacros.h"
-
-#define ITextureMtlInclusiveMethods \
-    ITextureInclusiveMethods;       \
-    ITextureMtlMethods TextureMtl
+    INTERFACE_ID(0xd3a85032, 0x224d, 0x45e5, [0x98, 0x25, 0x3a, 0xab, 0xd6, 0x1a, 0x5e, 0xa5]);
 
 /// Exposes Metal-specific functionality of a texture object.
-DILIGENT_BEGIN_INTERFACE(ITextureMtl, ITexture)
+struct ITextureMtlMethods
 {
     /// Returns a pointer to a Metal resource.
     /// For a staging texture, this will be a pointer to a MTLStorageModeShared buffer (MTLBuffer).
     /// For all other texture types, this will be a pointer to Metal texture object (MTLTexture).
-    VIRTUAL id<MTLResource>GetMtlResource(THIS) CONST PURE;
-};
-DILIGENT_END_INTERFACE
+    MTLResource** GetMtlResource(ITextureMtl*);
+}
 
-#include "../../../Primitives/interface/UndefInterfaceHelperMacros.h"
+struct ITextureMtlVtbl { ITextureMtlMethods TextureMtl; }
+struct ITextureMtl { ITextureMtlVtbl* pVtbl; }
 
-#if DILIGENT_C_INTERFACE
-
-#    define ITextureMtl_GetMtlResource(This) CALL_IFACE_METHOD(TextureMtl, GetMtlResource,This)
-
-s
-#endif
-
-
+MTLResource** ITextureMtl_GetMtlResource(ITextureMtl* texture) {
+    return texture.pVtbl.TextureMtl.GetMtlResource(texture);
+}
