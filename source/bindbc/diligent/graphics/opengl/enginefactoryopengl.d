@@ -36,82 +36,70 @@ module bindbc.diligent.graphics.opengl.enginefactoryopengl;
 /// \file
 /// Declaration of functions that create OpenGL-based engine implementation
 
-#include "../../GraphicsEngine/interface/EngineFactory.h"
-#include "../../GraphicsEngine/interface/RenderDevice.h"
-#include "../../GraphicsEngine/interface/DeviceContext.h"
-#include "../../GraphicsEngine/interface/SwapChain.h"
+import bindbc.diligent.graphics.enginefactory;
+import bindbc.diligent.graphics.renderdevice;
+import bindbc.diligent.graphics.devicecontext;
+import bindbc.diligent.graphics.swapchain;
 
-#include "../../HLSL2GLSLConverterLib/interface/HLSL2GLSLConverter.h"
+import bindbc.diligent.graphics.hlsl2glslconverterlib.hlsl2glslconverter;
 
-#if PLATFORM_ANDROID || PLATFORM_LINUX || PLATFORM_MACOS || PLATFORM_IOS || (PLATFORM_WIN32 && !defined(_MSC_VER))
-// https://gcc.gnu.org/wiki/Visibility
-#    define API_QUALIFIER __attribute__((visibility("default")))
-#elif PLATFORM_WIN32
-#    define API_QUALIFIER
-#else
-#    error Unsupported platform
-#endif
-
-#if ENGINE_DLL && PLATFORM_WIN32 && defined(_MSC_VER)
-#    include "../../GraphicsEngine/interface/LoadEngineDll.h"
-#    define EXPLICITLY_LOAD_ENGINE_GL_DLL 1
-#endif
+version(BindDiligent_Dynamic) { version(Windows) {
+    import bindbc.diligent.graphics.loadenginedll;
+    enum EXPLICITLY_LOAD_ENGINE_GL_DLL = 1;
+}}
 
 // {9BAAC767-02CC-4FFA-9E4B-E1340F572C49}
 static const INTERFACE_ID IID_EngineFactoryOpenGL =
-    {0x9baac767, 0x2cc, 0x4ffa, {0x9e, 0x4b, 0xe1, 0x34, 0xf, 0x57, 0x2c, 0x49}};
+    INTERFACE_ID(0x9baac767, 0x2cc, 0x4ffa, [0x9e, 0x4b, 0xe1, 0x34, 0xf, 0x57, 0x2c, 0x49]);
 
-#define DILIGENT_INTERFACE_NAME IEngineFactoryOpenGL
-#include "../../../Primitives/interface/DefineInterfaceHelperMacros.h"
-
-#define IEngineFactoryOpenGLInclusiveMethods \
-    IEngineFactoryInclusiveMethods;          \
-    IEngineFactoryOpenGLMethods EngineFactoryOpenGL
-
-DILIGENT_BEGIN_INTERFACE(IEngineFactoryOpenGL, IEngineFactory)
+struct IEngineFactoryOpenGLMethods
 {
-    VIRTUAL voidCreateDeviceAndSwapChainGL(THIS_
-                                                    const EngineGLCreateInfo REF EngineCI,
-                                                    IRenderDevice**              ppDevice,
-                                                    IDeviceContext**             ppImmediateContext,
-                                                    const SwapChainDesc REF      SCDesc,
-                                                    ISwapChain**                 ppSwapChain) PURE;
+    void* CreateDeviceAndSwapChainGL(IEngineFactoryOpenGL*,
+                                                    const(EngineGLCreateInfo)* EngineCI,
+                                                    IRenderDevice**            ppDevice,
+                                                    IDeviceContext**           ppImmediateContext,
+                                                    const(SwapChainDesc)*      SCDesc,
+                                                    ISwapChain**               ppSwapChain);
 
-    VIRTUAL voidCreateHLSL2GLSLConverter(THIS_
-                                                  IHLSL2GLSLConverter** ppConverter) PURE;
+    void* CreateHLSL2GLSLConverter(IEngineFactoryOpenGL*, IHLSL2GLSLConverter** ppConverter);
 
-    VIRTUAL voidAttachToActiveGLContext(THIS_
-                                                 const EngineGLCreateInfo REF EngineCI,
-                                                 IRenderDevice**              ppDevice,
-                                                 IDeviceContext**             ppImmediateContext) PURE;
-};
-DILIGENT_END_INTERFACE
-
-#include "../../../Primitives/interface/UndefInterfaceHelperMacros.h"
-
-#if DILIGENT_C_INTERFACE
-
-#    define IEngineFactoryOpenGL_CreateDeviceAndSwapChainGL(This, ...) CALL_IFACE_METHOD(EngineFactoryOpenGL, CreateDeviceAndSwapChainGL, This, __VA_ARGS__)
-#    define IEngineFactoryOpenGL_CreateHLSL2GLSLConverter(This, ...)   CALL_IFACE_METHOD(EngineFactoryOpenGL, CreateHLSL2GLSLConverter,   This, __VA_ARGS__)
-#    define IEngineFactoryOpenGL_AttachToActiveGLContext(This, ...)    CALL_IFACE_METHOD(EngineFactoryOpenGL, AttachToActiveGLContext,    This, __VA_ARGS__)
-
-#endif
-
-#if EXPLICITLY_LOAD_ENGINE_GL_DLL
-
-typedef struct IEngineFactoryOpenGL* (*GetEngineFactoryOpenGLType)();
-
-inline GetEngineFactoryOpenGLType DILIGENT_GLOBAL_FUNCTION(LoadGraphicsEngineOpenGL)()
-{
-    return (GetEngineFactoryOpenGLType)LoadEngineDll("GraphicsEngineOpenGL", "GetEngineFactoryOpenGL");
+    void* AttachToActiveGLContext(IEngineFactoryOpenGL*,
+                                                const(EngineGLCreateInfo)* EngineCI,
+                                                IRenderDevice**            ppDevice,
+                                                IDeviceContext**           ppImmediateContext);
 }
 
-#else
+struct IEngineFactoryOpenGLVtbl { IEngineFactoryOpenGLMethods EngineFactoryOpenGL; }
+struct IEngineFactoryOpenGL { IEngineFactoryOpenGLVtbl* pVtbl; }
 
-// Do not forget to call System.loadLibrary("GraphicsEngineOpenGL") in Java on Android!
-API_QUALIFIER
-struct IEngineFactoryOpenGL* DILIGENT_GLOBAL_FUNCTION(GetEngineFactoryOpenGL)();
+void* IEngineFactoryOpenGL_CreateDeviceAndSwapChainGL(IEngineFactoryOpenGL* factory,
+                                                    const(EngineGLCreateInfo)* engineCI,
+                                                    IRenderDevice**            ppDevice,
+                                                    IDeviceContext**           ppImmediateContext,
+                                                    const(SwapChainDesc)*      scDesc,
+                                                    ISwapChain**               ppSwapChain) {
+    return factory.pVtbl.EngineFactoryOpenGL.CreateDeviceAndSwapChainGL(factory, engineCI, ppDevice, ppImmediateContext, scDesc, ppSwapChain);
+}
 
-#endif
+void* IEngineFactoryOpenGL_CreateHLSL2GLSLConverter(IEngineFactoryOpenGL* factory, IHLSL2GLSLConverter** ppConverter) {
+    return factory.pVtbl.EngineFactoryOpenGL.CreateHLSL2GLSLConverter(factory, ppConverter);
+}
 
+void* IEngineFactoryOpenGL_AttachToActiveGLContext(IEngineFactoryOpenGL* factory,
+                                                const(EngineGLCreateInfo)* engineCI,
+                                                IRenderDevice**            ppDevice,
+                                                IDeviceContext**           ppImmediateContext) {
+    return factory.pVtbl.EngineFactoryOpenGL.AttachToActiveGLContext(factory, engineCI, ppDevice, ppImmediateContext);
+}
 
+static if (EXPLICITLY_LOAD_ENGINE_GL_DLL) {
+   IEngineFactoryOpenGL* function() GetEngineFactoryOpenGLType;
+
+    GetEngineFactoryOpenGLType Diligent_LoadGraphicsEngineOpenGL()
+    {
+        return cast(GetEngineFactoryOpenGLType)LoadEngineDll("GraphicsEngineOpenGL", "GetEngineFactoryOpenGL");
+    } 
+} else {    
+    // Do not forget to call System.loadLibrary("GraphicsEngineOpenGL") in Java on Android!
+    IEngineFactoryOpenGL* Diliget_GetEngineFactoryOpenGL();
+}

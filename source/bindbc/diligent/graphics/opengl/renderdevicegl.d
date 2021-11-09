@@ -36,23 +36,16 @@ module bindbc.diligent.graphics.opengl.renderdevicegl;
 /// \file
 /// Definition of the Diligent::IRenderDeviceGL interface
 
-#include "../../GraphicsEngine/interface/RenderDevice.h"
+import bindbc.diligent.graphics.renderdevice;
 
 /// Namespace for the OpenGL implementation of the graphics engine
 
 // {B4B395B9-AC99-4E8A-B7E1-9DCA0D485618}
 static const INTERFACE_ID IID_RenderDeviceGL =
-    {0xb4b395b9, 0xac99, 0x4e8a, {0xb7, 0xe1, 0x9d, 0xca, 0xd, 0x48, 0x56, 0x18}};
-
-#define DILIGENT_INTERFACE_NAME IRenderDeviceGL
-#include "../../../Primitives/interface/DefineInterfaceHelperMacros.h"
-
-#define IRenderDeviceGLInclusiveMethods \
-    IRenderDeviceInclusiveMethods;      \
-    IRenderDeviceGLMethods RenderDeviceGL
+    INTERFACE_ID(0xb4b395b9, 0xac99, 0x4e8a, [0xb7, 0xe1, 0x9d, 0xca, 0xd, 0x48, 0x56, 0x18]);
 
 /// Exposes OpenGL-specific functionality of a render device.
-DILIGENT_BEGIN_INTERFACE(IRenderDeviceGL, IRenderDevice)
+struct IRenderDeviceGLMethods
 {
     /// Creates a texture from OpenGL handle
 
@@ -72,12 +65,12 @@ DILIGENT_BEGIN_INTERFACE(IRenderDeviceGL, IRenderDevice)
     ///                             one reference.
     /// \note  Diligent engine texture object does not take ownership of the GL resource,
     ///        and the application must not destroy it while it is in use by the engine.
-    VIRTUAL voidCreateTextureFromGLHandle(THIS_
-                                                   Uint32                GLHandle,
-                                                   Uint32                GLBindTarget,
-                                                   const TextureDesc REF TexDesc,
-                                                   RESOURCE_STATE        InitialState,
-                                                   ITexture**            ppTexture) PURE;
+    void* CreateTextureFromGLHandle(IRenderDeviceGL*,
+                                                   uint                GLHandle,
+                                                   uint                GLBindTarget,
+                                                   const(TextureDesc)* TexDesc,
+                                                   RESOURCE_STATE      InitialState,
+                                                   ITexture**          ppTexture);
 
     /// Creates a buffer from OpenGL handle
 
@@ -92,11 +85,11 @@ DILIGENT_BEGIN_INTERFACE(IRenderDeviceGL, IRenderDevice)
     ///                             one reference.
     /// \note  Diligent engine buffer object does not take ownership of the GL resource,
     ///        and the application must not destroy it while it is in use by the engine.
-    VIRTUAL voidCreateBufferFromGLHandle(THIS_
-                                                  Uint32               GLHandle,
-                                                  const BufferDesc REF BuffDesc,
-                                                  RESOURCE_STATE       InitialState,
-                                                  IBuffer**            ppBuffer) PURE;
+    void* CreateBufferFromGLHandle(IRenderDeviceGL*,
+                                                  uint               GLHandle,
+                                                  const(BufferDesc)* BuffDesc,
+                                                  RESOURCE_STATE     InitialState,
+                                                  IBuffer**          ppBuffer);
 
     /// Creates a dummy texture with null handle.
 
@@ -111,21 +104,35 @@ DILIGENT_BEGIN_INTERFACE(IRenderDeviceGL, IRenderDevice)
     ///                             The function calls AddRef(), so that the new object will contain
     ///                             one reference.
     /// \note  Only RESOURCE_DIM_TEX_2D dummy textures are supported.
-    VIRTUAL voidCreateDummyTexture(THIS_
-                                            const TextureDesc REF TexDesc,
-                                            RESOURCE_STATE        InitialState,
-                                            ITexture**            ppTexture) PURE;
-};
-DILIGENT_END_INTERFACE
+    void* CreateDummyTexture(IRenderDeviceGL*,
+                                            const(TextureDesc)* TexDesc,
+                                            RESOURCE_STATE      InitialState,
+                                            ITexture**          ppTexture);
+}
 
-#include "../../../Primitives/interface/UndefInterfaceHelperMacros.h"
+struct IRenderDeviceGLVtbl { IRenderDeviceGLMethods RenderDeviceGL; }
+struct IRenderDeviceGL { IRenderDeviceGLVtbl* pVtbl; }
 
-#if DILIGENT_C_INTERFACE
+void* IRenderDeviceGL_CreateTextureFromGLHandle(IRenderDeviceGL* device,
+                                                   uint                glHandle,
+                                                   uint                glBindTarget,
+                                                   const(TextureDesc)* texDesc,
+                                                   RESOURCE_STATE      initialState,
+                                                   ITexture**          ppTexture) {
+    return device.pVtbl.RenderDeviceGL.CreateTextureFromGLHandle(device, glHandle, glBindTarget, texDesc, initialState, ppTexture);
+}
 
-#    define IRenderDeviceGL_CreateTextureFromGLHandle(This, ...)CALL_IFACE_METHOD(RenderDeviceGL, CreateTextureFromGLHandle, This, __VA_ARGS__)
-#    define IRenderDeviceGL_CreateBufferFromGLHandle(This, ...) CALL_IFACE_METHOD(RenderDeviceGL, CreateBufferFromGLHandle,  This, __VA_ARGS__)
-#    define IRenderDeviceGL_CreateDummyTexture(This, ...)       CALL_IFACE_METHOD(RenderDeviceGL, CreateDummyTexture,        This, __VA_ARGS__)
+void* IRenderDeviceGL_CreateBufferFromGLHandle(IRenderDeviceGL* device,
+                                                  uint               glHandle,
+                                                  const(BufferDesc)* buffDesc,
+                                                  RESOURCE_STATE     initialState,
+                                                  IBuffer**          ppBuffer) {
+    return device.pVtbl.RenderDeviceGL.CreateBufferFromGLHandle(device, glHandle, buffDesc, initialState, ppBuffer);
+}
 
-#endif
-
-
+void* IRenderDeviceGL_CreateDummyTexture(IRenderDeviceGL* device,
+                                            const(TextureDesc)* texDesc,
+                                            RESOURCE_STATE      initialState,
+                                            ITexture**          ppTexture) {
+    return device.pVtbl.RenderDeviceGL.CreateDummyTexture(device, texDesc, initialState, ppTexture);
+}

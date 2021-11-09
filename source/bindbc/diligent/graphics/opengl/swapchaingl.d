@@ -36,33 +36,22 @@ module bindbc.diligent.graphics.opengl.swapchaingl;
 /// \file
 /// Definition of the Diligent::ISwapChainGL interface
 
-#include "../../GraphicsEngine/interface/SwapChain.h"
+import bindbc.diligent.graphics.swapchain;
 
 // {F457BD7C-E725-4D3E-8607-A1F9BAE329EB}
 static const INTERFACE_ID IID_SwapChainGL =
-    {0xf457bd7c, 0xe725, 0x4d3e, {0x86, 0x7, 0xa1, 0xf9, 0xba, 0xe3, 0x29, 0xeb}};
-
-#define ISwapChainGLInclusiveMethods \
-    ISwapChainInclusiveMethods;      \
-    ISwapChainGLMethods SwapChainGL
-
-#define DILIGENT_INTERFACE_NAME ISwapChainGL
-#include "../../../Primitives/interface/DefineInterfaceHelperMacros.h"
+    INTERFACE_ID(0xf457bd7c, 0xe725, 0x4d3e, [0x86, 0x7, 0xa1, 0xf9, 0xba, 0xe3, 0x29, 0xeb]);
 
 /// Exposes OpenGL-specific functionality of a swap chain.
-DILIGENT_BEGIN_INTERFACE(ISwapChainGL, ISwapChain)
+struct ISwapChainGLMethods
 {
     /// Returns the default framebuffer handle
-    VIRTUAL GLuintGetDefaultFBO(THIS) CONST PURE;
-};
-DILIGENT_END_INTERFACE
+    GLuint* GetDefaultFBO(ISwapChainGL*);
+}
 
-#include "../../../Primitives/interface/UndefInterfaceHelperMacros.h"
+struct ISwapChainGLVtbl { ISwapChainGLMethods SwapChainGL; }
+struct ISwapChainGL { ISwapChainGLVtbl* pVtbl; }
 
-#if DILIGENT_C_INTERFACE
-
-#    define ISwapChainGL_GetDefaultFBO(This) CALL_IFACE_METHOD(SwapChainGL, GetDefaultFBO, This)
-
-#endif
-
-
+GLuint* ISwapChainGL_GetDefaultFBO(ISwapChainGL* swapchain) {
+    return swapchain.pVtbl.SwapChainGL.GetDefaultFBO(swapchain);
+}

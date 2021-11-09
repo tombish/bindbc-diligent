@@ -36,45 +36,11 @@ module bindbc.diligent.graphics.opengl.textureviewgl;
 /// \file
 /// Definition of the Diligent::ITextureViewGL interface
 
-#include "../../GraphicsEngine/interface/TextureView.h"
+import bindbc.diligent.graphics.textureview;
 
 // {15F93272-6135-414F-AB10-53FF9A5004AD}
 static const INTERFACE_ID IID_TextureViewGL =
-    {0x15f93272, 0x6135, 0x414f, {0xab, 0x10, 0x53, 0xff, 0x9a, 0x50, 0x4, 0xad}};
+    INTERFACE_ID(0x15f93272, 0x6135, 0x414f, [0xab, 0x10, 0x53, 0xff, 0x9a, 0x50, 0x4, 0xad]);
 
-#define DILIGENT_INTERFACE_NAME ITextureViewGL
-#include "../../../Primitives/interface/DefineInterfaceHelperMacros.h"
-
-#define ITextureViewGLInclusiveMethods \
-    ITextureViewInclusiveMethods
-//ITextureViewGLMethods TextureViewGL
-
-#if DILIGENT_CPP_INTERFACE
-
-/// Exposes OpenGL-specific functionality of a texture view object.
-DILIGENT_BEGIN_INTERFACE(ITextureViewGL, ITextureView) //
-{
-    //const GLObjectWrappers::GLTextureObj& GetHandle();
-    //GLenum GetBindTarget();
-};
-DILIGENT_END_INTERFACE
-
-#endif
-
-#include "../../../Primitives/interface/UndefInterfaceHelperMacros.h"
-
-#if DILIGENT_C_INTERFACE
-
-typedef struct ITextureViewGLVtbl
-{
-    ITextureViewGLInclusiveMethods;
-} ITextureViewGLVtbl;
-
-typedef struct ITextureViewGL
-{
-    struct ITextureViewGLVtbl* pVtbl;
-} ITextureViewGL;
-
-#endif
-
-
+struct ITextureViewGLVtbl {}
+struct ITextureViewGL { ITextureViewGLVtbl* pVtbl; }

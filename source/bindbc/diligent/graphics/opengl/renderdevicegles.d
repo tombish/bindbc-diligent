@@ -36,41 +36,35 @@ module bindbc.diligent.graphics.opengl.renderdevicegles;
 /// \file
 /// Definition of the Diligent::IRenderDeviceGLES interface
 
-#include "RenderDeviceGL.h"
-#include <android/native_window.h>
-#include <EGL/egl.h>
+import bindbc.diligent.graphics.opengl.renderdevicegl;
+import android.ndk.native_window;
+import android.java.javax.microedition.khronos.egl.EGL;
 
 // {F705A0D9-2023-4DE1-8B3C-C56E4CEB8DB7}
 static const INTERFACE_ID IID_RenderDeviceGLES =
-    {0xf705a0d9, 0x2023, 0x4de1, {0x8b, 0x3c, 0xc5, 0x6e, 0x4c, 0xeb, 0x8d, 0xb7}};
-
-#define DILIGENT_INTERFACE_NAME IRenderDeviceGLES
-#include "../../../Primitives/interface/DefineInterfaceHelperMacros.h"
-
-#define IRenderDeviceGLESInclusiveMethods \
-    IRenderDeviceGLInclusiveMethods;      \
-    IRenderDeviceGLESMethods RenderDeviceGLES
+    INTERFACE_ID(0xf705a0d9, 0x2023, 0x4de1, [0x8b, 0x3c, 0xc5, 0x6e, 0x4c, 0xeb, 0x8d, 0xb7]);
 
 /// Interface to the render device object implemented in OpenGLES
-DILIGENT_BEGIN_INTERFACE(IRenderDeviceGLES, IRenderDeviceGL)
+struct IRenderDeviceGLESMethods
 {
-    VIRTUAL boolInvalidate(THIS) PURE;
+    bool* Invalidate(IRenderDeviceGLES*);
 
-    VIRTUAL voidSuspend(THIS) PURE;
+    void* Suspend(IRenderDeviceGLES*);
 
-    VIRTUAL EGLintResume(THIS_
-                                  ANativeWindow* window) PURE;
-};
-DILIGENT_END_INTERFACE
+    EGLint* Resume(IRenderDeviceGLES*, ANativeWindow* window);
+}
 
-#include "../../../Primitives/interface/UndefInterfaceHelperMacros.h"
+struct IRenderDeviceGLESVtbl { IRenderDeviceGLESMethods RenderDeviceGLES; }
+struct IRenderDeviceGLES { IRenderDeviceGLESVtbl* pVtbl; }
 
-#if DILIGENT_C_INTERFACE
+bool* IRenderDeviceGLES_Invalidate(IRenderDeviceGLES* device) {
+    return device.pVtbl.RenderDeviceGLES.Invalidate(device);
+}
 
-#    define IRenderDeviceGLES_Invalidate(This)   CALL_IFACE_METHOD(RenderDeviceGLES, Invalidate, This)
-#    define IRenderDeviceGLES_Suspend(This)      CALL_IFACE_METHOD(RenderDeviceGLES, Suspend,    This)
-#    define IRenderDeviceGLES_Resume(This, ...)  CALL_IFACE_METHOD(RenderDeviceGLES, Resume,     This, __VA_ARGS__)
+void* IRenderDeviceGLES_Suspend(IRenderDeviceGLES* device) {
+    return device.pVtbl.RenderDeviceGLES.Suspend(device);
+}
 
-#endif
-
-
+EGLint* IRenderDeviceGLES_Resume(IRenderDeviceGLES* device, ANativeWindow* window) {
+    return device.pVtbl.RenderDeviceGLES.Resume(device, window);
+}

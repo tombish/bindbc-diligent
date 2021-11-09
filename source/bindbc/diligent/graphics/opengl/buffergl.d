@@ -36,33 +36,22 @@ module bindbc.diligent.graphics.opengl.buffergl;
 /// \file
 /// Definition of the Diligent::IBufferGL interface
 
-#include "../../GraphicsEngine/interface/Buffer.h"
+import bindbc.diligent.graphics.buffer;
 
 // {08DF7319-F425-4EC7-8D2B-1B3FC0BDDBB4}
 static const INTERFACE_ID IID_BufferGL =
-    {0x8df7319, 0xf425, 0x4ec7, {0x8d, 0x2b, 0x1b, 0x3f, 0xc0, 0xbd, 0xdb, 0xb4}};
-
-#define DILIGENT_INTERFACE_NAME IBufferGL
-#include "../../../Primitives/interface/DefineInterfaceHelperMacros.h"
-
-#define IBufferGLInclusiveMethods \
-    IBufferInclusiveMethods;      \
-    IBufferGLMethods BufferGL
+    INTERFACE_ID(0x8df7319, 0xf425, 0x4ec7, [0x8d, 0x2b, 0x1b, 0x3f, 0xc0, 0xbd, 0xdb, 0xb4]);
 
 /// Exposes OpenGL-specific functionality of a buffer object.
-DILIGENT_BEGIN_INTERFACE(IBufferGL, IBuffer)
+struct IBufferGLMethods
 {
     /// Returns OpenGL buffer handle
-    VIRTUAL GLuintGetGLBufferHandle(THIS) PURE;
-};
-DILIGENT_END_INTERFACE
+    GLuint* GetGLBufferHandle(IBufferGL*);
+}
 
-#include "../../../Primitives/interface/UndefInterfaceHelperMacros.h"
+struct IBufferGLVtbl { IBufferGLMethods BufferGL; }
+struct IBufferGL { IBufferGLVtbl* pVtbl; }
 
-#if DILIGENT_C_INTERFACE
-
-#    define IBufferGL_GetGLBufferHandle(This) CALL_IFACE_METHOD(BufferGL, GetGLBufferHandle, This)
-
-#endif
-
-
+GLuint* IBufferGL_GetGLBufferHandle(IBufferGL* buffer) {
+    return buffer.pVtbl.BufferGL.GetGLBufferHandle(buffer);
+}

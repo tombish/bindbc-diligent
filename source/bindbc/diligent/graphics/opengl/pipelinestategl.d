@@ -36,41 +36,11 @@ module bindbc.diligent.graphics.opengl.pipelinestategl;
 /// \file
 /// Definition of the Diligent::IPipelineStateGL interface
 
-#include "../../GraphicsEngine/interface/PipelineState.h"
+import bindbc.diligent.graphics.pipelinestate;
 
 // {80666BE3-318A-4403-AEE1-6E61A5B7A0F9}
 static const INTERFACE_ID IID_PipelineStateGL =
-    {0x80666be3, 0x318a, 0x4403, {0xae, 0xe1, 0x6e, 0x61, 0xa5, 0xb7, 0xa0, 0xf9}};
+    INTERFACE_ID(0x80666be3, 0x318a, 0x4403, [0xae, 0xe1, 0x6e, 0x61, 0xa5, 0xb7, 0xa0, 0xf9]);
 
-#define DILIGENT_INTERFACE_NAME IPipelineStateGL
-#include "../../../Primitives/interface/DefineInterfaceHelperMacros.h"
-
-#define IPipelineStateGLInclusiveMethods \
-    IPipelineStateInclusiveMethods
-//IPipelineStateGLMethods PipelineStateGL
-
-#if DILIGENT_CPP_INTERFACE
-
-/// Exposes OpenGL-specific functionality of a pipeline state object.
-DILIGENT_BEGIN_INTERFACE(IPipelineStateGL, IPipelineState){};
-DILIGENT_END_INTERFACE
-
-#endif
-
-#include "../../../Primitives/interface/UndefInterfaceHelperMacros.h"
-
-#if DILIGENT_C_INTERFACE
-
-struct IPipelineStateGLVtbl
-{
-    IPipelineStateGLInclusiveMethods;
-};
-
-typedef struct IPipelineStateGL
-{
-    struct IPipelineStateGLVtbl* pVtbl;
-} IPipelineStateGL;
-
-#endif
-
-
+struct IPipelineStateGLVtbl {}
+struct IPipelineStateGL { IPipelineStateGLVtbl* pVtbl; }

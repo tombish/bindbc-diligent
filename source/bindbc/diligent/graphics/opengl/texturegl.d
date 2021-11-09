@@ -36,37 +36,29 @@ module bindbc.diligent.graphics.opengl.texturegl;
 /// \file
 /// Definition of the Diligent::ITextureGL interface
 
-#include "../../GraphicsEngine/interface/Texture.h"
+import bindbc.diligent.graphics.texture;
 
 // {D7BC9FF0-28F0-4636-9732-710C204D1D63}
 static const INTERFACE_ID IID_TextureGL =
-    {0xd7bc9ff0, 0x28f0, 0x4636, {0x97, 0x32, 0x71, 0xc, 0x20, 0x4d, 0x1d, 0x63}};
-
-#define DILIGENT_INTERFACE_NAME ITextureGL
-#include "../../../Primitives/interface/DefineInterfaceHelperMacros.h"
-
-#define ITextureGLInclusiveMethods \
-    ITextureInclusiveMethods;      \
-    ITextureGLMethods TextureGL
+    INTERFACE_ID(0xd7bc9ff0, 0x28f0, 0x4636, [0x97, 0x32, 0x71, 0xc, 0x20, 0x4d, 0x1d, 0x63]);
 
 /// Exposes OpenGL-specific functionality of a texture object.
-DILIGENT_BEGIN_INTERFACE(ITextureGL, ITexture)
+struct ITextureGLMethods
 {
     /// Returns OpenGL texture handle
-    VIRTUAL GLuintGetGLTextureHandle(THIS) PURE;
+    GLuint* GetGLTextureHandle(ITextureGL*);
 
     /// Returns bind target of the native OpenGL texture
-    VIRTUAL GLenumGetBindTarget(THIS) CONST PURE;
-};
-DILIGENT_END_INTERFACE
+    GLenum* GetBindTarget(ITextureGL*);
+}
 
-#include "../../../Primitives/interface/UndefInterfaceHelperMacros.h"
+struct ITextureGLVtbl { ITextureGLMethods TextureGL; }
+struct ITextureGL { ITextureGLVtbl* pVtbl; }
 
-#if DILIGENT_C_INTERFACE
+GLuint* ITextureGL_GetGLTextureHandle(ITextureGL* textureGL) {
+    return textureGL.pVtbl.TextureGL.GetGLTextureHandle(textureGL);
+}
 
-#    define ITextureGL_GetGLTextureHandle(This) CALL_IFACE_METHOD(TextureGL, GetGLTextureHandle, This)
-#    define ITextureGL_GetBindTarget(This)      CALL_IFACE_METHOD(TextureGL, GetBindTarget,      This)
-
-#endif
-
-
+GLenum* ITextureGL_GetBindTarget(ITextureGL* textureGL) {
+    return textureGL.pVtbl.TextureGL.GetBindTarget(textureGL);
+}

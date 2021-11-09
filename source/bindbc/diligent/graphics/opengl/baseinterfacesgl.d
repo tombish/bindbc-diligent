@@ -33,42 +33,14 @@
 
 module bindbc.diligent.graphics.opengl.baseinterfacesgl;
 
-#if PLATFORM_ANDROID
+version(Android) {
+    import bindbc.diligent.graphics.opengl.renderdevicegles; 
+    alias IGLDeviceBaseInterface = IRenderDeviceGLES;   
+}
+else {
+        import bindbc.diligent.graphics.opengl.renderdevicegl;
+        alias IGLDeviceBaseInterface = IRenderDeviceGL;
+}
 
-#   include "RenderDeviceGLES.h"
-    
-
-        typedef IRenderDeviceGLES IGLDeviceBaseInterface;
-
-    DILIGENT_END_NAMESPACE
-
-#elif PLATFORM_WIN32 || PLATFORM_LINUX || PLATFORM_MACOS
-
-#   include "RenderDeviceGL.h"
-    
-    
-        typedef IRenderDeviceGL IGLDeviceBaseInterface;
-    
-    DILIGENT_END_NAMESPACE
-
-#elif PLATFORM_IOS
-
-#   include "RenderDeviceGL.h"
-    
-    
-        typedef IRenderDeviceGL IGLDeviceBaseInterface;
-    
-    DILIGENT_END_NAMESPACE
-
-#else
-
-#   error Unsupported platform
-
-#endif
-
-#include "DeviceContextGL.h"
-
-    typedef IDeviceContextGL IGLDeviceContextBaseInterface;
-
-DILIGENT_END_NAMESPACE
-
+import bindbc.diligent.graphics.opengl.devicecontextgl;
+alias IGLDeviceContextBaseInterface = IDeviceContextGL;

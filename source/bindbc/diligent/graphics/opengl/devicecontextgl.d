@@ -36,23 +36,16 @@ module bindbc.diligent.graphics.opengl.devicecontextgl;
 /// \file
 /// Definition of the Diligent::IDeviceContextGL interface
 
-#include "../../GraphicsEngine/interface/DeviceContext.h"
+import bindbc.diligent.graphics.devicecontext;
 
 struct ISwapChainGL;
 
 // {3464FDF1-C548-4935-96C3-B454C9DF6F6A}
 static const INTERFACE_ID IID_DeviceContextGL =
-    {0x3464fdf1, 0xc548, 0x4935, {0x96, 0xc3, 0xb4, 0x54, 0xc9, 0xdf, 0x6f, 0x6a}};
-
-#define DILIGENT_INTERFACE_NAME IDeviceContextGL
-#include "../../../Primitives/interface/DefineInterfaceHelperMacros.h"
-
-#define IDeviceContextGLInclusiveMethods \
-    IDeviceContextInclusiveMethods;      \
-    IDeviceContextGLMethods DeviceContextGL
+    INTERFACE_ID(0x3464fdf1, 0xc548, 0x4935, [0x96, 0xc3, 0xb4, 0x54, 0xc9, 0xdf, 0x6f, 0x6a]);
 
 /// Exposes OpenGL-specific functionality of a device context.
-DILIGENT_BEGIN_INTERFACE(IDeviceContextGL, IDeviceContext)
+struct IDeviceContextGLMethods
 {
     /// Attaches to the active GL context in the thread.
 
@@ -61,22 +54,23 @@ DILIGENT_BEGIN_INTERFACE(IDeviceContextGL, IDeviceContext)
     /// is passed over from the main application
     ///
     /// \return false if there is no active GL context, and true otherwise
-    VIRTUAL boolUpdateCurrentGLContext(THIS) PURE;
+    bool* UpdateCurrentGLContext(IDeviceContextGL*);
 
     /// Sets the swap in the device context. The swap chain is used by the device context
     /// to obtain the default FBO handle.
-    VIRTUAL voidSetSwapChain(THIS_
-                                      struct ISwapChainGL* pSwapChain) PURE;
-};
-DILIGENT_END_INTERFACE
+    void* SetSwapChain(IDeviceContextGL*, ISwapChainGL* pSwapChain);
+}
 
-#include "../../../Primitives/interface/UndefInterfaceHelperMacros.h"
+struct IDeviceContextGLVtbl { IDeviceContextGLMethods DeviceContextGL; }
+struct IDeviceContextGL { IDeviceContextGLVtbl* pVtbl; }
 
-#if DILIGENT_C_INTERFACE
+//#    define IDeviceContextGL_UpdateCurrentGLContext(This) CALL_IFACE_METHOD(DeviceContextGL, UpdateCurrentGLContext, This)
+//#    define IDeviceContextGL_SetSwapChain(This, ...)      CALL_IFACE_METHOD(DeviceContextGL, SetSwapChain,           This, __VA_ARGS__)
 
-#    define IDeviceContextGL_UpdateCurrentGLContext(This) CALL_IFACE_METHOD(DeviceContextGL, UpdateCurrentGLContext, This)
-#    define IDeviceContextGL_SetSwapChain(This, ...)      CALL_IFACE_METHOD(DeviceContextGL, SetSwapChain,           This, __VA_ARGS__)
+bool* IDeviceContextGL_UpdateCurrentGLContext(IDeviceContextGL* context) {
+    return context.pVtbl.DeviceContextGL.UpdateCurrentGLContext(context);
+}
 
-#endif
-
-
+void* IDeviceContextGL_SetSwapChain(IDeviceContextGL* context, ISwapChainGL* pSwapChain) {
+    return context.pVtbl.DeviceContextGL.SetSwapChain(context, pSwapChain);
+}
