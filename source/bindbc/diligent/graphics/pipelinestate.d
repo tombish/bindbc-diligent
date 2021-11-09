@@ -173,7 +173,7 @@ struct GraphicsPipelineDesc
 
     /// Render target formats.
     /// All formats must be TEX_FORMAT_UNKNOWN when pRenderPass is not null.
-    TEXTURE_FORMAT RTVFormats[DILIGENT_MAX_RENDER_TARGETS] DEFAULT_INITIALIZER({});
+    TEXTURE_FORMAT[DILIGENT_MAX_RENDER_TARGETS] RTVFormats = {};
 
     /// Depth-stencil format.
     /// Must be TEX_FORMAT_UNKNOWN when pRenderPass is not null.
