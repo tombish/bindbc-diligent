@@ -8,8 +8,14 @@ targetType "staticLibrary"
 targetPath "lib"
 targetName "BindBC_Diligent"
 
-platform "windows" {
+configuration "windows" {
+    platforms "Windows"
     dependency "directx-d" version="~>0.14.0" 
+}
+
+configuration "android" {
+    platforms "Android"
+    dependency "d_android" version="~>0.1.1"
 }
 
 configuration "dynamic" {
