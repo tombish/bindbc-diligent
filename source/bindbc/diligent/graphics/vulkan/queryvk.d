@@ -36,41 +36,11 @@ module bindbc.diligent.graphics.vulkan.queryvk;
 /// \file
 /// Definition of the Diligent::IQueryVk interface
 
-#include "../../GraphicsEngine/interface/Query.h"
+import bindbc.diligent.graphics.query;
 
 // {161C015B-1FE2-4452-8BFF-E35F27B3103C}
 static const INTERFACE_ID IID_QueryVk =
-    {0x161c015b, 0x1fe2, 0x4452, {0x8b, 0xff, 0xe3, 0x5f, 0x27, 0xb3, 0x10, 0x3c}};
+    INTERFACE_ID(0x161c015b, 0x1fe2, 0x4452, [0x8b, 0xff, 0xe3, 0x5f, 0x27, 0xb3, 0x10, 0x3c]);
 
-#define DILIGENT_INTERFACE_NAME IQueryVk
-#include "../../../Primitives/interface/DefineInterfaceHelperMacros.h"
-
-#define IQueryVkInclusiveMethods \
-    IQueryInclusiveMethods
-//IQueryVkMethods QueryVk
-
-#if DILIGENT_CPP_INTERFACE
-
-/// Exposes Vulkan-specific functionality of a Query object.
-DILIGENT_BEGIN_INTERFACE(IQueryVk, IQuery){};
-DILIGENT_END_INTERFACE
-
-#endif
-
-#include "../../../Primitives/interface/UndefInterfaceHelperMacros.h"
-
-#if DILIGENT_C_INTERFACE
-
-typedef struct IQueryVkVtbl
-{
-    IQueryVkInclusiveMethods;
-} IQueryVkVtbl;
-
-typedef struct IQueryVk
-{
-    struct IQueryVkVtbl* pVtbl;
-} IQueryVk;
-
-#endif
-
-
+struct IQueryVkVtbl {}
+struct IQueryVk { IQueryVkVtbl* pVtbl; }

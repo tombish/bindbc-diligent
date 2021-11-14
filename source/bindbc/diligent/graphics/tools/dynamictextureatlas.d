@@ -35,7 +35,7 @@ module bindbc.diligent.graphics.tools.dynamictextureatlas;
 
 /// \file
 /// Declaration of DynamicTextureAtlas interface and related data structures
-
+/*
 #include "../../GraphicsEngine/interface/RenderDevice.h"
 #include "../../GraphicsEngine/interface/DeviceContext.h"
 #include "../../GraphicsEngine/interface/Texture.h"
@@ -180,3 +180,4 @@ void CreateDynamicTextureAtlas(IRenderDevice*                       pDevice,
 
 } // namespace Diligent
 
+*/

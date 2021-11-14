@@ -36,73 +36,75 @@ module bindbc.diligent.graphics.vulkan.commandqueuevk;
 /// \file
 /// Definition of the Diligent::ICommandQueueVk interface
 
-#include "../../GraphicsEngine/interface/CommandQueue.h"
+import bindbc.diligent.graphics.commandqueue;
 
 // {9FBF582F-3069-41B9-AC05-344D5AF5CE8C}
 static const INTERFACE_ID IID_CommandQueueVk =
-    {0x9fbf582f, 0x3069, 0x41b9, {0xac, 0x5, 0x34, 0x4d, 0x5a, 0xf5, 0xce, 0x8c}};
-
-#define DILIGENT_INTERFACE_NAME ICommandQueueVk
-#include "../../../Primitives/interface/DefineInterfaceHelperMacros.h"
-
-#define ICommandQueueVkInclusiveMethods \
-    ICommandQueueInclusiveMethods;      \
-    ICommandQueueVkMethods CommandQueueVk
+    INTERFACE_ID(0x9fbf582f, 0x3069, 0x41b9, [0xac, 0x5, 0x34, 0x4d, 0x5a, 0xf5, 0xce, 0x8c]);
 
 /// Command queue interface
-DILIGENT_BEGIN_INTERFACE(ICommandQueueVk, ICommandQueue)
+struct ICommandQueueVkMethods
 {
     /// Submits a given command buffer to the command queue
 
     /// \return Fence value associated with the submitted command buffer
-    VIRTUAL Uint64SubmitCmdBuffer(THIS_
-                                           VkCommandBuffer cmdBuffer) PURE;
+    ulong* SubmitCmdBuffer(ICommandQueueVk*, VkCommandBuffer cmdBuffer);
 
     /// Submits a given work batch to the internal Vulkan command queue
 
     /// \return Fence value associated with the submitted command buffer
-    VIRTUAL Uint64Submit(THIS_
-                                  const VkSubmitInfo REF SubmitInfo) PURE;
+    ulong* Submit(ICommandQueueVk*, const(VkSubmitInfo)* SubmitInfo);
 
     /// Presents the current swap chain image on the screen
-    VIRTUAL VkResultPresent(THIS_
-                                     const VkPresentInfoKHR REF PresentInfo) PURE;
+    VkResult* Present(ICommandQueueVk*, const(VkPresentInfoKHR)* PresentInfo);
 
     /// Returns Vulkan command queue handle. May return VK_NULL_HANDLE if queue is anavailable
     ///
     /// \warning  Access to the VkQueue must be externally synchronized.
     ///           Don't use this method to submit commands directly, use SubmitCmdBuffer() or Submit(),
     ///           which are thread-safe.
-    VIRTUAL VkQueueGetVkQueue(THIS) PURE;
+    VkQueue* GetVkQueue(ICommandQueueVk*);
 
     /// Returns vulkan command queue family index
-    VIRTUAL uint32_tGetQueueFamilyIndex(THIS) CONST PURE;
+    uint* GetQueueFamilyIndex(ICommandQueueVk*);
 
     /// Signals the given fence
-    VIRTUAL voidEnqueueSignalFence(THIS_
-                                            VkFence vkFence) PURE;
+    void* EnqueueSignalFence(ICommandQueueVk*, VkFence vkFence);
 
     /// Signals the given timeline semaphore.
     ///
     /// \note  Requires NativeFence feature, see Diligent::DeviceFeatures.
-    VIRTUAL voidEnqueueSignal(THIS_
-                                       VkSemaphore vkTimelineSemaphore,
-                                       Uint64      Value) PURE;
-};
-DILIGENT_END_INTERFACE
+    void* EnqueueSignal(ICommandQueueVk*, VkSemaphore vkTimelineSemaphore, ulong Value);
+}
 
-#include "../../../Primitives/interface/UndefInterfaceHelperMacros.h"
+struct ICommandQueueVkVtbl { ICommandQueueVkMethods CommandQueueVk; }
+struct ICommandQueueVk { ICommandQueueVkVtbl* pVtbl; }
 
-#if DILIGENT_C_INTERFACE
+ulong* SICommandQueueVk_SubmitCmdBuffer(ICommandQueueVk* cmdQueue, VkCommandBuffer cmdBuffer) {
+    return cmdQueue.pVtbl.CommandQueueVk.SubmitCmdBuffer(cmdQueue, cmdBuffer);
+}
 
-#    define ICommandQueueVk_SubmitCmdBuffer(This, ...)        CALL_IFACE_METHOD(CommandQueueVk, SubmitCmdBuffer,        This, __VA_ARGS__)
-#    define ICommandQueueVk_Submit(This, ...)                 CALL_IFACE_METHOD(CommandQueueVk, Submit,                 This, __VA_ARGS__)
-#    define ICommandQueueVk_Present(This, ...)                CALL_IFACE_METHOD(CommandQueueVk, Present,                This, __VA_ARGS__)
-#    define ICommandQueueVk_GetVkQueue(This)                  CALL_IFACE_METHOD(CommandQueueVk, GetVkQueue,             This)
-#    define ICommandQueueVk_GetQueueFamilyIndex(This)         CALL_IFACE_METHOD(CommandQueueVk, GetQueueFamilyIndex,    This)
-#    define ICommandQueueVk_EnqueueSignalFence(This, ...)     CALL_IFACE_METHOD(CommandQueueVk, EnqueueSignalFence,     This, __VA_ARGS__)
-#    define ICommandQueueVk_EnqueueSignal(This, ...)          CALL_IFACE_METHOD(CommandQueueVk, EnqueueSignal,          This, __VA_ARGS__)
+ulong* SICommandQueueVk_Submit(ICommandQueueVk* cmdQueue, const(VkSubmitInfo)* submitInfo) {
+    return cmdQueue.pVtbl.CommandQueueVk.Submit(cmdQueue, submitInfo);
+}
 
-#endif
+VkResult* ICommandQueueVk_Present(ICommandQueueVk* cmdQueue, const(VkPresentInfoKHR)* presentInfo) {
+    return cmdQueue.pVtbl.CommandQueueVk.Present(cmdQueue, presentInfo);
+}
 
+VkQueue* ICommandQueueVk_GetVkQueue(ICommandQueueVk* cmdQueue) {
+    return cmdQueue.pVtbl.CommandQueueVk.GetVkQueue(cmdQueue);
+}
+
+uint* ICommandQueueVk_GetQueueFamilyIndex(ICommandQueueVk* cmdQueue) {
+    return cmdQueue.pVtbl.CommandQueueVk.GetQueueFamilyIndex(cmdQueue);
+}
+
+void* ICommandQueueVk_EnqueueSignalFence(ICommandQueueVk* cmdQueue, VkFence vkFence) {
+    return cmdQueue.pVtbl.CommandQueueVk.EnqueueSignalFence(cmdQueue, vkFence);
+}
+
+void* ICommandQueueVk_EnqueueSignal(ICommandQueueVk* cmdQueue, VkSemaphore vkTimelineSemaphore, ulong value) {
+    return cmdQueue.pVtbl.CommandQueueVk.EnqueueSignal(cmdQueue, vkTimelineSemaphore, value);
+}
 

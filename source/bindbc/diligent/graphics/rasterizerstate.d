@@ -31,7 +31,7 @@
  *  of the possibility of such damages.
  */
 
-module bindbc.diligent.graphics.engine.rasterizerstate;
+module bindbc.diligent.graphics.rasterizerstate;
 
 /// \file
 /// Rasterizer state description

@@ -36,7 +36,7 @@ module bindbc.diligent.graphics.d3d12.swapchaind3d12;
 /// \file
 /// Definition of the Diligent::ISwapChainD3D12 interface
 
-import directx.dxgi1_4;
+//import directx.dxgi1_4;
 
 import bindbc.diligent.graphics.swapchain;
 import bindbc.diligent.graphics.d3d12.textured3d12;

@@ -31,7 +31,7 @@
  *  of the possibility of such damages.
  */
 
-module bindbc.diligent.graphics.engine.loadenginedll;
+module bindbc.diligent.graphics.loadenginedll;
 
 /// \file
 /// Helper function to load engine DLL on Windows

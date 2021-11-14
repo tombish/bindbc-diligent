@@ -36,37 +36,29 @@ module bindbc.diligent.graphics.vulkan.bottomlevelasvk;
 /// \file
 /// Definition of the Diligent::IBottomLevelASVk interface
 
-#include "../../GraphicsEngine/interface/BottomLevelAS.h"
+import bindbc.diligent.graphics.bottomlevelas;
 
 // {7212AFC9-02E2-4D7F-81A8-1CE5353CEA2D}
 static const INTERFACE_ID IID_BottomLevelASVk =
-    {0x7212afc9, 0x2e2, 0x4d7f, {0x81, 0xa8, 0x1c, 0xe5, 0x35, 0x3c, 0xea, 0x2d}};
-
-#define DILIGENT_INTERFACE_NAME IBottomLevelASVk
-#include "../../../Primitives/interface/DefineInterfaceHelperMacros.h"
-
-#define IBottomLevelASVkInclusiveMethods \
-    IBottomLevelASInclusiveMethods;      \
-    IBottomLevelASVkMethods BottomLevelASVk
+    INTERFACE_ID(0x7212afc9, 0x2e2, 0x4d7f, [0x81, 0xa8, 0x1c, 0xe5, 0x35, 0x3c, 0xea, 0x2d]);
 
 /// Exposes Vulkan-specific functionality of a Bottom-level acceleration structure object.
-DILIGENT_BEGIN_INTERFACE(IBottomLevelASVk, IBottomLevelAS)
+struct IBottomLevelASVkMethods
 {
     /// Returns a Vulkan handle of the internal BLAS object.
-    VIRTUAL VkAccelerationStructureKHRGetVkBLAS(THIS) CONST PURE;
+    VkAccelerationStructureKHR* GetVkBLAS(IBottomLevelASVk*);
 
     /// Returns a Vulkan device address of the internal BLAS object.
-    VIRTUAL VkDeviceAddressGetVkDeviceAddress(THIS) CONST PURE;
-};
-DILIGENT_END_INTERFACE
+    VkDeviceAddress* GetVkDeviceAddress(IBottomLevelASVk*);
+}
 
-#include "../../../Primitives/interface/UndefInterfaceHelperMacros.h"
+struct IBottomLevelASVkVtbl { IBottomLevelASVkMethods BottomLevelASVk; }
+struct IBottomLevelASVk { IBottomLevelASVkVtbl* pVtbl; }
 
-#if DILIGENT_C_INTERFACE
+VkAccelerationStructureKHR* IBottomLevelASVk_GetVkBLAS(IBottomLevelASVk* bottomAS) {
+    return bottomAS.pVtbl.BottomLevelASVk.GetVkBLAS(bottomAS);
+}
 
-#    define IBottomLevelASVk_GetVkBLAS(This)          CALL_IFACE_METHOD(BottomLevelASVk, GetVkBLAS, This)
-#    define IBottomLevelASVk_GetVkDeviceAddress(This) CALL_IFACE_METHOD(BottomLevelASVk, GetVkDeviceAddress, This)
-
-#endif
-
-
+VkDeviceAddress* IBottomLevelASVk_GetVkDeviceAddress(IBottomLevelASVk* bottomAS) {
+    return bottomAS.pVtbl.BottomLevelASVk.GetVkDeviceAddress(bottomAS);
+}

@@ -36,35 +36,22 @@ module bindbc.diligent.graphics.vulkan.textureviewvk;
 /// \file
 /// Definition of the Diligent::ITextureViewVk interface
 
-#include "../../GraphicsEngine/interface/TextureView.h"
+import bindbc.diligent.graphics.textureview;
 
 // {B02AA468-3328-46F3-9777-55E97BF6C86E}
 static const INTERFACE_ID IID_TextureViewVk =
-    {0xb02aa468, 0x3328, 0x46f3, {0x97, 0x77, 0x55, 0xe9, 0x7b, 0xf6, 0xc8, 0x6e}};
-
-#define DILIGENT_INTERFACE_NAME ITextureViewVk
-#include "../../../Primitives/interface/DefineInterfaceHelperMacros.h"
-
-#define ITextureViewVkInclusiveMethods \
-    ITextureViewInclusiveMethods;      \
-    ITextureViewVkMethods TextureViewVk
+    INTERFACE_ID(0xb02aa468, 0x3328, 0x46f3, [0x97, 0x77, 0x55, 0xe9, 0x7b, 0xf6, 0xc8, 0x6e]);
 
 /// Exposes Vulkan-specific functionality of a texture view object.
-DILIGENT_BEGIN_INTERFACE(ITextureViewVk, ITextureView)
+struct ITextureViewVkMethods
 {
     /// Returns Vulkan image view handle
-    VIRTUAL VkImageViewGetVulkanImageView(THIS) CONST PURE;
-};
-DILIGENT_END_INTERFACE
+    VkImageView* GetVulkanImageView(ITextureViewVk*);
+}
 
-#include "../../../Primitives/interface/UndefInterfaceHelperMacros.h"
+struct ITextureViewVkVtbl { ITextureViewVkMethods TextureViewVk; }
+struct ITextureViewVk { ITextureViewVkVtbl* pVtbl; }
 
-#if DILIGENT_C_INTERFACE
-
-#    define ITextureViewVk_GetVulkanImageView(This) CALL_IFACE_METHOD(TextureViewVk, GetVulkanImageView, This)
-
-s
-
-#endif
-
-
+VkImageView* ITextureViewVk_GetVulkanImageView(ITextureViewVk* textureView) {
+    return textureView.pVtbl.TextureViewVk.GetVulkanImageView(textureView);
+}

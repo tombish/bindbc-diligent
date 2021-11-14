@@ -33,11 +33,14 @@
  *  of the possibility of such damages.
  */
 
+
+module bindbc.diligent.primitives.filestream;
+
 /// \file
 /// Defines Diligent::IFileStream interface
 
 import bindbc.diligent.primitives.object;
-import bindbc.diligent.primitives.datablob;
+public import bindbc.diligent.primitives.datablob;
 
 /// IFileStream interface unique identifier
 // {E67F386C-6A5A-4A24-A0CE-C66435465D41}

@@ -36,47 +36,35 @@ module bindbc.diligent.graphics.vulkan.shaderbindingtablevk;
 /// \file
 /// Definition of the Diligent::IShaderBindingTableVk interface
 
-#include "../../GraphicsEngine/interface/ShaderBindingTable.h"
-#include "DeviceContextVk.h"
+import bindbc.diligent.graphics.shaderbindingtable;
+import bindbc.diligent.graphics.vulkan.devicecontextvk;
 
 // {31ED9B4B-4FF4-44D8-AE71-12B5D8AF7F93}
 static const INTERFACE_ID IID_ShaderBindingTableVk =
-    {0x31ed9b4b, 0x4ff4, 0x44d8, {0xae, 0x71, 0x12, 0xb5, 0xd8, 0xaf, 0x7f, 0x93}};
-
-#define DILIGENT_INTERFACE_NAME IShaderBindingTableVk
-#include "../../../Primitives/interface/DefineInterfaceHelperMacros.h"
-
-#define IShaderBindingTableVkInclusiveMethods \
-    IShaderBindingTableInclusiveMethods;      \
-    IShaderBindingTableVkMethods ShaderBindingTableVk
+    INTERFACE_ID(0x31ed9b4b, 0x4ff4, 0x44d8, [0xae, 0x71, 0x12, 0xb5, 0xd8, 0xaf, 0x7f, 0x93]);
 
 /// This structure contains the data that can be used as input arguments for vkCmdTraceRaysKHR() command.
 struct BindingTableVk
 {
-    VkStridedDeviceAddressRegionKHR RaygenShader   DEFAULT_INITIALIZER({});
-    VkStridedDeviceAddressRegionKHR MissShader     DEFAULT_INITIALIZER({});
-    VkStridedDeviceAddressRegionKHR HitShader      DEFAULT_INITIALIZER({});
-    VkStridedDeviceAddressRegionKHR CallableShader DEFAULT_INITIALIZER({});
-};
-typedef struct BindingTableVk BindingTableVk;
+    VkStridedDeviceAddressRegionKHR RaygenShader   = {};
+    VkStridedDeviceAddressRegionKHR MissShader     = {};
+    VkStridedDeviceAddressRegionKHR HitShader      = {};
+    VkStridedDeviceAddressRegionKHR CallableShader = {};
+}
 
 /// Exposes Vulkan-specific functionality of a Shader binding table object.
-DILIGENT_BEGIN_INTERFACE(IShaderBindingTableVk, IShaderBindingTable)
+struct IShaderBindingTableVkMethods
 {
     /// Returns the data that can be used with vkCmdTraceRaysKHR() call.
     /// 
     /// \remarks  The method is not thread-safe. An application must externally synchronize the access
     ///           to the shader binding table.
-    VIRTUAL const BindingTableVk REFGetVkBindingTable(THIS) CONST PURE;
-};
-DILIGENT_END_INTERFACE
+    const(BindingTableVk)** GetVkBindingTable(IShaderBindingTableVk*);
+}
 
-#include "../../../Primitives/interface/UndefInterfaceHelperMacros.h"
+struct IShaderBindingTableVkVtbl { IShaderBindingTableVkMethods ShaderBindingTableVk; }
+struct IShaderBindingTableVk { IShaderBindingTableVkVtbl* pVtbl; }
 
-#if DILIGENT_C_INTERFACE
-
-#    define IShaderBindingTableVk_GetVkBindingTable(This) CALL_IFACE_METHOD(ShaderBindingTableVk, GetVkBindingTable, This)
-
-#endif
-
-
+const(BindingTableVk)** IShaderBindingTableVk_GetVkBindingTable(IShaderBindingTableVk* bindingTable) {
+    return bindingTable.pVtbl.ShaderBindingTableVk.GetVkBindingTable(bindingTable);
+}

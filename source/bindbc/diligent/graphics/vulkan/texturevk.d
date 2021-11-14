@@ -36,50 +36,43 @@ module bindbc.diligent.graphics.vulkan.texturevk;
 /// \file
 /// Definition of the Diligent::ITextureVk interface
 
-#include "../../GraphicsEngine/interface/Texture.h"
+import bindbc.diligent.graphics.texture;
 
 // {3BB9155F-22C5-4365-927E-8C4049F9B949}
 static const INTERFACE_ID IID_TextureVk =
-    {0x3bb9155f, 0x22c5, 0x4365, {0x92, 0x7e, 0x8c, 0x40, 0x49, 0xf9, 0xb9, 0x49}};
-
-#define DILIGENT_INTERFACE_NAME ITextureVk
-#include "../../../Primitives/interface/DefineInterfaceHelperMacros.h"
-
-#define ITextureVkInclusiveMethods \
-    ITextureInclusiveMethods;      \
-    ITextureVkMethods TextureVk
+    INTERFACE_ID(0x3bb9155f, 0x22c5, 0x4365, [0x92, 0x7e, 0x8c, 0x40, 0x49, 0xf9, 0xb9, 0x49]);
 
 /// Exposes Vulkan-specific functionality of a texture object.
-DILIGENT_BEGIN_INTERFACE(ITextureVk, ITexture)
+struct ITextureVkMethods
 {
     /// Returns Vulkan image handle.
 
     /// The application must not release the returned image
-    VIRTUAL VkImageGetVkImage(THIS) CONST PURE;
+    VkImage* GetVkImage(ITextureVk*);
 
     /// Sets Vulkan image layout
 
     /// \param [in] Layout - Vulkan image layout to set.
     /// \note This function does not perform layout transition, but sets the
     ///       internal texture state to match the given Vulkan layout.
-    VIRTUAL voidSetLayout(THIS_
-                                   VkImageLayout Layout) PURE;
+    void* SetLayout(ITextureVk*, VkImageLayout Layout);
 
     /// Returns current Vulkan image layout. If the state is unknown to the engine, returns VK_IMAGE_LAYOUT_UNDEFINED
-    VIRTUAL VkImageLayoutGetLayout(THIS) CONST PURE;
-};
-DILIGENT_END_INTERFACE
+    VkImageLayout* GetLayout(ITextureVk*);
+}
 
-#include "../../../Primitives/interface/UndefInterfaceHelperMacros.h"
+struct ITextureVkVtbl { ITextureVkMethods TextureVk; }
+struct ITextureVk { ITextureVkVtbl* pVtbl; }
 
-#if DILIGENT_C_INTERFACE
+VkImage* ITextureVk_GetVkImage(ITextureVk* texture) {
+    return texture.pVtbl.TextureVk.GetVkImage(texture);
+}
 
-#    define ITextureVk_GetVkImage(This)     CALL_IFACE_METHOD(TextureVk, GetVkImage,This)
-#    define ITextureVk_SetLayout(This, ...) CALL_IFACE_METHOD(TextureVk, SetLayout, This, __VA_ARGS__)
-#    define ITextureVk_GetLayout(This)      CALL_IFACE_METHOD(TextureVk, GetLayout, This)
+void* ITextureVk_SetLayout(ITextureVk* texture, VkImageLayout layout) {
+    return texture.pVtbl.TextureVk.SetLayout(texture, layout);
+}
 
-s
-
-#endif
-
+VkImageLayout* ITextureVk_GetLayout(ITextureVk* texture) {
+    return texture.pVtbl.TextureVk.GetLayout(texture);
+}
 

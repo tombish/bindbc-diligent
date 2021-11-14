@@ -31,7 +31,7 @@
  *  of the possibility of such damages.
  */
 
-module bindbc.diligent.graphics.engine.depthstencilstate;
+module bindbc.diligent.graphics.depthstencilstate;
 
 /// \file
 /// Definition of data types that describe depth-stencil state

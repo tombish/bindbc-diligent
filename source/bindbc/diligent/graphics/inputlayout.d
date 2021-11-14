@@ -38,7 +38,7 @@ module bindbc.diligent.graphics.inputlayout;
 /// \file
 /// Definition input layout
 
-import bindbc.graphics.graphicstypes;
+import bindbc.diligent.graphics.graphicstypes;
 
 enum int MAX_LAYOUT_ELEMENTS        = 16;
 enum int LAYOUT_ELEMENT_AUTO_OFFSET = 0xFFFFFFFF;

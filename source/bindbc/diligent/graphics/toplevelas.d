@@ -31,7 +31,7 @@
  *  of the possibility of such damages.
  */
 
-module bindbc.diligent.graphics.engine.toplevelas;
+module bindbc.diligent.graphics.toplevelas;
 
 /// \file
 /// Definition of the Diligent::ITopLevelAS interface and related data structures

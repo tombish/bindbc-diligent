@@ -31,7 +31,7 @@
  *  of the possibility of such damages.
  */
 
-module bindbc.diligent.graphics.engine.commandlist;
+module bindbc.diligent.graphics.commandlist;
 
 /// \file
 /// Defines Diligent::IBuffer interface and related data structures
@@ -42,18 +42,10 @@ import bindbc.diligent.graphics.deviceobject;
 static const INTERFACE_ID IID_CommandList =
     INTERFACE_ID(0xc38c68f2, 0x8a8c, 0x4ed5, [0xb7, 0xee, 0x69, 0x12, 0x6e, 0x75, 0xdc, 0xd8]);
 
-struct ICommandList;
-
-//  C requires that a struct or union has at least one member
-//struct ICommandListMethods
-//{
-//};
-
 struct ICommandListVtbl
 {
     IObjectMethods Object;
     IDeviceObjectMethods DeviceObject;
-    //struct ICommandListMethods  CommandList;
 };
 
 struct ICommandList

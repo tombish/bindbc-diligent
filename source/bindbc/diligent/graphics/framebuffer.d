@@ -31,7 +31,7 @@
  *  of the possibility of such damages.
  */
 
-module bindbc.diligent.graphics.engine.framebuffer;
+module bindbc.diligent.graphics.framebuffer;
 
 /// \file
 /// Definition of the Diligent::IFramebuffer interface and related data structures
@@ -68,15 +68,10 @@ struct FramebufferDesc
     uint NumArraySlices = 0;
 }
 
-struct IFramebuffer;
-
 struct IFramebufferVtbl
 {
     IObjectMethods       Object;
     IDeviceObjectMethods DeviceObject;
 }
 
-struct IFramebuffer
-{
-    IFramebufferVtbl* pVtbl;
-}
+struct IFramebuffer { IFramebufferVtbl* pVtbl; }

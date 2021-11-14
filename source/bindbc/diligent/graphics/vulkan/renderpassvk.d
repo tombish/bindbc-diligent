@@ -36,33 +36,22 @@ module bindbc.diligent.graphics.vulkan.renderpassvk;
 /// \file
 /// Definition of the Diligent::IRenderPassVk interface
 
-#include "../../GraphicsEngine/interface/RenderPass.h"
+import bindbc.diligent.graphics.renderpass;
 
 // {3DE6938F-D34D-4135-A6FA-15A89E9525D0}
 static const INTERFACE_ID IID_RenderPassVk =
-    {0x3de6938f, 0xd34d, 0x4135, {0xa6, 0xfa, 0x15, 0xa8, 0x9e, 0x95, 0x25, 0xd0}};
-
-#define DILIGENT_INTERFACE_NAME IRenderPassVk
-#include "../../../Primitives/interface/DefineInterfaceHelperMacros.h"
-
-#define IRenderPassVkInclusiveMethods                              \
-    /*IRenderPassInclusiveMethods*/ IDeviceObjectInclusiveMethods; \
-    IRenderPassVkMethods RenderPassVk
+    INTERFACE_ID(0x3de6938f, 0xd34d, 0x4135, [0xa6, 0xfa, 0x15, 0xa8, 0x9e, 0x95, 0x25, 0xd0]);
 
 /// Exposes Vulkan-specific functionality of a RenderPass object.
-DILIGENT_BEGIN_INTERFACE(IRenderPassVk, IRenderPass)
+struct IRenderPassVkMethods
 {
     /// Returns a Vulkan handle of the internal render pass object.
-    VIRTUAL VkRenderPassGetVkRenderPass() CONST PURE;
-};
-DILIGENT_END_INTERFACE
+    VkRenderPass* GetVkRenderPass(IRenderPassVk*);
+}
 
-#include "../../../Primitives/interface/UndefInterfaceHelperMacros.h"
+struct IRenderPassVkVtbl { IRenderPassVkMethods RenderPassVk; }
+struct IRenderPassVk { IRenderPassVkVtbl* pVtbl; }
 
-#if DILIGENT_C_INTERFACE
-
-#    define IRenderPassVk_GetVkRenderPass(This) CALL_IFACE_METHOD(RenderPassVk, GetVkRenderPass, This)
-
-#endif
-
-
+VkRenderPass* IRenderPassVk_GetVkRenderPass(IRenderPassVk* renderPass) {
+    return renderPass.pVtbl.RenderPassVk.GetVkRenderPass(renderPass);
+}

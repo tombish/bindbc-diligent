@@ -37,7 +37,7 @@ module bindbc.diligent.graphics.d3dbase.shaderresourcevariabled3d;
 /// Definition of the Diligent::IShaderResourceVariableD3D interface
 
 import bindbc.diligent.graphics.shaderresourcevariable;
-import shaderd3d;
+import bindbc.diligent.graphics.d3dbase.shaderd3d;
 
 /*
 namespace Diligent

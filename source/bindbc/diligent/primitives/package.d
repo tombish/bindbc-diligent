@@ -7,6 +7,7 @@
 module bindbc.diligent.primitives;
 
 public {
+    import bindbc.diligent.primitives.datablob;
     import bindbc.diligent.primitives.debugoutput;
     import bindbc.diligent.primitives.filestream;
     import bindbc.diligent.primitives.interfaceid;

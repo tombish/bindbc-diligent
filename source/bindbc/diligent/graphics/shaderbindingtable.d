@@ -31,7 +31,7 @@
  *  of the possibility of such damages.
  */
 
-module bindbc.diligent.graphics.engine.shaderbindingtable;
+module bindbc.diligent.graphics.shaderbindingtable;
 
 /// \file
 /// Definition of Diligent::IShaderBindingTable interface and related data structures

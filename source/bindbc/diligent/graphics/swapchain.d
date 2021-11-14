@@ -31,7 +31,7 @@
  *  of the possibility of such damages.
  */
 
-module bindbc.diligent.graphics.engine.swapchain;
+module bindbc.diligent.graphics.swapchain;
 
 /// \file
 /// Definition of the Diligent::ISwapChain interface and related data structures

@@ -36,36 +36,10 @@ module bindbc.diligent.graphics.vulkan.shaderresourcebindingvk;
 /// \file
 /// Definition of the Diligent::IShaderResourceBindingVk interface and related data structures
 
-#include "../../GraphicsEngine/interface/ShaderResourceBinding.h"
+import bindbc.diligent.graphics.shaderresourcebinding;
 
 // {1E8C82DC-5B3A-47D5-8AE9-197CAE8DB71F}
 static const INTERFACE_ID IID_ShaderResourceBindingVk =
-    {0x1e8c82dc, 0x5b3a, 0x47d5, {0x8a, 0xe9, 0x19, 0x7c, 0xae, 0x8d, 0xb7, 0x1f}};
+    INTERFACE_ID(0x1e8c82dc, 0x5b3a, 0x47d5, [0x8a, 0xe9, 0x19, 0x7c, 0xae, 0x8d, 0xb7, 0x1f]);
 
-#define DILIGENT_INTERFACE_NAME IShaderResourceBindingVk
-#include "../../../Primitives/interface/DefineInterfaceHelperMacros.h"
-
-#define IShaderResourceBindingVkInclusiveMethods \
-    IShaderResourceBindingInclusiveMethods
-//IShaderResourceBindingVkMethods ShaderResourceBindingVk
-
-#if DILIGENT_CPP_INTERFACE
-
-/// Exposes Vulkan-specific functionality of a shader resource binding object.
-DILIGENT_BEGIN_INTERFACE(IShaderResourceBindingVk, IShaderResourceBinding){};
-DILIGENT_END_INTERFACE
-
-#endif
-
-#include "../../../Primitives/interface/UndefInterfaceHelperMacros.h"
-
-#if DILIGENT_C_INTERFACE
-
-typedef struct IShaderResourceBindingVkVtbl
-{
-    IShaderResourceBindingVkInclusiveMethods;
-} IShaderResourceBindingVkVtbl;
-
-#endif
-
-
+struct IShaderResourceBindingVkVtbl {} 

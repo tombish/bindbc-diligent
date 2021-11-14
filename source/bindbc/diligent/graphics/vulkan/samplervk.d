@@ -36,33 +36,22 @@ module bindbc.diligent.graphics.vulkan.samplervk;
 /// \file
 /// Definition of the Diligent::ISamplerVk interface
 
-#include "../../GraphicsEngine/interface/Sampler.h"
+import bindbc.diligent.graphics.sampler;
 
 // {87C21E88-8A9F-4AD2-9A1E-D5EC140415EA}
 static const INTERFACE_ID IID_SamplerVk =
-    {0x87c21e88, 0x8a9f, 0x4ad2, {0x9a, 0x1e, 0xd5, 0xec, 0x14, 0x4, 0x15, 0xea}};
-
-#define DILIGENT_INTERFACE_NAME ISamplerVk
-#include "../../../Primitives/interface/DefineInterfaceHelperMacros.h"
-
-#define ISamplerVkInclusiveMethods \
-    ISamplerInclusiveMethods;      \
-    ISamplerVkMethods SamplerVk
+    INTERFACE_ID(0x87c21e88, 0x8a9f, 0x4ad2, [0x9a, 0x1e, 0xd5, 0xec, 0x14, 0x4, 0x15, 0xea]);
 
 /// Exposes Vulkan-specific functionality of a sampler object.
-DILIGENT_BEGIN_INTERFACE(ISamplerVk, ISampler)
+struct ISamplerVkMethods
 {
     /// Returns a Vulkan handle of the internal sampler object.
-    VIRTUAL VkSamplerGetVkSampler() CONST PURE;
-};
-DILIGENT_END_INTERFACE
+    VkSampler* GetVkSampler(ISamplerVk*);
+}
 
-#include "../../../Primitives/interface/UndefInterfaceHelperMacros.h"
+struct ISamplerVkVtbl { ISamplerVkMethods SamplerVk; }
+struct ISamplerVk { ISamplerVkVtbl* pVtbl; }
 
-#if DILIGENT_C_INTERFACE
-
-#    define ISamplerVk_GetVkSampler(This) CALL_IFACE_METHOD(SamplerVk, GetVkSampler, This)
-
-#endif
-
-
+VkSampler* ISamplerVk_GetVkSampler(ISamplerVk* sampler) {
+    return sampler.pVtbl.SamplerVk.GetVkSampler(sampler);
+}

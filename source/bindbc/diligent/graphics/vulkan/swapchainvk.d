@@ -36,34 +36,23 @@ module bindbc.diligent.graphics.vulkan.swapchainvk;
 /// \file
 /// Definition of the Diligent::ISwapChainVk interface
 
-#include "../../GraphicsEngine/interface/SwapChain.h"
-#include "TextureViewVk.h"
+import bindbc.diligent.graphics.swapchain;
+import bindbc.diligent.graphics.vulkan.textureviewvk;
 
 // {22A39881-5EC5-4A9C-8395-90215F04A5CC}
 static const INTERFACE_ID IID_SwapChainVk =
-    {0x22a39881, 0x5ec5, 0x4a9c, {0x83, 0x95, 0x90, 0x21, 0x5f, 0x4, 0xa5, 0xcc}};
-
-#define DILIGENT_INTERFACE_NAME ISwapChainVk
-#include "../../../Primitives/interface/DefineInterfaceHelperMacros.h"
-
-#define ISwapChainVkInclusiveMethods \
-    ISwapChainInclusiveMethods;      \
-    ISwapChainVkMethods SwapChainVk
+    INTERFACE_ID(0x22a39881, 0x5ec5, 0x4a9c, [0x83, 0x95, 0x90, 0x21, 0x5f, 0x4, 0xa5, 0xcc]);
 
 /// Exposes Vulkan-specific functionality of a swap chain.
-DILIGENT_BEGIN_INTERFACE(ISwapChainVk, ISwapChain)
+struct ISwapChainVkMethods
 {
     /// Returns a Vulkan handle to the internal swap chain object.
-    VIRTUAL VkSwapchainKHRGetVkSwapChain(THIS) PURE;
-};
-DILIGENT_END_INTERFACE
+    VkSwapchainKHR* GetVkSwapChain(ISwapChainVk*);
+}
 
-#include "../../../Primitives/interface/UndefInterfaceHelperMacros.h"
+struct ISwapChainVkVtbl { ISwapChainVkMethods SwapChainVk; }
+struct ISwapChainVk { ISwapChainVkVtbl* pVtbl; }
 
-#if DILIGENT_C_INTERFACE
-
-#    define ISwapChainVk_GetVkSwapChain(This)  CALL_IFACE_METHOD(SwapChainVk, GetVkSwapChain, This)
-
-#endif
-
-
+VkSwapchainKHR* ISwapChainVk_GetVkSwapChain(ISwapChainVk* swapchain) {
+    return swapchain.pVtbl.SwapChainVk.GetVkSwapChain(swapchain);
+}

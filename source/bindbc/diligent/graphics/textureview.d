@@ -31,12 +31,13 @@
  *  of the possibility of such damages.
  */
 
-module bindbc.diligent.graphics.engine.textureview;
+module bindbc.diligent.graphics.textureview;
 
 /// \file
 /// Definition of the Diligent::ITextureView interface and related data structures
 
-import bindbc.diligent.graphics.deviceobject;
+public import bindbc.diligent.graphics.deviceobject;
+public import bindbc.diligent.graphics.texture;
 
 struct ISampler;
 

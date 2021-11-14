@@ -31,7 +31,7 @@
  *  of the possibility of such damages.
  */
 
-module bindbc.diligent.graphics.engine.resourcemapping;
+module bindbc.diligent.graphics.resourcemapping;
 
 /// \file
 /// Definition of the Diligent::IResourceMapping interface and related data structures

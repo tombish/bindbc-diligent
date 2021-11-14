@@ -31,7 +31,7 @@
  *  of the possibility of such damages.
  */
 
-module bindbc.diligent.graphics.engine.blendstate;
+module bindbc.diligent.graphics.blendstate;
 
 /// \file
 /// Blend state description

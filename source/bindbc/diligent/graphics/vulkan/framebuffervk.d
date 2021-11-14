@@ -36,33 +36,23 @@ module bindbc.diligent.graphics.vulkan.framebuffervk;
 /// \file
 /// Definition of the Diligent::IFramebufferVk interface
 
-#include "../../GraphicsEngine/interface/Framebuffer.h"
+import bindbc.diligent.graphics.framebuffer;
 
 // {846BE360-D89B-41AD-B089-7F2439ADCE3A}
 static const INTERFACE_ID IID_FramebufferVk =
-    {0x846be360, 0xd89b, 0x41ad, {0xb0, 0x89, 0x7f, 0x24, 0x39, 0xad, 0xce, 0x3a}};
-
-#define DILIGENT_INTERFACE_NAME IFramebufferVk
-#include "../../../Primitives/interface/DefineInterfaceHelperMacros.h"
-
-#define IFramebufferVkInclusiveMethods                              \
-    /*IFramebufferInclusiveMethods*/ IDeviceObjectInclusiveMethods; \
-    IFramebufferVkMethods FramebufferVk
+    INTERFACE_ID(0x846be360, 0xd89b, 0x41ad, [0xb0, 0x89, 0x7f, 0x24, 0x39, 0xad, 0xce, 0x3a]);
 
 /// Exposes Vulkan-specific functionality of a Framebuffer object.
-DILIGENT_BEGIN_INTERFACE(IFramebufferVk, IFramebuffer)
+struct IFramebufferVkMethods
 {
     /// Returns Vulkan framebuffer object handle
-    VIRTUAL VkFramebufferGetVkFramebuffer() CONST PURE;
-};
-DILIGENT_END_INTERFACE
+    VkFramebuffer* GetVkFramebuffer(IFramebufferVk*);
+}
 
-#include "../../../Primitives/interface/UndefInterfaceHelperMacros.h"
+struct IFramebufferVkVtbl { IFramebufferVkMethods FramebufferVk; }
+struct IFramebufferVk { IFramebufferVkVtbl* pVtbl; }
 
-#if DILIGENT_C_INTERFACE
-
-#    define IFramebufferVk_GetVkFramebuffer(This) CALL_IFACE_METHOD(FramebufferVk, GetVkFramebuffer, This)
-
-#endif
-
-
+//#    define IFramebufferVk_GetVkFramebuffer(This) CALL_IFACE_METHOD(FramebufferVk, GetVkFramebuffer, This)
+VkFramebuffer* IFramebufferVk_GetVkFramebuffer(IFramebufferVk* frameBuffer) {
+    return frameBuffer.pVtbl.FramebufferVk.GetVkFramebuffer(frameBuffer);
+}

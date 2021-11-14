@@ -36,37 +36,29 @@ module bindbc.diligent.graphics.vulkan.toplevelasvk;
 /// \file
 /// Definition of the Diligent::ITopLevelASVk interface
 
-#include "../../GraphicsEngine/interface/TopLevelAS.h"
+import bindbc.diligent.graphics.toplevelas;
 
 // {356FFFFA-9E57-49F7-8FF4-7017B61BE6A8}
 static const INTERFACE_ID IID_TopLevelASVk =
-    {0x356ffffa, 0x9e57, 0x49f7, {0x8f, 0xf4, 0x70, 0x17, 0xb6, 0x1b, 0xe6, 0xa8}};
-
-#define DILIGENT_INTERFACE_NAME ITopLevelASVk
-#include "../../../Primitives/interface/DefineInterfaceHelperMacros.h"
-
-#define ITopLevelASVkInclusiveMethods \
-    ITopLevelASInclusiveMethods;      \
-    ITopLevelASVkMethods TopLevelASVk
+    INTERFACE_ID(0x356ffffa, 0x9e57, 0x49f7, [0x8f, 0xf4, 0x70, 0x17, 0xb6, 0x1b, 0xe6, 0xa8]);
 
 /// Exposes Vulkan-specific functionality of a Top-level acceleration structure object.
-DILIGENT_BEGIN_INTERFACE(ITopLevelASVk, ITopLevelAS)
+struct ITopLevelASVkMethods
 {
     /// Returns a Vulkan handle of the internal top-level AS object.
-    VIRTUAL VkAccelerationStructureKHRGetVkTLAS(THIS) CONST PURE;
+    VkAccelerationStructureKHR* GetVkTLAS(ITopLevelASVk*);
 
     /// Returns a Vulkan device address of the internal top-level AS object.
-    VIRTUAL VkDeviceAddressGetVkDeviceAddress(THIS) CONST PURE;
-};
-DILIGENT_END_INTERFACE
+    VkDeviceAddress* GetVkDeviceAddress(ITopLevelASVk*);
+}
 
-#include "../../../Primitives/interface/UndefInterfaceHelperMacros.h"
+struct ITopLevelASVkVtbl { ITopLevelASVkMethods TopLevelASVk; }
+struct ITopLevelASVk { ITopLevelASVkVtbl* pVtbl; }
 
-#if DILIGENT_C_INTERFACE
+VkAccelerationStructureKHR* ITopLevelASVk_GetVkTLAS(ITopLevelASVk* toplevelAS) {
+    return toplevelAS.pVtbl.TopLevelASVk.GetVkTLAS(topLevelAS);
+}
 
-#    define ITopLevelASVk_GetVkTLAS(This)          CALL_IFACE_METHOD(TopLevelASVk, GetVkTLAS, This)
-#    define ITopLevelASVk_GetVkDeviceAddress(This) CALL_IFACE_METHOD(TopLevelASVk, GetVkDeviceAddress, This)
-
-#endif
-
-
+VkDeviceAddress* ITopLevelASVk_GetVkDeviceAddress(ITopLevelASVk* toplevelAS) {
+    return toplevelAS.pVtbl.TopLevelASVk.GetVkDeviceAddress(topLevelAS);
+}

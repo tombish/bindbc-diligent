@@ -31,14 +31,14 @@
  *  of the possibility of such damages.
  */
 
-module bindbc.diligent.graphics.engine.texture;
+module bindbc.diligent.graphics.texture;
 
 /// \file
 /// Definition of the Diligent::ITexture interface and related data structures
 
-import bindbc.diligent.graphics.graphicstypes;
-import bindbc.diligent.graphics.deviceobject;
-import bindbc.diligent.graphics.textureview;
+public import bindbc.diligent.graphics.graphicstypes;
+public import bindbc.diligent.graphics.deviceobject;
+public import bindbc.diligent.graphics.textureview;
 
 // {A64B0E60-1B5E-4CFD-B880-663A1ADCBE98}
 static const INTERFACE_ID IID_Texture =

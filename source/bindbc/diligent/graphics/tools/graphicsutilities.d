@@ -36,33 +36,31 @@ module bindbc.diligent.graphics.tools.graphicsutilities;
 /// \file
 /// Defines graphics engine utilities
 
-#include "../../GraphicsEngine/interface/Texture.h"
-#include "../../GraphicsEngine/interface/Buffer.h"
-#include "../../GraphicsEngine/interface/RenderDevice.h"
+import bindbc.diligent.graphics.texture;
+import bindbc.diligent.graphics.buffer;
+import bindbc.diligent.graphics.renderdevice;
 
-void DILIGENT_GLOBAL_FUNCTION(CreateUniformBuffer)(IRenderDevice*                  pDevice,
-                                                   Uint32                          Size,
-                                                   const Char*                     Name,
-                                                   IBuffer**                       ppBuffer,
-                                                   USAGE Usage                     DEFAULT_VALUE(USAGE_DYNAMIC),
-                                                   BIND_FLAGS BindFlags            DEFAULT_VALUE(BIND_UNIFORM_BUFFER),
-                                                   CPU_ACCESS_FLAGS CPUAccessFlags DEFAULT_VALUE(CPU_ACCESS_WRITE),
-                                                   void* pInitialData              DEFAULT_VALUE(nullptr));
+void Diligent_CreateUniformBuffer(IRenderDevice*                  pDevice,
+                                  uint                            Size,
+                                  const(char)*                    Name,
+                                  IBuffer**                       ppBuffer,
+                                  USAGE Usage                     = USAGE.USAGE_DYNAMIC,
+                                  BIND_FLAGS BindFlags            = BIND_FLAGS.BIND_UNIFORM_BUFFER,
+                                  CPU_ACCESS_FLAGS CPUAccessFlags = CPU_ACCESS_FLAGS.CPU_ACCESS_WRITE,
+                                  void* pInitialData              = null);
 
-void DILIGENT_GLOBAL_FUNCTION(GenerateCheckerBoardPattern)(Uint32         Width,
-                                                           Uint32         Height,
-                                                           TEXTURE_FORMAT Fmt,
-                                                           Uint32         HorzCells,
-                                                           Uint32         VertCells,
-                                                           Uint8*         pData,
-                                                           Uint32         StrideInBytes);
+void Diligent_GenerateCheckerBoardPattern(uint           Width,
+                                          uint           Height,
+                                          TEXTURE_FORMAT Fmt,
+                                          uint           HorzCells,
+                                          uint           VertCells,
+                                          ubyte*         pData,
+                                          uint           StrideInBytes);
 
-void DILIGENT_GLOBAL_FUNCTION(ComputeMipLevel)(Uint32         FineLevelWidth,
-                                               Uint32         FineLevelHeight,
-                                               TEXTURE_FORMAT Fmt,
-                                               const void*    pFineLevelData,
-                                               Uint32         FineDataStrideInBytes,
-                                               void*          pCoarseLevelData,
-                                               Uint32         CoarseDataStrideInBytes);
-
-
+void Diligent_ComputeMipLevel(uint           FineLevelWidth,
+                              uint           FineLevelHeight,
+                              TEXTURE_FORMAT Fmt,
+                              const(void)*   pFineLevelData,
+                              uint           FineDataStrideInBytes,
+                              void*          pCoarseLevelData,
+                              uint           CoarseDataStrideInBytes);

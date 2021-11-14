@@ -36,38 +36,30 @@ module bindbc.diligent.graphics.vulkan.pipelinestatevk;
 /// \file
 /// Definition of the Diligent::IPipeplineStateVk interface
 
-#include "../../GraphicsEngine/interface/PipelineState.h"
-#include "RenderPassVk.h"
+import bindbc.diligent.graphics.pipelinestate;
+import bindbc.diligent.graphics.vulkan.renderpassvk;
 
 // {2FEA0868-0932-412A-9F0A-7CEA7E61B5E0}
 static const INTERFACE_ID IID_PipelineStateVk =
-    {0x2fea0868, 0x932, 0x412a, {0x9f, 0xa, 0x7c, 0xea, 0x7e, 0x61, 0xb5, 0xe0}};
-
-#define DILIGENT_INTERFACE_NAME IPipelineStateVk
-#include "../../../Primitives/interface/DefineInterfaceHelperMacros.h"
-
-#define IPipelineStateVkInclusiveMethods \
-    IPipelineStateInclusiveMethods;      \
-    IPipelineStateVkMethods PipelineStateVk
+    INTERFACE_ID(0x2fea0868, 0x932, 0x412a, [0x9f, 0xa, 0x7c, 0xea, 0x7e, 0x61, 0xb5, 0xe0]);
 
 /// Exposes Vulkan-specific functionality of a pipeline state object.
-DILIGENT_BEGIN_INTERFACE(IPipelineStateVk, IPipelineState)
+struct IPipelineStateVkMethods
 {
     /// Returns a pointer to the internal render pass object.
-    VIRTUAL IRenderPassVk*GetRenderPass(THIS) CONST PURE;
+    IRenderPassVk** GetRenderPass(IPipelineStateVk*);
 
     /// Returns a Vulkan handle of the internal pipeline state object.
-    VIRTUAL VkPipelineGetVkPipeline(THIS) CONST PURE;
-};
-DILIGENT_END_INTERFACE
+    VkPipeline* GetVkPipeline(IPipelineStateVk*);
+}
 
-#include "../../../Primitives/interface/UndefInterfaceHelperMacros.h"
+struct IPipelineStateVkVtbl { IPipelineStateVkMethods PipelineStateVk; }
+struct IPipelineStateVk { IPipelineStateVkVtbl* pVtbl; }
 
-#if DILIGENT_C_INTERFACE
+IRenderPassVk** IPipelineStateVk_GetRenderPass(IPipelineStateVk* pipelineState) {
+    return pipelineState.pVtbl.PipelineStateVk.GetRenderPass(pipelineState);
+}
 
-#    define IPipelineStateVk_GetRenderPass(This) CALL_IFACE_METHOD(PipelineStateVk, GetRenderPass, This)
-#    define IPipelineStateVk_GetVkPipeline(This) CALL_IFACE_METHOD(PipelineStateVk, GetVkPipeline, This)
-
-#endif
-
-
+VkPipeline* IPipelineStateVk_GetVkPipeline(IPipelineStateVk* pipelineState) {
+    return pipelineState.pVtbl.PipelineStateVk.GetVkPipeline(pipelineState);
+}

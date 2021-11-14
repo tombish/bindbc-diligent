@@ -36,6 +36,7 @@
 module bindbc.diligent.graphics.buffer;
 
 import bindbc.diligent.graphics.deviceobject;
+import bindbc.diligent.graphics.devicecontext;
 import bindbc.diligent.graphics.bufferview;
 
 // {EC47EAD3-A2C4-44F2-81C5-5248D14F10E4}

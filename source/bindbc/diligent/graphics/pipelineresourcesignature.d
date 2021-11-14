@@ -31,7 +31,7 @@
  *  of the possibility of such damages.
  */
 
-module bindbc.diligent.graphics.engine.pipelineresourcesignature;
+module bindbc.diligent.graphics.pipelineresourcesignature;
 
 /// \file
 /// Definition of the Diligent::IPipelineResourceSignature interface and related data structures

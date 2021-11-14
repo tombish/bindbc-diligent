@@ -31,7 +31,7 @@
  *  of the possibility of such damages.
  */
 
-module bindbc.diligent.graphics.engine.shaderresourcevariable;
+module bindbc.diligent.graphics.shaderresourcevariable;
 
 /// \file
 /// Definition of the Diligent::IShaderResourceVariable interface and related data structures

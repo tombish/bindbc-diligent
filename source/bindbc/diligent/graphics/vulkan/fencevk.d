@@ -36,33 +36,22 @@ module bindbc.diligent.graphics.vulkan.fencevk;
 /// \file
 /// Definition of the Diligent::IFenceVk interface
 
-#include "../../GraphicsEngine/interface/Fence.h"
+import bindbc.diligent.graphics.fence;
 
 // {7610B4CD-EDEA-4951-82CF-52F97FAFED2D}
 static const INTERFACE_ID IID_FenceVk =
-    {0x7610b4cd, 0xedea, 0x4951, {0x82, 0xcf, 0x52, 0xf9, 0x7f, 0xaf, 0xed, 0x2d}};
-
-#define DILIGENT_INTERFACE_NAME IFenceVk
-#include "../../../Primitives/interface/DefineInterfaceHelperMacros.h"
-
-#define IFenceVkInclusiveMethods \
-    IFenceInclusiveMethods;      \
-    IFenceVkMethods FenceVk
+    INTERFACE_ID(0x7610b4cd, 0xedea, 0x4951, [0x82, 0xcf, 0x52, 0xf9, 0x7f, 0xaf, 0xed, 0x2d]);
 
 /// Exposes Vulkan-specific functionality of a fence object.
-DILIGENT_BEGIN_INTERFACE(IFenceVk, IFence)
+struct IFenceVkMethods
 {
     /// If timeline semaphores are supported, returns the semaphore object; otherwise returns VK_NULL_HANDLE.
-    VIRTUAL VkSemaphoreGetVkSemaphore(THIS) PURE;
-};
-DILIGENT_END_INTERFACE
+    VkSemaphore* GetVkSemaphore(IFenceVk*);
+}
 
-#include "../../../Primitives/interface/UndefInterfaceHelperMacros.h"
+struct IFenceVkVtbl { IFenceVkMethods FenceVk; }
+struct IFenceVk { IFenceVkVtbl* pVtbl; }
 
-#if DILIGENT_C_INTERFACE
-
-#    define IFenceVk_GetVkSemaphore(This)    CALL_IFACE_METHOD(FenceVk, GetVkSemaphore, This)
-
-#endif
-
-
+VkSemaphore* IFenceVk_GetVkSemaphore(IFenceVk* fence) {
+    fence.pVtbl.FenceVk.GetVkSemaphore(fence);
+}

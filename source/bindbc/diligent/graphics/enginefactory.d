@@ -31,7 +31,7 @@
  *  of the possibility of such damages.
  */
 
-module bindbc.diligent.graphics.engine.enginefactory;
+module bindbc.diligent.graphics.enginefactory;
 
 /// \file
 /// Defines Diligent::IEngineFactory interface

@@ -31,7 +31,7 @@
  *  of the possibility of such damages.
  */
 
-module bindbc.diligent.graphics.engine.bottomlevelas;
+module bindbc.diligent.graphics.bottomlevelas;
 
 /// \file
 /// Definition of the Diligent::IBottomLevelAS interface and related data structures

@@ -36,33 +36,22 @@ module bindbc.diligent.graphics.vulkan.bufferviewvk;
 /// \file
 /// Definition of the Diligent::IBufferViewVk interface
 
-#include "../../GraphicsEngine/interface/BufferView.h"
+import bindbc.diligent.graphics.bufferview;
 
 // {CB67024A-1E23-4202-A49A-07B6BCEABC06}
 static const INTERFACE_ID IID_BufferViewVk =
-    {0xcb67024a, 0x1e23, 0x4202, {0xa4, 0x9a, 0x7, 0xb6, 0xbc, 0xea, 0xbc, 0x6}};
-
-#define DILIGENT_INTERFACE_NAME IBufferViewVk
-#include "../../../Primitives/interface/DefineInterfaceHelperMacros.h"
-
-#define IBufferViewVkInclusiveMethods \
-    IBufferViewInclusiveMethods;      \
-    IBufferViewVkMethods BufferViewVk
+    INTERFACE_ID(0xcb67024a, 0x1e23, 0x4202, [0xa4, 0x9a, 0x7, 0xb6, 0xbc, 0xea, 0xbc, 0x6]);
 
 /// Exposes Vulkan-specific functionality of a buffer view object.
-DILIGENT_BEGIN_INTERFACE(IBufferViewVk, IBufferView)
+struct IBufferViewVkMethods
 {
     /// Returns a Vulkan handle of the internal buffer view object.
-    VIRTUAL VkBufferViewGetVkBufferView(THIS) CONST PURE;
-};
-DILIGENT_END_INTERFACE
+    VkBufferView* GetVkBufferView(IBufferViewVk*);
+}
 
-#include "../../../Primitives/interface/UndefInterfaceHelperMacros.h"
+struct IBufferViewVkVtbl { IBufferViewVkMethods BufferViewVk; }
+struct IBufferViewVk { IBufferViewVkVtbl* pVtbl; }
 
-#if DILIGENT_C_INTERFACE
-
-#    define IBufferViewVk_GetVkBufferView(This) CALL_IFACE_METHOD(BufferViewVk, GetVkBufferView, This)
-
-#endif
-
-
+VkBufferView* IBufferViewVk_GetVkBufferView(IBufferViewVk* bufferView) {
+    return bufferView.pVtbl.BufferViewVk.GetVkBufferView(bufferView);
+}

@@ -36,37 +36,21 @@ module bindbc.diligent.graphics.vulkan.enginefactoryvk;
 /// \file
 /// Declaration of functions that initialize Direct3D12-based engine implementation
 
-#include "../../GraphicsEngine/interface/EngineFactory.h"
-#include "../../GraphicsEngine/interface/RenderDevice.h"
-#include "../../GraphicsEngine/interface/DeviceContext.h"
-#include "../../GraphicsEngine/interface/SwapChain.h"
+import bindbc.diligent.graphics.enginefactory;
+import bindbc.diligent.graphics.renderdevice;
+import bindbc.diligent.graphics.devicecontext;
+import bindbc.diligent.graphics.swapchain;
 
-#if PLATFORM_ANDROID || PLATFORM_LINUX || PLATFORM_MACOS || PLATFORM_IOS || PLATFORM_TVOS || (PLATFORM_WIN32 && !defined(_MSC_VER))
-// https://gcc.gnu.org/wiki/Visibility
-#    define API_QUALIFIER __attribute__((visibility("default")))
-#elif PLATFORM_WIN32
-#    define API_QUALIFIER
-#else
-#    error Unsupported platform
-#endif
-
-#if ENGINE_DLL && PLATFORM_WIN32 && defined(_MSC_VER)
-#    include "../../GraphicsEngine/interface/LoadEngineDll.h"
-#    define EXPLICITLY_LOAD_ENGINE_VK_DLL 1
-#endif
+version(BindDiligent_Dynamic) { version(Windows) {
+    import bindbc.diligent.graphics.loadenginedll;
+    enum EXPLICITLY_LOAD_ENGINE_VK_DLL = 1;
+}}
 
 // {F554EEE4-57C2-4637-A508-85BE80DC657C}
 static const INTERFACE_ID IID_EngineFactoryVk =
-    {0xf554eee4, 0x57c2, 0x4637, {0xa5, 0x8, 0x85, 0xbe, 0x80, 0xdc, 0x65, 0x7c}};
+    INTERFACE_ID(0xf554eee4, 0x57c2, 0x4637, [0xa5, 0x8, 0x85, 0xbe, 0x80, 0xdc, 0x65, 0x7c]);
 
-#define DILIGENT_INTERFACE_NAME IEngineFactoryVk
-#include "../../../Primitives/interface/DefineInterfaceHelperMacros.h"
-
-#define IEngineFactoryVkInclusiveMethods \
-    IEngineFactoryInclusiveMethods;      \
-    IEngineFactoryVkMethods EngineFactoryVk
-
-DILIGENT_BEGIN_INTERFACE(IEngineFactoryVk, IEngineFactory)
+struct IEngineFactoryVkMethods
 {
     /// Creates a render device and device contexts for Vulkan backend
 
@@ -77,10 +61,10 @@ DILIGENT_BEGIN_INTERFACE(IEngineFactoryVk, IEngineFactory)
     ///                           the contexts will be written. Immediate context goes at
     ///                           position 0. If EngineCI.NumDeferredContexts > 0,
     ///                           pointers to the deferred contexts are written afterwards.
-    VIRTUAL voidCreateDeviceAndContextsVk(THIS_
-                                                   const EngineVkCreateInfo REF EngineCI,
-                                                   IRenderDevice**              ppDevice,
-                                                   IDeviceContext**             ppContexts) PURE;
+    void* CreateDeviceAndContextsVk(IEngineFactoryVk*,
+                                                   const(EngineVkCreateInfo)* EngineCI,
+                                                   IRenderDevice**            ppDevice,
+                                                   IDeviceContext**           ppContexts);
 
     /// Creates a swap chain for Vulkan-based engine implementation
 
@@ -93,12 +77,12 @@ DILIGENT_BEGIN_INTERFACE(IEngineFactoryVk, IEngineFactory)
     ///
     /// \param [out] ppSwapChain    - Address of the memory location where pointer to the new
     ///                               swap chain will be written
-    VIRTUAL voidCreateSwapChainVk(THIS_
-                                           IRenderDevice*          pDevice,
-                                           IDeviceContext*         pImmediateContext,
-                                           const SwapChainDesc REF SwapChainDesc,
-                                           const NativeWindow REF  Window,
-                                           ISwapChain**            ppSwapChain) PURE;
+    void* CreateSwapChainVk(IEngineFactoryVk*,
+                                           IRenderDevice*        pDevice,
+                                           IDeviceContext*       pImmediateContext,
+                                           const(SwapChainDesc)* SwapChainDesc,
+                                           const(NativeWindow)*  Window,
+                                           ISwapChain**          ppSwapChain);
 
     /// Enable device simulation layer (if available).
 
@@ -106,34 +90,39 @@ DILIGENT_BEGIN_INTERFACE(IEngineFactoryVk, IEngineFactory)
     /// Use VK_DEVSIM_FILENAME environment variable to define the path to the .json file.
     /// 
     /// \remarks Use this function before calling EnumerateAdapters() and CreateDeviceAndContextsVk().
-    VIRTUAL voidEnableDeviceSimulation(THIS) PURE;
-};
-DILIGENT_END_INTERFACE
-
-#include "../../../Primitives/interface/UndefInterfaceHelperMacros.h"
-
-#if DILIGENT_C_INTERFACE
-
-#    define IEngineFactoryVk_CreateDeviceAndContextsVk(This, ...) CALL_IFACE_METHOD(EngineFactoryVk, CreateDeviceAndContextsVk, This, __VA_ARGS__)
-#    define IEngineFactoryVk_CreateSwapChainVk(This, ...)         CALL_IFACE_METHOD(EngineFactoryVk, CreateSwapChainVk,         This, __VA_ARGS__)
-#    define IEngineFactoryVk_EnableDeviceSimulation(This)         CALL_IFACE_METHOD(EngineFactoryVk, EnableDeviceSimulation,    This)
-
-#endif
-
-#if EXPLICITLY_LOAD_ENGINE_VK_DLL
-
-typedef struct IEngineFactoryVk* (*GetEngineFactoryVkType)();
-
-inline GetEngineFactoryVkType DILIGENT_GLOBAL_FUNCTION(LoadGraphicsEngineVk)()
-{
-    return (GetEngineFactoryVkType)LoadEngineDll("GraphicsEngineVk", "GetEngineFactoryVk");
+    void* EnableDeviceSimulation(IEngineFactoryVk*);
 }
 
-#else
+struct IEngineFactoryVkVtbl { IEngineFactoryVkMethods EngineFactoryVk; }
+struct IEngineFactoryVk { IEngineFactoryVkVtbl* pVtbl; }
 
-API_QUALIFIER
-struct IEngineFactoryVk* DILIGENT_GLOBAL_FUNCTION(GetEngineFactoryVk)();
+void* IEngineFactoryVk_CreateDeviceAndContextsVk(IEngineFactoryVk* engineFactory,
+                                                   const(EngineVkCreateInfo)* engineCI,
+                                                   IRenderDevice**            ppDevice,
+                                                   IDeviceContext**           ppContexts) {
+    return engineFactory.pVtbl.EngineFactoryVk.CreateDeviceAndContextsVk(engineFactory, engineCI, ppDevice, ppContexts);
+}
 
-#endif
+void* IEngineFactoryVk_CreateSwapChainVk(IEngineFactoryVk* engineFactory,
+                                           IRenderDevice*        pDevice,
+                                           IDeviceContext*       pImmediateContext,
+                                           const(SwapChainDesc)* swapchainDesc,
+                                           const(NativeWindow)*  window,
+                                           ISwapChain**          ppSwapChain) {
+    return engineFactory.pVtbl.EngineFactoryVk.CreateSwapChainVk(engineFactory, pDevice, pImmediateContext, swapchainDesc, window, ppSwapChain);
+}
 
+void* IEngineFactoryVk_EnableDeviceSimulation(IEngineFactoryVk* engineFactory) {
+    return engineFactory.pVtbl.EngineFactoryVk.EnableDeviceSimulation(engineFactory);
+}
 
+static if (EXPLICITLY_LOAD_ENGINE_VK_DLL) {
+   IEngineFactoryVk* function() GetEngineFactoryVkType;
+
+    GetEngineFactoryVkType Diligent_LoadGraphicsEngineVk()
+    {
+        return cast(GetEngineFactoryVkType)LoadEngineDll("GraphicsEngineVk", "GetEngineFactoryVk");
+    } 
+} else {    
+    IEngineFactoryVk* Diliget_GetEngineFactoryVk();
+}

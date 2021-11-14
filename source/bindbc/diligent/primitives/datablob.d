@@ -33,6 +33,8 @@
  *  of the possibility of such damages.
  */
 
+ module bindbc.diligent.primitives.datablob;
+
 /// \file
 /// Defines Diligent::IDataBlob interface
 

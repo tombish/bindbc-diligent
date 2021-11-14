@@ -31,7 +31,7 @@
  *  of the possibility of such damages.
  */
 
-module bindbc.diligent.graphics.engine.pipelinestate;
+module bindbc.diligent.graphics.pipelinestate;
 
 /// \file
 /// Definition of the Diligent::IRenderDevice interface and related data structures

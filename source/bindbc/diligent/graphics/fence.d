@@ -31,7 +31,7 @@
  *  of the possibility of such damages.
  */
 
-module bindbc.diligent.graphics.engine.fence;
+module bindbc.diligent.graphics.fence;
 
 /// \file
 /// Defines Diligent::IFence interface and related data structures

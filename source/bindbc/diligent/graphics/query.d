@@ -31,7 +31,7 @@
  *  of the possibility of such damages.
  */
 
-module bindbc.diligent.graphics.engine.query;
+module bindbc.diligent.graphics.query;
 
 /// \file
 /// Defines Diligent::IQuery interface and related data structures

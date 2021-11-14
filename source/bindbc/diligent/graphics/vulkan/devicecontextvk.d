@@ -36,40 +36,29 @@ module bindbc.diligent.graphics.vulkan.devicecontextvk;
 /// \file
 /// Definition of the Diligent::IDeviceContextVk interface
 
-#include "../../GraphicsEngine/interface/DeviceContext.h"
-#include "CommandQueueVk.h"
+import bindbc.diligent.graphics.devicecontext;
+import bindbc.diligent.graphics.vulkan.commandqueuevk;
 
 // {72AEB1BA-C6AD-42EC-8811-7ED9C72176BB}
 static const INTERFACE_ID IID_DeviceContextVk =
-    {0x72aeb1ba, 0xc6ad, 0x42ec, {0x88, 0x11, 0x7e, 0xd9, 0xc7, 0x21, 0x76, 0xbb}};
-
-#define DILIGENT_INTERFACE_NAME IDeviceContextVk
-#include "../../../Primitives/interface/DefineInterfaceHelperMacros.h"
-
-#define IDeviceContextVkInclusiveMethods \
-    IDeviceContextInclusiveMethods;      \
-    IDeviceContextVkMethods DeviceContextVk
+    INTERFACE_ID(0x72aeb1ba, 0xc6ad, 0x42ec, [0x88, 0x11, 0x7e, 0xd9, 0xc7, 0x21, 0x76, 0xbb]);
 
 /// Exposes Vulkan-specific functionality of a device context.
-DILIGENT_BEGIN_INTERFACE(IDeviceContextVk, IDeviceContext)
+struct IDeviceContextVkMethods
 {
     /// Transitions the internal Vulkan image to the specified layout
 
     /// \param [in] pTexture  - texture to transition
     /// \param [in] NewLayout - Vulkan image layout this texture to transition to
     /// \remarks The texture state must be known to the engine.
-    VIRTUAL voidTransitionImageLayout(THIS_
-                                               ITexture*     pTexture,
-                                               VkImageLayout NewLayout) PURE;
+    void* TransitionImageLayout(IDeviceContextVk*, ITexture* pTexture, VkImageLayout NewLayout);
 
     /// Transitions the internal Vulkan buffer object to the specified state
 
     /// \param [in] pBuffer        - Buffer to transition
     /// \param [in] NewAccessFlags - Access flags to set for the buffer
     /// \remarks The buffer state must be known to the engine.
-    VIRTUAL voidBufferMemoryBarrier(THIS_
-                                             IBuffer*      pBuffer,
-                                             VkAccessFlags NewAccessFlags) PURE;
+    void* BufferMemoryBarrier(IDeviceContextVk*, IBuffer* pBuffer, VkAccessFlags NewAccessFlags);
 
     /// Returns the Vulkan handle of the command buffer currently being recorded
 
@@ -85,17 +74,20 @@ DILIGENT_BEGIN_INTERFACE(IDeviceContextVk, IDeviceContext)
     ///           states in the command buffer, it must invalidate the engine's internal state tracking by
     ///           calling IDeviceContext::InvalidateState() and then manually restore all required states via
     ///           appropriate Diligent API calls.
-    VIRTUAL VkCommandBufferGetVkCommandBuffer(THIS) PURE;
-};
-DILIGENT_END_INTERFACE
+    VkCommandBuffer* GetVkCommandBuffer(IDeviceContextVk*);
+}
 
-#include "../../../Primitives/interface/UndefInterfaceHelperMacros.h"
+struct IDeviceContextVkVtbl { IDeviceContextVkMethods DeviceContextVk; }
+struct IDeviceContextVk { IDeviceContextVkVtbl* pVtbl; }
 
-#if DILIGENT_C_INTERFACE
+void* IDeviceContextVk_TransitionImageLayout(IDeviceContextVk* context, ITexture* pTexture, VkImageLayout newLayout) {
+    return context.pVtbl.DeviceContextVk.TransitionImageLayout(context, pTexture, newLayout);
+}
 
-#    define IDeviceContextVk_TransitionImageLayout(This, ...) CALL_IFACE_METHOD(DeviceContextVk, TransitionImageLayout, This, __VA_ARGS__)
-#    define IDeviceContextVk_BufferMemoryBarrier(This, ...)   CALL_IFACE_METHOD(DeviceContextVk, BufferMemoryBarrier,   This, __VA_ARGS__)
+void* IDeviceContextVk_BufferMemoryBarrier(IDeviceContextVk* context, IBuffer* pBuffer, VkAccessFlags newAccessFlags) {
+    return context.pVtbl.DeviceContextVk.BufferMemoryBarrier(context, pBuffer, newAccessFlags);
+}
 
-#endif
-
-
+VkCommandBuffer* IDeviceContextVk_GetVkCommandBuffer(IDeviceContextVk* context) {
+    return context.pVtbl.DeviceContextVk.GetVkCommandBuffer(context);
+}

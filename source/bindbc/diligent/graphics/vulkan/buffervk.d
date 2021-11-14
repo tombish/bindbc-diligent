@@ -36,49 +36,46 @@ module bindbc.diligent.graphics.vulkan.buffervk;
 /// \file
 /// Definition of the Diligent::IBufferVk interface
 
-#include "../../GraphicsEngine/interface/Buffer.h"
+import bindbc.diligent.graphics.buffer;
 
 // {12D8EC02-96F4-431E-9695-C5F572CC7587}
 static const INTERFACE_ID IID_BufferVk =
-    {0x12d8ec02, 0x96f4, 0x431e, {0x96, 0x95, 0xc5, 0xf5, 0x72, 0xcc, 0x75, 0x87}};
-
-#define DILIGENT_INTERFACE_NAME IBufferVk
-#include "../../../Primitives/interface/DefineInterfaceHelperMacros.h"
-
-#define IBufferVkInclusiveMethods \
-    IBufferInclusiveMethods;      \
-    IBufferVkMethods BufferVk
+    INTERFACE_ID(0x12d8ec02, 0x96f4, 0x431e, [0x96, 0x95, 0xc5, 0xf5, 0x72, 0xcc, 0x75, 0x87]);
 
 /// Exposes Vulkan-specific functionality of a buffer object.
-DILIGENT_BEGIN_INTERFACE(IBufferVk, IBuffer)
+struct IBufferVkMethods
 {
     /// Returns a Vulkan handle of the internal buffer object.
-    VIRTUAL VkBufferGetVkBuffer(THIS) CONST PURE;
+    VkBuffer* GetVkBuffer(IBufferVk*);
 
     /// Sets the Vulkan access flags.
 
     /// \param [in] AccessFlags - Vulkan access flags to be set for this buffer
-    VIRTUAL voidSetAccessFlags(THIS_
-                                        VkAccessFlags AccessFlags) PURE;
+    void* SetAccessFlags(IBufferVk*, VkAccessFlags AccessFlags);
 
     /// If the buffer state is known to the engine (i.e. not Diligent::RESOURCE_STATE_UNKNOWN),
     /// returns Vulkan access flags corresponding to the state. If the state is unknown, returns 0.
-    VIRTUAL VkAccessFlagsGetAccessFlags(THIS) CONST PURE;
+    VkAccessFlags* GetAccessFlags(IBufferVk*);
 
     /// Returns a Vulkan device address of the internal buffer object.
-    VIRTUAL VkDeviceAddressGetVkDeviceAddress(THIS) CONST PURE;
-};
-DILIGENT_END_INTERFACE
+    VkDeviceAddress* GetVkDeviceAddress(IBufferVk*);
+}
 
-#include "../../../Primitives/interface/UndefInterfaceHelperMacros.h"
+struct IBufferVkVtbl { IBufferVkMethods BufferVk; }
+struct IBufferVk { IBufferVkVtbl* pVtbl; }
 
-#if DILIGENT_C_INTERFACE
+VkBuffer* IBufferVk_GetVkBuffer(IBufferVk* buffer) {
+    return buffer.pVtbl.BufferVk.GetVkBuffer(buffer);
+}
 
-#    define IBufferVk_GetVkBuffer(This)         CALL_IFACE_METHOD(BufferVk, GetVkBuffer, This)
-#    define IBufferVk_SetAccessFlags(This, ...) CALL_IFACE_METHOD(BufferVk, SetAccessFlags, This, __VA_ARGS__)
-#    define IBufferVk_GetAccessFlags(This)      CALL_IFACE_METHOD(BufferVk, GetAccessFlags, This)
-#    define IBufferVk_GetVkDeviceAddress(This)  CALL_IFACE_METHOD(BufferVk, GetVkDeviceAddress, This)
+void* IBufferVk_SetAccessFlags(IBufferVk* buffer, VkAccessFlags accessFlags) {
+    return buffer.pVtbl.BufferVk.SetAccessFlags(buffer, accessFlags);
+}
 
-#endif
+VkAccessFlags* IBufferVk_GetAccessFlags(IBufferVk* buffer) {
+    return buffer.pVtbl.BufferVk.GetAccessFlags(buffer);
+}
 
-
+VkDeviceAddress* IBufferVk_GetVkDeviceAddress(IBufferVk* buffer) {
+    return buffer.pVtbl.BufferVk.GetVkDeviceAddress(buffer);
+}

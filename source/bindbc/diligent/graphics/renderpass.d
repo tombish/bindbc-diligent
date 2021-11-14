@@ -31,7 +31,7 @@
  *  of the possibility of such damages.
  */
 
-module bindbc.diligent.graphics.engine.renderpass;
+module bindbc.diligent.graphics.renderpass;
 
 /// \file
 /// Definition of the Diligent::IRenderPass interface and related data structures

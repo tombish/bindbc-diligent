@@ -31,7 +31,7 @@
  *  of the possibility of such damages.
  */
 
-module bindbc.diligent.graphics.engine.sampler;
+module bindbc.diligent.graphics.sampler;
 
 /// \file
 /// Definition of the Diligent::ISampler interface and related data structures

@@ -30,7 +30,7 @@
  *  of the possibility of such damages.
  */
 
-module bindbc.diligent.graphics.engine.commandqueue;
+module bindbc.diligent.graphics.commandqueue;
 
 /// \file
 /// Definition of the Diligent::ICommandQueue interface

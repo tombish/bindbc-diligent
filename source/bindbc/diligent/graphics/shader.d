@@ -33,11 +33,13 @@
  *  of the possibility of such damages.
  */
 
+ module bindbc.diligent.graphics.shader;
+
 /// \file
 /// Definition of the Diligent::IShader interface and related data structures
 
-import bindbc.diligent.primitives.filestream;
-import bindbc.diligent.graphics.deviceobject;
+public import bindbc.diligent.primitives.filestream;
+public import bindbc.diligent.graphics.deviceobject;
 
 // {2989B45C-143D-4886-B89C-C3271C2DCC5D}
 static const INTERFACE_ID IID_Shader =
@@ -141,7 +143,7 @@ struct IShaderSourceInputStreamFactory { IShaderSourceInputStreamFactoryVtbl* pV
 
 //#    define IShaderSourceInputStreamFactory_CreateInputStream(This, ...)  CALL_IFACE_METHOD(ShaderSourceInputStreamFactory, CreateInputStream, This, __VA_ARGS__)
 //#    define IShaderSourceInputStreamFactory_CreateInputStream2(This, ...) CALL_IFACE_METHOD(ShaderSourceInputStreamFactory, CreateInputStream2, This, __VA_ARGS__)
-void* IShaderSourceInputStreamFactory_CreateInputStream(ShaderSourceInputStreamFactory* factory,
+void* IShaderSourceInputStreamFactory_CreateInputStream(IShaderSourceInputStreamFactory* factory,
                                            const(char)* name,
                                            IFileStream** ppStream) {
     factory.pVtbl.CreateInputStream(factory, name, ppStream);
