@@ -75,7 +75,7 @@ static const INTERFACE_ID IID_HLSL2GLSLConverter =
     INTERFACE_ID(0x44a21160, 0x77e0, 0x4ddc, [0xa5, 0x7e, 0xb8, 0xb8, 0xb6, 0x5b, 0x53, 0x42]);
 
 /// Interface to the buffer object implemented in OpenGL
-struct IObjectInclusiveMethods
+struct IHLSL2GLSLConverterMethods
 {
     extern(C) @nogc nothrow {
         void* CreateStream(IHLSL2GLSLConverter*,

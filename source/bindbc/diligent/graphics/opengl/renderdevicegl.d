@@ -36,7 +36,7 @@ module bindbc.diligent.graphics.opengl.renderdevicegl;
 /// \file
 /// Definition of the Diligent::IRenderDeviceGL interface
 
-import bindbc.diligent.graphics.renderdevice;
+public import bindbc.diligent.graphics.renderdevice;
 
 /// Namespace for the OpenGL implementation of the graphics engine
 

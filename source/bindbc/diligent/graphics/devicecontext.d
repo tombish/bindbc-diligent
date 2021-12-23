@@ -36,13 +36,13 @@
 /// Definition of the Diligent::IDeviceContext interface and related data structures
 module bindbc.diligent.graphics.devicecontext;
 
-import bindbc.diligent.primitives.object;
+public import bindbc.diligent.primitives.object;
 import bindbc.diligent.graphics.graphicstypes;
 import bindbc.diligent.graphics.constants;
 import bindbc.diligent.graphics.buffer;
 import bindbc.diligent.graphics.inputlayout;
 import bindbc.diligent.graphics.shader;
-import bindbc.diligent.graphics.texture;
+public import bindbc.diligent.graphics.texture;
 import bindbc.diligent.graphics.sampler;
 import bindbc.diligent.graphics.resourcemapping;
 import bindbc.diligent.graphics.textureview;
@@ -50,16 +50,18 @@ import bindbc.diligent.graphics.bufferview;
 import bindbc.diligent.graphics.depthstencilstate;
 import bindbc.diligent.graphics.blendstate;
 import bindbc.diligent.graphics.pipelinestate;
-import bindbc.diligent.graphics.fence;
+public import bindbc.diligent.graphics.fence;
 import bindbc.diligent.graphics.query;
 import bindbc.diligent.graphics.renderpass;
 import bindbc.diligent.graphics.framebuffer;
 import bindbc.diligent.graphics.commandlist;
 import bindbc.diligent.graphics.swapchain;
-import bindbc.diligent.graphics.bottomlevelas;
-import bindbc.diligent.graphics.toplevelas;
+public import bindbc.diligent.graphics.bottomlevelas;
+public import bindbc.diligent.graphics.toplevelas;
 import bindbc.diligent.graphics.shaderbindingtable;
 import bindbc.diligent.graphics.commandqueue;
+
+public import bindbc.diligent.graphics.shaderresourcebinding;
 
 // {DC92711B-A1BE-4319-B2BD-C662D1CC19E4}
 static const INTERFACE_ID IID_DeviceContext =
@@ -113,7 +115,7 @@ struct DeviceContextDesc
     ///           For deferred contexts, this member is only defined between IDeviceContext::Begin and
     ///           IDeviceContext::FinishCommandList calls and matches the texture copy granularity of
     ///           the immediate context where the command list will be executed.
-    uint[3] TextureCopyGranularity = {};
+    uint[3] TextureCopyGranularity = [1, 1, 1];
 }
 
 /// Draw command flags
@@ -488,25 +490,25 @@ enum SET_VERTEX_BUFFERS_FLAGS : ubyte
 struct Viewport
 {
     /// X coordinate of the left boundary of the viewport.
-    float TopLeftX = 0.f;
+    float TopLeftX = 0.0f;
 
     /// Y coordinate of the top boundary of the viewport.
     /// When defining a viewport, DirectX convention is used:
     /// window coordinate systems originates in the LEFT TOP corner
     /// of the screen with Y axis pointing down.
-    float TopLeftY = 0.f;
+    float TopLeftY = 0.0f;
 
     /// Viewport width.
-    float Width = 0.f;
+    float Width = 0.0f;
 
     /// Viewport Height.
-    float Height = 0.f;
+    float Height = 0.0f;
 
     /// Minimum depth of the viewport. Ranges between 0 and 1.
-    float MinDepth = 0.f;
+    float MinDepth = 0.0f;
 
     /// Maximum depth of the viewport. Ranges between 0 and 1.
-    float MaxDepth = 0.f;
+    float MaxDepth = 0.0f;
 }
 
 /// Describes the rectangle.
@@ -645,7 +647,7 @@ enum COPY_AS_MODE : ubyte
 }
 
 /// Defines geometry flags for ray tracing.
-enum AYTRACING_GEOMETRY_FLAGS : ubyte
+enum RAYTRACING_GEOMETRY_FLAGS : ubyte
 {
     RAYTRACING_GEOMETRY_FLAG_NONE = 0,
 
@@ -1117,13 +1119,13 @@ struct StateTransitionDesc
     /// If this value is RESOURCE_STATE_UNKNOWN, internal resource state will be used, which must be defined in this case.
     ///
     /// \note  Resource state must be compatible with the context type.
-    RESOURCE_STATE OldState   = RESOURCE_STATE_UNKNOWN;
+    RESOURCE_STATE OldState   = RESOURCE_STATE.RESOURCE_STATE_UNKNOWN;
 
     /// Resource state after transition.
     /// Must not be RESOURCE_STATE_UNKNOWN or RESOURCE_STATE_UNDEFINED.
     ///
     /// \note  Resource state must be compatible with the context type.
-    RESOURCE_STATE NewState   = RESOURCE_STATE_UNKNOWN;
+    RESOURCE_STATE NewState   = RESOURCE_STATE.RESOURCE_STATE_UNKNOWN;
 
     /// State transition type, see Diligent::STATE_TRANSITION_TYPE.
 
@@ -1144,7 +1146,7 @@ struct StateTransitionDesc
 struct IDeviceContextMethods
 {
     /// Returns the context description
-    const DeviceContextDesc** GetDesc(IDeviceContext*);
+    const(DeviceContextDesc)** GetDesc(IDeviceContext*);
 
     /// Begins recording commands in the deferred context.
 
@@ -1862,11 +1864,11 @@ struct IDeviceContextMethods
     /// \remarks Supported contexts: graphics, compute, transfer.
     void* CopyBuffer(IDeviceContext*,
                                     IBuffer*                       pSrcBuffer,
-                                    uint                         SrcOffset,
+                                    uint                           SrcOffset,
                                     RESOURCE_STATE_TRANSITION_MODE SrcBufferTransitionMode,
                                     IBuffer*                       pDstBuffer,
-                                    uint                         DstOffset,
-                                    uint                         Size,
+                                    uint                           DstOffset,
+                                    uint                           Size,
                                     RESOURCE_STATE_TRANSITION_MODE DstBufferTransitionMode);
 
 
@@ -1882,7 +1884,7 @@ struct IDeviceContextMethods
                                    IBuffer*     pBuffer,
                                    MAP_TYPE     MapType,
                                    MAP_FLAGS    MapFlags,
-                                   PVoid*    pMappedData);
+                                   void**       ppMappedData);
 
 
     /// Unmaps the previously mapped buffer.
@@ -2237,7 +2239,7 @@ struct IDeviceContextMethods
 struct IDeviceContextVtbl { IDeviceContextMethods DeviceContext; }
 struct IDeviceContext { IDeviceContextVtbl* pVtbl; }
 
-const DeviceContextDesc** IDeviceContext_GetDesc(IDeviceContext* context) {
+const(DeviceContextDesc)** IDeviceContext_GetDesc(IDeviceContext* context) {
     return context.pVtbl.DeviceContext.GetDesc(context);
 }
 
@@ -2459,8 +2461,8 @@ void*  IDeviceContext_MapBuffer(IDeviceContext* context,
                                    IBuffer*     pBuffer,
                                    MAP_TYPE     mapType,
                                    MAP_FLAGS    mapFlags,
-                                   PVoid*       pMappedData) {
-    return context.pVtbl.DeviceContext.MapBuffer(context, pBuffer, mapType, mapFlags, pMappedData);
+                                   void**       ppMappedData) {
+    return context.pVtbl.DeviceContext.MapBuffer(context, pBuffer, mapType, mapFlags, ppMappedData);
 }
 
 void*  IDeviceContext_UnmapBuffer(IDeviceContext* context,
@@ -2522,9 +2524,9 @@ void*  IDeviceContext_TransitionResourceStates(IDeviceContext* context,
 
 void*  IDeviceContext_ResolveTextureSubresource(IDeviceContext* context,
                                                    ITexture*                                  pSrcTexture,
-                                                   ITexture*                                  pSrcTexture,
+                                                   ITexture*                                  pDstTexture,
                                                    const(ResolveTextureSubresourceAttribs)*   resolveAttribs) {
-    return context.pVtbl.DeviceContext.ResolveTextureSubresource(context, pSrcTexture, pSrcTexture, resolveAttribs);
+    return context.pVtbl.DeviceContext.ResolveTextureSubresource(context, pSrcTexture, pDstTexture, resolveAttribs);
 }
 
 void*  IDeviceContext_BuildBLAS(IDeviceContext* context, const(BuildBLASAttribs)* attribs) {

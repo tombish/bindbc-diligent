@@ -36,9 +36,9 @@ module bindbc.diligent.graphics.swapchain;
 /// \file
 /// Definition of the Diligent::ISwapChain interface and related data structures
 
-import bindbc.diligent.primitives.object;
-import bindbc.diligent.graphics.textureview;
-import bindbc.diligent.graphics.graphicstypes;
+public import bindbc.diligent.primitives.object;
+public import bindbc.diligent.graphics.textureview;
+public import bindbc.diligent.graphics.graphicstypes;
 
 // {1C703B77-6607-4EEC-B1FE-15C82D3B4130}
 static const INTERFACE_ID IID_SwapChain =

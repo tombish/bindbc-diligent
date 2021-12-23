@@ -44,7 +44,7 @@ import bindbc.diligent.graphics.swapchain;
 version(BindDiligent_Dynamic) { version(Windows) {
     import bindbc.diligent.graphics.loadenginedll;
     enum EXPLICITLY_LOAD_ENGINE_VK_DLL = 1;
-}}
+} else { enum EXPLICITLY_LOAD_ENGINE_VK_DLL = 0; }}
 
 // {F554EEE4-57C2-4637-A508-85BE80DC657C}
 static const INTERFACE_ID IID_EngineFactoryVk =
@@ -115,14 +115,17 @@ void* IEngineFactoryVk_CreateSwapChainVk(IEngineFactoryVk* engineFactory,
 void* IEngineFactoryVk_EnableDeviceSimulation(IEngineFactoryVk* engineFactory) {
     return engineFactory.pVtbl.EngineFactoryVk.EnableDeviceSimulation(engineFactory);
 }
+version(BindDiligent_Dynamic) {
 
-static if (EXPLICITLY_LOAD_ENGINE_VK_DLL) {
-   IEngineFactoryVk* function() GetEngineFactoryVkType;
+    static if (EXPLICITLY_LOAD_ENGINE_VK_DLL) {
+    IEngineFactoryVk* function() GetEngineFactoryVkType;
 
-    GetEngineFactoryVkType Diligent_LoadGraphicsEngineVk()
-    {
-        return cast(GetEngineFactoryVkType)LoadEngineDll("GraphicsEngineVk", "GetEngineFactoryVk");
-    } 
-} else {    
-    IEngineFactoryVk* Diliget_GetEngineFactoryVk();
+        GetEngineFactoryVkType Diligent_LoadGraphicsEngineVk()
+        {
+            return cast(GetEngineFactoryVkType)LoadEngineDll("GraphicsEngineVk", "GetEngineFactoryVk");
+        } 
+    } else {    
+        IEngineFactoryVk* Diliget_GetEngineFactoryVk();
+    }
+    
 }

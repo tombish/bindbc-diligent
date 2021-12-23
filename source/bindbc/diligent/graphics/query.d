@@ -36,8 +36,8 @@ module bindbc.diligent.graphics.query;
 /// \file
 /// Defines Diligent::IQuery interface and related data structures
 
-import bindbc.diligent.graphics.deviceobject;
-import bindbc.diligent.graphics.graphicstypes;
+public import bindbc.diligent.graphics.deviceobject;
+public import bindbc.diligent.graphics.graphicstypes;
 
 // {70F2A88A-F8BE-4901-8F05-2F72FA695BA0}
 static const INTERFACE_ID IID_Query =
@@ -189,8 +189,8 @@ struct IQueryMethods
 struct IQueryVtbl { IQueryMethods Query; }
 struct IQuery { IQueryVtbl* pVtbl; }
 
-QueryDesc* IQuery_GetDesc(IQuery* object) {
-    cast(const(QueryDesc)*)IDeviceObject_GetDesc(object);
+const(QueryDesc)* IQuery_GetDesc(IQuery* object) {
+    return cast(const(QueryDesc)*)IDeviceObject_GetDesc(cast(IDeviceObject*)object);
 }
 
 bool* IQuery_GetData(IQuery* query,

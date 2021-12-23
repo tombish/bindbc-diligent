@@ -36,7 +36,7 @@ module bindbc.diligent.graphics.renderpass;
 /// \file
 /// Definition of the Diligent::IRenderPass interface and related data structures
 
-import bindbc.diligent.graphics.deviceobject;
+public import bindbc.diligent.graphics.deviceobject;
 
 // {B818DEC7-174D-447A-A8E4-94D21C57B40A}
 static const INTERFACE_ID IID_RenderPass =

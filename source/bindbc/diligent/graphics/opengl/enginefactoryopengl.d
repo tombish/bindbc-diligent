@@ -46,7 +46,7 @@ import bindbc.diligent.graphics.hlsl2glslconverterlib.hlsl2glslconverter;
 version(BindDiligent_Dynamic) { version(Windows) {
     import bindbc.diligent.graphics.loadenginedll;
     enum EXPLICITLY_LOAD_ENGINE_GL_DLL = 1;
-}}
+} else { enum EXPLICITLY_LOAD_ENGINE_GL_DLL = 0; }}
 
 // {9BAAC767-02CC-4FFA-9E4B-E1340F572C49}
 static const INTERFACE_ID IID_EngineFactoryOpenGL =
@@ -92,14 +92,16 @@ void* IEngineFactoryOpenGL_AttachToActiveGLContext(IEngineFactoryOpenGL* factory
     return factory.pVtbl.EngineFactoryOpenGL.AttachToActiveGLContext(factory, engineCI, ppDevice, ppImmediateContext);
 }
 
-static if (EXPLICITLY_LOAD_ENGINE_GL_DLL) {
-   IEngineFactoryOpenGL* function() GetEngineFactoryOpenGLType;
+version(BindDiligent_Dynamic) {
+    static if (EXPLICITLY_LOAD_ENGINE_GL_DLL) {
+        IEngineFactoryOpenGL* function() GetEngineFactoryOpenGLType;
 
-    GetEngineFactoryOpenGLType Diligent_LoadGraphicsEngineOpenGL()
-    {
-        return cast(GetEngineFactoryOpenGLType)LoadEngineDll("GraphicsEngineOpenGL", "GetEngineFactoryOpenGL");
-    } 
-} else {    
-    // Do not forget to call System.loadLibrary("GraphicsEngineOpenGL") in Java on Android!
-    IEngineFactoryOpenGL* Diliget_GetEngineFactoryOpenGL();
+        GetEngineFactoryOpenGLType Diligent_LoadGraphicsEngineOpenGL()
+        {
+            return cast(GetEngineFactoryOpenGLType)LoadEngineDll("GraphicsEngineOpenGL", "GetEngineFactoryOpenGL");
+        } 
+    } else {    
+        // Do not forget to call System.loadLibrary("GraphicsEngineOpenGL") in Java on Android!
+        IEngineFactoryOpenGL* Diliget_GetEngineFactoryOpenGL();
+    }
 }

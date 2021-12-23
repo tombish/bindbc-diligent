@@ -162,24 +162,18 @@ struct ITextureViewMethods
 struct ITextureViewVtbl { ITextureViewMethods TextureView; }
 struct ITextureView { ITextureViewVtbl* pVtbl; }
 
-//#    define ITextureView_GetDesc(This) (const struct TextureViewDesc*)IDeviceObject_GetDesc(This)
-
-TextureViewDesc* ITextureView_GetDesc(ITextureView* object) {
-    cast(const(TextureViewDesc)*)IDeviceObject_GetDesc(object);
+const(TextureViewDesc)* ITextureView_GetDesc(ITextureView* object) {
+    return cast(const(TextureViewDesc)*)IDeviceObject_GetDesc(cast(IDeviceObject*)object);
 }
-
-//#    define ITextureView_SetSampler(This, ...) CALL_IFACE_METHOD(TextureView, SetSampler, This, __VA_ARGS__)
-//#    define ITextureView_GetSampler(This)      CALL_IFACE_METHOD(TextureView, GetSampler, This)
-//#    define ITextureView_GetTexture(This)      CALL_IFACE_METHOD(TextureView, GetTexture, This)
 
 void* ITextureView_SetSampler(ITextureView* textureView, ISampler* pSampler) {
     return textureView.pVtbl.TextureView.SetSampler(textureView, pSampler);
 }
 
-ISampler** ITextureView_GetSampler(ITextureView*) {
+ISampler** ITextureView_GetSampler(ITextureView* textureView) {
     return textureView.pVtbl.TextureView.GetSampler(textureView);
 }
 
-ITexture** ITextureView_GetTexture(ITextureView*) {
+ITexture** ITextureView_GetTexture(ITextureView* textureView) {
     return textureView.pVtbl.TextureView.GetTexture(textureView);
 }

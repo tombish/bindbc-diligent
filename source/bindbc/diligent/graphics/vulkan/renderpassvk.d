@@ -38,6 +38,8 @@ module bindbc.diligent.graphics.vulkan.renderpassvk;
 
 import bindbc.diligent.graphics.renderpass;
 
+import erupted;
+
 // {3DE6938F-D34D-4135-A6FA-15A89E9525D0}
 static const INTERFACE_ID IID_RenderPassVk =
     INTERFACE_ID(0x3de6938f, 0xd34d, 0x4135, [0xa6, 0xfa, 0x15, 0xa8, 0x9e, 0x95, 0x25, 0xd0]);

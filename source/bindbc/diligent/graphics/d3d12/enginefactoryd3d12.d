@@ -41,7 +41,7 @@ import bindbc.diligent.graphics.renderdevice;
 import bindbc.diligent.graphics.devicecontext;
 import bindbc.diligent.graphics.swapchain;
 
-version(BindDiligent_Dynamic) { import bindbc.diligent.graphics.loadenginedll; }
+version(BindDiligent_Dynamic) { version(Windows) { import bindbc.diligent.graphics.loadenginedll; }}
 
 struct ICommandQueueD3D12;
 

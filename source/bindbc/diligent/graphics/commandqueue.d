@@ -35,7 +35,7 @@ module bindbc.diligent.graphics.commandqueue;
 /// \file
 /// Definition of the Diligent::ICommandQueue interface
 
-import bindbc.diligent.primitives.object;
+public import bindbc.diligent.primitives.object;
 
 // {0FF427F7-6284-409E-8161-A023CA07EF5D}
 static const INTERFACE_ID IID_CommandQueue =

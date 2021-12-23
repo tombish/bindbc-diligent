@@ -36,8 +36,10 @@ module bindbc.diligent.graphics.vulkan.devicecontextvk;
 /// \file
 /// Definition of the Diligent::IDeviceContextVk interface
 
-import bindbc.diligent.graphics.devicecontext;
+public import bindbc.diligent.graphics.devicecontext;
 import bindbc.diligent.graphics.vulkan.commandqueuevk;
+
+import erupted;
 
 // {72AEB1BA-C6AD-42EC-8811-7ED9C72176BB}
 static const INTERFACE_ID IID_DeviceContextVk =

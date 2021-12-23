@@ -36,7 +36,7 @@ module bindbc.diligent.graphics.sampler;
 /// \file
 /// Definition of the Diligent::ISampler interface and related data structures
 
-import bindbc.diligent.graphics.deviceobject;
+public import bindbc.diligent.graphics.deviceobject;
 
 // {595A59BF-FA81-4855-BC5E-C0E048745A95}
 static const INTERFACE_ID IID_Sampler =
@@ -99,7 +99,7 @@ struct SamplerDesc
 
     /// Border color to use if TEXTURE_ADDRESS_BORDER is specified for AddressU, AddressV, or AddressW. 
     /// Default value: {0,0,0,0}
-    float[4] BorderColor = {};
+    float[4] BorderColor = [0.0f, 0.0f, 0.0f, 0.0f];
 
     /// Specifies the minimum value that LOD is clamped to before accessing the texture MIP levels.
     /// Must be less than or equal to MaxLOD.
@@ -116,6 +116,6 @@ struct SamplerDesc
 struct ISamplerVtbl {}
 struct ISampler { ISamplerVtbl* pVtbl; }
 
-SamplerDesc* ISampler_GetDesc(ISampler* object) {
-    cast(const(SamplerDesc)*)IDeviceObject_GetDesc(object);
+const(SamplerDesc)* ISampler_GetDesc(ISampler* object) {
+    return cast(const(SamplerDesc)*)IDeviceObject_GetDesc(cast(IDeviceObject*)object);
 }

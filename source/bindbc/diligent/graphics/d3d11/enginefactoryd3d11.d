@@ -36,12 +36,12 @@ module bindbc.diligent.graphics.d3d11.enginefactoryd3d11;
 /// \file
 /// Declaration of functions that initialize Direct3D11-based engine implementation
 
-import bindbc.diligent.graphics.enginefactory;
+public import bindbc.diligent.graphics.enginefactory;
 import bindbc.diligent.graphics.renderdevice;
 import bindbc.diligent.graphics.devicecontext;
 import bindbc.diligent.graphics.swapchain;
 
-version(BindDiligent_Dynamic) { import bindbc.diligent.graphics.loadenginedll; }
+version(BindDiligent_Dynamic) { version(Windows) { import bindbc.diligent.graphics.loadenginedll; }}
 
 // {62663A30-AAF0-4A9A-9729-9EAC6BF789F2}
 static const INTERFACE_ID IID_EngineFactoryD3D11 =
@@ -59,9 +59,9 @@ struct IEngineFactoryD3D11Methods
     ///                           the contexts will be written. Immediate context goes at
     ///                           position 0. If EngineCI.NumDeferredContexts > 0,
     ///                           pointers to deferred contexts are written afterwards.
-    void* CreateDeviceAndContextsD3D11(IEngineFactoryD3D11*, const EngineD3D11CreateInfo* EngineCI,
-                                                      IRenderDevice**                    ppDevice,
-                                                      IDeviceContext**                   ppContexts);
+    void* CreateDeviceAndContextsD3D11(IEngineFactoryD3D11*, const(EngineD3D11CreateInfo)* EngineCI,
+                                                      IRenderDevice**                      ppDevice,
+                                                      IDeviceContext**                     ppContexts);
 
     /// Creates a swap chain for Direct3D11-based engine implementation.
 
@@ -78,12 +78,12 @@ struct IEngineFactoryD3D11Methods
     /// \param [out] ppSwapChain    - Address of the memory location where pointer to the new
     ///                               swap chain will be written.
     void* CreateSwapChainD3D11(IEngineFactoryD3D11*,
-                                IRenderDevice*            pDevice,
-                                IDeviceContext*           pImmediateContext,
-                                const SwapChainDesc*      SCDesc,
-                                const FullScreenModeDesc* FSDesc,
-                                const NativeWindow*       Window,
-                                ISwapChain**              ppSwapChain);
+                                IRenderDevice*             pDevice,
+                                IDeviceContext*            pImmediateContext,
+                                const(SwapChainDesc)*      SCDesc,
+                                const(FullScreenModeDesc)* FSDesc,
+                                const(NativeWindow)*       Window,
+                                ISwapChain**               ppSwapChain);
 
     /// Attaches to existing Direct3D11 render device and immediate context.
 
@@ -97,11 +97,11 @@ struct IEngineFactoryD3D11Methods
     ///                           position 0. If EngineCI.NumDeferredContexts > 0,
     ///                           pointers to the deferred contexts are written afterwards.
     void* AttachToD3D11Device(IEngineFactoryD3D11*,
-                                void*                        pd3d11NativeDevice,
-                                void*                        pd3d11ImmediateContext,
-                                const EngineD3D11CreateInfo* EngineCI,
-                                IRenderDevice**              ppDevice,
-                                IDeviceContext**             ppContexts);
+                                void*                         pd3d11NativeDevice,
+                                void*                         pd3d11ImmediateContext,
+                                const(EngineD3D11CreateInfo)* EngineCI,
+                                IRenderDevice**               ppDevice,
+                                IDeviceContext**              ppContexts);
 
     /// Enumerates available display modes for the specified output of the specified adapter.
 
@@ -133,28 +133,28 @@ struct IEngineFactoryD3D11 { IEngineFactoryD3D11Vtbl* pVtbl; }
 // #    define IEngineFactoryD3D11_EnumerateDisplayModes(This, ...)        CALL_IFACE_METHOD(EngineFactoryD3D11, EnumerateDisplayModes,        This, __VA_ARGS__)
 
 void* IEngineFactoryD3D11_CreateDeviceAndContextsD3D11(IEngineFactoryD3D11* factory,
-                                                        const EngineD3D11CreateInfo* EngineCI,
+                                                        const(EngineD3D11CreateInfo)* EngineCI,
                                                         IRenderDevice**                    ppDevice,
                                                         IDeviceContext**                   ppContexts) {
     return factory.pVtbl.EngineFactoryD3D11.CreateDeviceAndContextsD3D11(factory, EngineCI, ppDevice, ppContexts);
 }
 
 void* IEngineFactoryD3D11_CreateSwapChainD3D11(IEngineFactoryD3D11* factory,
-                                                IRenderDevice*            pDevice,
-                                                IDeviceContext*           pImmediateContext,
-                                                const SwapChainDesc*      SCDesc,
-                                                const FullScreenModeDesc* FSDesc,
-                                                const NativeWindow*       Window,
-                                                ISwapChain**              ppSwapChain) {
+                                                IRenderDevice*             pDevice,
+                                                IDeviceContext*            pImmediateContext,
+                                                const(SwapChainDesc)*      SCDesc,
+                                                const(FullScreenModeDesc)* FSDesc,
+                                                const(NativeWindow)*       Window,
+                                                ISwapChain**               ppSwapChain) {
     return factory.pVtbl.EngineFactoryD3D11.CreateSwapChainD3D11(factory, pDevice, pImmediateContext, SCDesc, FSDesc, Window, ppSwapChain);
 }
 
 void* IEngineFactoryD3D11_AttachToD3D11Device(IEngineFactoryD3D11* factory,
-                                void*                        pd3d11NativeDevice,
-                                void*                        pd3d11ImmediateContext,
-                                const EngineD3D11CreateInfo* EngineCI,
-                                IRenderDevice**              ppDevice,
-                                IDeviceContext**             ppContexts) {
+                                void*                         pd3d11NativeDevice,
+                                void*                         pd3d11ImmediateContext,
+                                const(EngineD3D11CreateInfo)* EngineCI,
+                                IRenderDevice**               ppDevice,
+                                IDeviceContext**              ppContexts) {
     return factory.pVtbl.EngineFactoryD3D11.AttachToD3D11Device(factory, pd3d11NativeDevice, pd3d11ImmediateContext, EngineCI, ppDevice, ppContexts);
 }
 

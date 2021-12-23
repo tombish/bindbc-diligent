@@ -36,9 +36,9 @@ module bindbc.diligent.graphics.framebuffer;
 /// \file
 /// Definition of the Diligent::IFramebuffer interface and related data structures
 
-import bindbc.diligent.graphics.deviceobject;
-import bindbc.diligent.graphics.renderpass;
-import bindbc.diligent.graphics.textureview;
+public import bindbc.diligent.graphics.deviceobject;
+public import bindbc.diligent.graphics.renderpass;
+public import bindbc.diligent.graphics.textureview;
 
 // {05DA9E47-3CA6-4F96-A967-1DDDC53181A6}
 static const INTERFACE_ID IID_Framebuffer =

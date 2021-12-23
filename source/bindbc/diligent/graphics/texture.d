@@ -39,6 +39,7 @@ module bindbc.diligent.graphics.texture;
 public import bindbc.diligent.graphics.graphicstypes;
 public import bindbc.diligent.graphics.deviceobject;
 public import bindbc.diligent.graphics.textureview;
+public import bindbc.diligent.graphics.buffer;
 
 // {A64B0E60-1B5E-4CFD-B880-663A1ADCBE98}
 static const INTERFACE_ID IID_Texture =
@@ -220,8 +221,8 @@ struct ITextureMethods
 struct ITextureVtbl { ITextureMethods Texture; }
 struct ITexture { ITextureVtbl* pVtbl; }
 
-TextureDesc* ITexture_GetDesc(ITexture* object) {
-    cast(const(TextureDesc)*)IDeviceObject_GetDesc(object);
+const(TextureDesc)* ITexture_GetDesc(ITexture* object) {
+    return cast(const(TextureDesc)*)IDeviceObject_GetDesc(cast(IDeviceObject*)object);
 }
 
 void* ITexture_CreateView(ITexture* texture, const(TextureViewDesc)* viewDesc, ITextureView** ppView) {

@@ -45,7 +45,7 @@ static const INTERFACE_ID IID_DeviceObject =
 struct IDeviceObjectMethods
 {
      /// Returns the object description
-    DeviceObjectAttribs** GetDesc(IDeviceObject*) const;
+    const(DeviceObjectAttribs)** GetDesc(IDeviceObject*);
 
 
     /// Returns unique identifier assigned to an object
@@ -94,14 +94,14 @@ struct IDeviceObjectMethods
 struct IDeviceObjectVtbl { IDeviceObjectMethods DeviceObject; }
 struct IDeviceObject { IDeviceObjectVtbl* pVtbl; }
 
-DeviceObjectAttribs** IDeviceObject_GetDesc(IDeviceObject* object) {
+const(DeviceObjectAttribs)** IDeviceObject_GetDesc(IDeviceObject* object) {
     return object.pVtbl.DeviceObject.GetDesc(object);
 }
 int* IDeviceObject_GetUniqueID(IDeviceObject* object) {
     return object.pVtbl.DeviceObject.GetUniqueID(object);
 }
 void* IDeviceObject_SetUserData(IDeviceObject* object, IObject* pUserData) {
-    object.pVtbl.DeviceObject.SetUserData(object, pUserData);
+    return object.pVtbl.DeviceObject.SetUserData(object, pUserData);
 }
 IObject** IDeviceObject_GetUserData(IDeviceObject* object) {
     return object.pVtbl.DeviceObject.GetUserData(object);

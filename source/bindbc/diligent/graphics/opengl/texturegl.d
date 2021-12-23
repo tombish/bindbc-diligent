@@ -37,6 +37,7 @@ module bindbc.diligent.graphics.opengl.texturegl;
 /// Definition of the Diligent::ITextureGL interface
 
 import bindbc.diligent.graphics.texture;
+import bindbc.opengl;
 
 // {D7BC9FF0-28F0-4636-9732-710C204D1D63}
 static const INTERFACE_ID IID_TextureGL =

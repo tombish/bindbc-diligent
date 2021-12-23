@@ -36,7 +36,7 @@ module bindbc.diligent.graphics.bottomlevelas;
 /// \file
 /// Definition of the Diligent::IBottomLevelAS interface and related data structures
 
-import bindbc.diligent.primitives.object;
+public import bindbc.diligent.primitives.object;
 import bindbc.diligent.graphics.graphicstypes;
 import bindbc.diligent.graphics.constants;
 import bindbc.diligent.graphics.buffer;
@@ -240,11 +240,11 @@ struct IBottomLevelASVtbl { IBottomLevelASMethods BottomLevelAS; }
 struct IBottomLevelAS { IBottomLevelASVtbl* pVtbl; }
 
 uint* IBottomLevelAS_GetGeometryDescIndex(IBottomLevelAS* structure, const(char)* name) {
-    return BottomLevelAS.pVtbl.BottomLevelAS.GetGeometryDescIndex(structure, name);
+    return structure.pVtbl.BottomLevelAS.GetGeometryDescIndex(structure, name);
 }
 
 uint* IBottomLevelAS_GetGeometryIndex(IBottomLevelAS* structure, const(char)* name) {
-    return BottomLevelAS.pVtbl.BottomLevelAS.GetGeometryIndex(structure, name);
+    return structure.pVtbl.BottomLevelAS.GetGeometryIndex(structure, name);
 }
 
 uint* IBottomLevelAS_GetActualGeometryCount(IBottomLevelAS* structure) {
@@ -259,7 +259,7 @@ ulong* IBottomLevelAS_GetNativeHandle(IBottomLevelAS* structure) {
     return structure.pVtbl.BottomLevelAS.GetNativeHandle(structure);
 }
 
-void* IBottomLevelAS_SetState(IBottomLevelAS* structure, RESOURCE_STATE State) {
+void* IBottomLevelAS_SetState(IBottomLevelAS* structure, RESOURCE_STATE state) {
     return structure.pVtbl.BottomLevelAS.SetState(structure, state);
 }
 RESOURCE_STATE* IBottomLevelAS_GetState(IBottomLevelAS* structure) {

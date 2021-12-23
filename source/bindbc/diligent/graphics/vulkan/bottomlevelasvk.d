@@ -33,6 +33,8 @@
 
 module bindbc.diligent.graphics.vulkan.bottomlevelasvk;
 
+import erupted;
+
 /// \file
 /// Definition of the Diligent::IBottomLevelASVk interface
 

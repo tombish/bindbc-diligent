@@ -38,6 +38,8 @@ module bindbc.diligent.graphics.vulkan.bufferviewvk;
 
 import bindbc.diligent.graphics.bufferview;
 
+import erupted;
+
 // {CB67024A-1E23-4202-A49A-07B6BCEABC06}
 static const INTERFACE_ID IID_BufferViewVk =
     INTERFACE_ID(0xcb67024a, 0x1e23, 0x4202, [0xa4, 0x9a, 0x7, 0xb6, 0xbc, 0xea, 0xbc, 0x6]);

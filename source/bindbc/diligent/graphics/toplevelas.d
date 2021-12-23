@@ -36,7 +36,7 @@ module bindbc.diligent.graphics.toplevelas;
 /// \file
 /// Definition of the Diligent::ITopLevelAS interface and related data structures
 
-import bindbc.diligent.primitives.object;
+public import bindbc.diligent.primitives.object;
 import bindbc.diligent.graphics.graphicstypes;
 import bindbc.diligent.graphics.constants;
 import bindbc.diligent.graphics.buffer;
@@ -201,7 +201,7 @@ void** ITopLevelAS_GetNativeHandle(ITopLevelAS* topLevelAS) {
     return topLevelAS.pVtbl.TopLevelAS.GetNativeHandle(topLevelAS);
 }
 
-void* ITopLevelAS_SetState(ITopLevelAS*, RESOURCE_STATE state) {
+void* ITopLevelAS_SetState(ITopLevelAS* topLevelAS, RESOURCE_STATE state) {
     return topLevelAS.pVtbl.TopLevelAS.SetState(topLevelAS, state);
 }
 

@@ -35,8 +35,8 @@
  
 module bindbc.diligent.graphics.bufferview;
 
-import bindbc.diligent.graphics.deviceobject;
-import bindbc.diligent.graphics.buffer;
+public import bindbc.diligent.graphics.deviceobject;
+public import bindbc.diligent.graphics.buffer;
 
 // {E2E83490-E9D2-495B-9A83-ABB413A38B07}
 static const INTERFACE_ID IID_BufferView = 
@@ -99,8 +99,8 @@ struct IBufferViewMethods
 struct IBufferViewVtbl { IBufferViewMethods BufferView; }
 struct IBufferView { IBufferViewVtbl* pVtbl; }
 
-BufferViewDesc* IBufferView_GetDesc(IBufferView* object) {
-    cast(const BufferViewDesc*)IDeviceObject_GetDesc(object);
+const(BufferViewDesc)* IBufferView_GetDesc(IBufferView* object) {
+    return cast(const(BufferViewDesc)*)IDeviceObject_GetDesc(cast(IDeviceObject*)object);
 }
 IBuffer** IBufferView_GetBuffer(IBufferView* object) {
     return object.pVtbl.BufferView.GetBuffer(object);

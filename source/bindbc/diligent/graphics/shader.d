@@ -40,6 +40,7 @@
 
 public import bindbc.diligent.primitives.filestream;
 public import bindbc.diligent.graphics.deviceobject;
+public import bindbc.diligent.graphics.hlsl2glslconverterlib.hlsl2glslconverter;
 
 // {2989B45C-143D-4886-B89C-C3271C2DCC5D}
 static const INTERFACE_ID IID_Shader =
@@ -141,19 +142,17 @@ struct IShaderSourceInputStreamFactoryMethods
 struct IShaderSourceInputStreamFactoryVtbl { IShaderSourceInputStreamFactoryMethods ShaderSourceInputStreamFactory; }
 struct IShaderSourceInputStreamFactory { IShaderSourceInputStreamFactoryVtbl* pVtbl; }
 
-//#    define IShaderSourceInputStreamFactory_CreateInputStream(This, ...)  CALL_IFACE_METHOD(ShaderSourceInputStreamFactory, CreateInputStream, This, __VA_ARGS__)
-//#    define IShaderSourceInputStreamFactory_CreateInputStream2(This, ...) CALL_IFACE_METHOD(ShaderSourceInputStreamFactory, CreateInputStream2, This, __VA_ARGS__)
 void* IShaderSourceInputStreamFactory_CreateInputStream(IShaderSourceInputStreamFactory* factory,
                                            const(char)* name,
                                            IFileStream** ppStream) {
-    factory.pVtbl.CreateInputStream(factory, name, ppStream);
+    return factory.pVtbl.ShaderSourceInputStreamFactory.CreateInputStream(factory, name, ppStream);
 }
 
 void* IShaderSourceInputStreamFactory_CreateInputStream2(IShaderSourceInputStreamFactory* factory,
                                             const(char)*                            name,
                                             CREATE_SHADER_SOURCE_INPUT_STREAM_FLAGS flags,
                                             IFileStream**                           ppStream) {
-    factory.pVtbl.CreateInputStream(factory, name, flags, ppStream);
+    return factory.pVtbl.ShaderSourceInputStreamFactory.CreateInputStream2(factory, name, flags, ppStream);
 }
 
 
@@ -347,8 +346,8 @@ struct IShaderMethods
 struct IShaderVtbl { IShaderMethods Shader; }
 struct IShader { IShaderVtbl* pVtbl; }
 
-ShaderDesc* IShader_GetDesc(IShader* object) {
-    cast(const(ShaderDesc)*)IDeviceObject_GetDesc(object);
+const(ShaderDesc)* IShader_GetDesc(IShader* object) {
+    return cast(const(ShaderDesc)*)IDeviceObject_GetDesc(cast(IDeviceObject*)object);
 }
 
 uint* IShader_GetResourceCount(IShader* shader) {

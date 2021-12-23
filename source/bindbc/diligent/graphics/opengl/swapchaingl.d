@@ -38,6 +38,8 @@ module bindbc.diligent.graphics.opengl.swapchaingl;
 
 import bindbc.diligent.graphics.swapchain;
 
+import bindbc.opengl;
+
 // {F457BD7C-E725-4D3E-8607-A1F9BAE329EB}
 static const INTERFACE_ID IID_SwapChainGL =
     INTERFACE_ID(0xf457bd7c, 0xe725, 0x4d3e, [0x86, 0x7, 0xa1, 0xf9, 0xba, 0xe3, 0x29, 0xeb]);

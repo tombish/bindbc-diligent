@@ -38,6 +38,8 @@ module bindbc.diligent.graphics.vulkan.commandqueuevk;
 
 import bindbc.diligent.graphics.commandqueue;
 
+import erupted;
+
 // {9FBF582F-3069-41B9-AC05-344D5AF5CE8C}
 static const INTERFACE_ID IID_CommandQueueVk =
     INTERFACE_ID(0x9fbf582f, 0x3069, 0x41b9, [0xac, 0x5, 0x34, 0x4d, 0x5a, 0xf5, 0xce, 0x8c]);

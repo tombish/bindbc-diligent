@@ -35,9 +35,9 @@
  
 module bindbc.diligent.graphics.buffer;
 
-import bindbc.diligent.graphics.deviceobject;
-import bindbc.diligent.graphics.devicecontext;
-import bindbc.diligent.graphics.bufferview;
+public import bindbc.diligent.graphics.deviceobject;
+public import bindbc.diligent.graphics.devicecontext;
+public import bindbc.diligent.graphics.bufferview;
 
 // {EC47EAD3-A2C4-44F2-81C5-5248D14F10E4}
 static const INTERFACE_ID IID_Buffer = 
@@ -154,7 +154,7 @@ struct IBufferMethods
         ///          until all views are released.\n
         ///          The function calls AddRef() for the created interface, so it must be released by
         ///          a call to Release() when it is no longer needed.
-        void* CreateView(IBuffer*, const BufferViewDesc* ViewDesc, IBufferView** ppView);
+        void* CreateView(IBuffer*, const(BufferViewDesc)* ViewDesc, IBufferView** ppView);
 
         /// Returns the pointer to the default view.
 
@@ -239,47 +239,38 @@ struct IBufferMethods
 struct IBufferVtbl { IBufferMethods Buffer; }
 struct IBuffer { IBufferVtbl* pVtbl; }
 
-BufferDesc* IBuffer_GetDesc(IBuffer* object){
-    return cast(const BufferDesc*)IDeviceObject_GetDesc(object);
+const(BufferDesc)* getDesc(IBuffer* object){
+    return cast(const(BufferDesc)*)IDeviceObject_GetDesc(cast(IDeviceObject*)object);
 }
 
-//#    define IBuffer_CreateView(This, ...)            CALL_IFACE_METHOD(Buffer, CreateView,            This, __VA_ARGS__)
-//#    define IBuffer_GetDefaultView(This, ...)        CALL_IFACE_METHOD(Buffer, GetDefaultView,        This, __VA_ARGS__)
-//#    define IBuffer_GetNativeHandle(This)            CALL_IFACE_METHOD(Buffer, GetNativeHandle,       This)
-//#    define IBuffer_SetState(This, ...)              CALL_IFACE_METHOD(Buffer, SetState,              This, __VA_ARGS__)
-//#    define IBuffer_GetState(This)                   CALL_IFACE_METHOD(Buffer, GetState,              This)
-//#    define IBuffer_GetMemoryProperties(This)        CALL_IFACE_METHOD(Buffer, GetMemoryProperties,   This)
-//#    define IBuffer_FlushMappedRange(This, ...)      CALL_IFACE_METHOD(Buffer, FlushMappedRange,      This, __VA_ARGS__)
-//#    define IBuffer_InvalidateMappedRange(This, ...) CALL_IFACE_METHOD(Buffer, InvalidateMappedRange, This, __VA_ARGS__)
-
-void* IBuffer_CreateView(IBuffer* object, const BufferViewDesc* ViewDesc, IBufferView** ppView) {
-    object.pVtbl.Buffer.CreateView(object, ViewDesc, ppView);
+void* createView(IBuffer* buffer, const(BufferViewDesc)* ViewDesc, IBufferView** ppView) {
+    return buffer.pVtbl.Buffer.CreateView(buffer, ViewDesc, ppView);
 }
 
-IBufferView** IBuffer_GetDefaultView(IBuffer* object, BUFFER_VIEW_TYPE ViewType) {
-    return object.pVtbl.Buffer.GetDefaultView(object, ViewType);
+IBufferView** getDefaultView(IBuffer* buffer, BUFFER_VIEW_TYPE ViewType) {
+    return buffer.pVtbl.Buffer.GetDefaultView(buffer, ViewType);
 }
 
-void** IBuffer_GetNativeHandle() {
-
+void** getNativeHandle(IBuffer* buffer) {
+    return buffer.pVtbl.Buffer.GetNativeHandle(buffer);
 }
 
-void* IBuffer_SetState() {
-
+void* setState(IBuffer* buffer, RESOURCE_STATE state) {
+    return buffer.pVtbl.Buffer.SetState(buffer, state);
 }
 
-RESOURCE_STATE* IBuffer_GetState() {
-
+RESOURCE_STATE* getState(IBuffer* buffer) {
+    return buffer.pVtbl.Buffer.GetState(buffer);
 }
 
-MEMORY_PROPERTIES* IBuffer_GetMemoryProperties() {
-
+MEMORY_PROPERTIES* getMemoryProperties(IBuffer* buffer) {
+    return buffer.pVtbl.Buffer.GetMemoryProperties(buffer);
 }
 
-void* IBuffer_FlushMappedRange(){
-
+void* flushMappedRange(IBuffer* buffer, uint startOffset, uint size){
+    return buffer.pVtbl.Buffer.FlushMappedRange(buffer, startOffset, size);
 }
 
-void* IBuffer_InvalidateMappedRange() {
-
+void* invalidateMappedRange(IBuffer* buffer, uint startOffset, uint size) {
+    return buffer.pVtbl.Buffer.InvalidateMappedRange(buffer, startOffset, size);
 }

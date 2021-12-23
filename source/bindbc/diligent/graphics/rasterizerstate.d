@@ -129,9 +129,9 @@ struct RasterizerStateDesc
     /// Maximum depth bias of a pixel.
     /// \warning Depth bias clamp is not available in OpenGL
     /// Default value: 0.
-    float   DepthBiasClamp          = 0.f;
+    float   DepthBiasClamp          = 0.0f;
 
     /// Scalar that scales the given pixel's slope before adding to the pixel's depth.
     /// Default value: 0.
-    float   SlopeScaledDepthBias    = 0.f;
+    float   SlopeScaledDepthBias    = 0.0f;
 }

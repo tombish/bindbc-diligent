@@ -36,9 +36,9 @@
 module bindbc.diligent.graphics.graphicstypes;
 
 import bindbc.diligent.primitives.debugoutput;
-import bindbc.diligent.platforms.nativewindow;
-import bindbc.diligent.graphics.apiinfo;
-import bindbc.diligent.graphics.constants;
+public import bindbc.diligent.platforms.nativewindow;
+public import bindbc.diligent.graphics.apiinfo;
+public import bindbc.diligent.graphics.constants;
 
 /// This enumeration describes value type. It is used by
 /// - BufferDesc structure to describe value type of a formatted buffer

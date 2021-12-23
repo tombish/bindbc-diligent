@@ -57,7 +57,7 @@ struct IDataBlobMethods
         void** GetDataPtr(IDataBlob*);
 
         /// Returns const pointer to the internal data buffer
-        const void** GetConstDataPtr(IDataBlob*);
+        const(void)** GetConstDataPtr(IDataBlob*);
     }
 }
 
@@ -77,6 +77,6 @@ void** IDataBlob_GetDataPtr(IDataBlob* dataBlob) {
     return dataBlob.pVtbl.DataBlob.GetDataPtr(dataBlob);
 }
 
-const void** IDataBlob_GetConstDataPtr(IDataBlob* dataBlob) {
+const(void)** IDataBlob_GetConstDataPtr(IDataBlob* dataBlob) {
     return dataBlob.pVtbl.DataBlob.GetConstDataPtr(dataBlob);
 }

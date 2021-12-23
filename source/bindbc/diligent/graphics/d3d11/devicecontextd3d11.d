@@ -36,7 +36,7 @@ module bindbc.diligent.graphics.d3d11.devicecontextd3d11;
 /// \file
 /// Definition of the Diligent::IDeviceContextD3D11 interface
 
-import bindbc.diligent.graphics.devicecontext;
+public import bindbc.diligent.graphics.devicecontext;
 
 // {F0EE0335-C8AB-4EC1-BB15-B8EE5F003B99}
 static const INTERFACE_ID IID_DeviceContextD3D11 =

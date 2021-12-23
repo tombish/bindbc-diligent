@@ -38,6 +38,8 @@ module bindbc.diligent.graphics.vulkan.fencevk;
 
 import bindbc.diligent.graphics.fence;
 
+import erupted;
+
 // {7610B4CD-EDEA-4951-82CF-52F97FAFED2D}
 static const INTERFACE_ID IID_FenceVk =
     INTERFACE_ID(0x7610b4cd, 0xedea, 0x4951, [0x82, 0xcf, 0x52, 0xf9, 0x7f, 0xaf, 0xed, 0x2d]);
@@ -53,5 +55,5 @@ struct IFenceVkVtbl { IFenceVkMethods FenceVk; }
 struct IFenceVk { IFenceVkVtbl* pVtbl; }
 
 VkSemaphore* IFenceVk_GetVkSemaphore(IFenceVk* fence) {
-    fence.pVtbl.FenceVk.GetVkSemaphore(fence);
+    return fence.pVtbl.FenceVk.GetVkSemaphore(fence);
 }

@@ -290,8 +290,8 @@ struct IPipelineResourceSignatureMethods
 struct IPipelineResourceSignatureVtbl { IPipelineResourceSignatureMethods PipelineResourceSignature; }
 struct IPipelineResourceSignature { IPipelineResourceSignatureVtbl* pVtbl; }
 
-PipelineResourceSignatureDesc* IPipelineResourceSignature_GetDesc(IPipelineResourceSignature* object) {
-    cast(const(PipelineResourceSignatureDesc)*)IDeviceObject_GetDesc(object);
+const(PipelineResourceSignatureDesc)* IPipelineResourceSignature_GetDesc(IPipelineResourceSignature* object) {
+    return cast(const(PipelineResourceSignatureDesc)*)IDeviceObject_GetDesc(cast(IDeviceObject*)object);
 }
 
 //#    define IPipelineResourceSignature_CreateShaderResourceBinding(This, ...)  CALL_IFACE_METHOD(PipelineResourceSignature, CreateShaderResourceBinding, This, __VA_ARGS__)
@@ -310,7 +310,7 @@ void* IPipelineResourceSignature_BindStaticResources(IPipelineResourceSignature*
                                              SHADER_TYPE                 shaderStages,
                                              IResourceMapping*           pResourceMapping,
                                              BIND_SHADER_RESOURCES_FLAGS flags) {
-    return signature.pVtbl.PipelineResourceSignature.BindStaticResources(signature,ShaderStages, pResourceMapping, flags);
+    return signature.pVtbl.PipelineResourceSignature.BindStaticResources(signature, shaderStages, pResourceMapping, flags);
 }
 
 IShaderResourceVariable** IPipelineResourceSignature_GetStaticVariableByName(IPipelineResourceSignature* signature,

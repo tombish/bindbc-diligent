@@ -37,10 +37,8 @@ module bindbc.diligent.graphics.opengl.renderdevicegles;
 /// Definition of the Diligent::IRenderDeviceGLES interface
 
 import bindbc.diligent.graphics.opengl.renderdevicegl;
-version(Android){
-    import android.ndk.native_window;
-    import android.java.javax.microedition.khronos.egl.EGL;  
-}
+import android.ndk.native_window;
+import android.java.javax.microedition.khronos.egl.EGL;  
 
 
 // {F705A0D9-2023-4DE1-8B3C-C56E4CEB8DB7}

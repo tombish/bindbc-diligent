@@ -36,7 +36,7 @@ module bindbc.diligent.graphics.pipelinestate;
 /// \file
 /// Definition of the Diligent::IRenderDevice interface and related data structures
 
-import bindbc.diligent.primitives.object;
+public import bindbc.diligent.primitives.object;
 //#include "../../../Platforms/interface/PlatformDefinitions.h"
 import bindbc.diligent.graphics.graphicstypes;
 import bindbc.diligent.graphics.blendstate;
@@ -64,7 +64,7 @@ struct SampleDesc
 }
 
 /// Shader variable property flags.
-enum HADER_VARIABLE_FLAGS : ubyte
+enum SHADER_VARIABLE_FLAGS : ubyte
 {
     /// Shader variable has no special properties.
     SHADER_VARIABLE_FLAG_NONE               = 0x00,
@@ -94,7 +94,7 @@ struct ShaderResourceVariableDesc
     /// Shader variable type. See Diligent::SHADER_RESOURCE_VARIABLE_TYPE for a list of allowed types
     SHADER_RESOURCE_VARIABLE_TYPE Type         = SHADER_RESOURCE_VARIABLE_TYPE.SHADER_RESOURCE_VARIABLE_TYPE_STATIC;
 
-    SHADER_VARIABLE_FLAGS         Flags        = SHADER_VARIABLE_FLAG_NONE.SHADER_VARIABLE_FLAG_NONE;
+    SHADER_VARIABLE_FLAGS         Flags        = SHADER_VARIABLE_FLAGS.SHADER_VARIABLE_FLAG_NONE;
 }
 
 /// Pipeline layout description
@@ -173,11 +173,11 @@ struct GraphicsPipelineDesc
 
     /// Render target formats.
     /// All formats must be TEX_FORMAT_UNKNOWN when pRenderPass is not null.
-    TEXTURE_FORMAT[DILIGENT_MAX_RENDER_TARGETS] RTVFormats = {};
+    TEXTURE_FORMAT[DILIGENT_MAX_RENDER_TARGETS] RTVFormats = TEXTURE_FORMAT.TEX_FORMAT_UNKNOWN;
 
     /// Depth-stencil format.
     /// Must be TEX_FORMAT_UNKNOWN when pRenderPass is not null.
-    TEXTURE_FORMAT DSVFormat     =TEXTURE_FORMAT.TEX_FORMAT_UNKNOWN;
+    TEXTURE_FORMAT DSVFormat     = TEXTURE_FORMAT.TEX_FORMAT_UNKNOWN;
 
     /// Multisampling parameters.
     SampleDesc SmplDesc;
@@ -452,7 +452,7 @@ struct TilePipelineDesc
     ubyte SampleCount            = 1;
 
     /// Render target formats.
-    TEXTURE_FORMAT[DILIGENT_MAX_RENDER_TARGETS]  RTVFormats = {};
+    TEXTURE_FORMAT[DILIGENT_MAX_RENDER_TARGETS] RTVFormats = TEXTURE_FORMAT.TEX_FORMAT_UNKNOWN;
 }
 
 /// Tile pipeline state initialization information.
@@ -629,8 +629,8 @@ struct IPipelineStateMethods
 struct IPipelineStateVtbl { IPipelineStateMethods PipelineState; }
 struct IPipelineState { IPipelineStateVtbl* pVtbl; }
 
-PipelineStateDesc* IPipelineState_GetDesc(IPipelineState* object) {
-    cast(const(PipelineStateDesc)*)IDeviceObject_GetDesc(object);
+const(PipelineStateDesc)* IPipelineState_GetDesc(IPipelineState* object) {
+    return cast(const(PipelineStateDesc)*)IDeviceObject_GetDesc(cast(IDeviceObject*)object);
 }
 
 const(GraphicsPipelineDesc)** IPipelineState_GetGraphicsPipelineDesc(IPipelineState* pipelineState) {

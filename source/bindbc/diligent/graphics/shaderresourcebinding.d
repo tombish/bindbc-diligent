@@ -36,13 +36,11 @@ module bindbc.diligent.graphics.shaderresourcebinding;
 /// \file
 /// Definition of the Diligent::IShaderResourceBinding interface and related data structures
 
-import bindbc.diligent.primitives.object;
-import bindbc.diligent.graphics.shader;
-import bindbc.diligent.graphics.shaderresourcevariable;
-import bindbc.diligent.graphics.resourcemapping;
-
-struct IPipelineState;
-struct IPipelineResourceSignature;
+public import bindbc.diligent.primitives.object;
+public import bindbc.diligent.graphics.shader;
+public import bindbc.diligent.graphics.shaderresourcevariable;
+public import bindbc.diligent.graphics.resourcemapping;
+public import bindbc.diligent.graphics.pipelineresourcesignature;
 
 // {061F8774-9A09-48E8-8411-B5BD20560104}
 static const INTERFACE_ID IID_ShaderResourceBinding =

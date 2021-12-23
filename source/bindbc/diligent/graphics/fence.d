@@ -36,7 +36,7 @@ module bindbc.diligent.graphics.fence;
 /// \file
 /// Defines Diligent::IFence interface and related data structures
 
-import bindbc.diligent.graphics.deviceobject;
+public import bindbc.diligent.graphics.deviceobject;
 
 // {3B19184D-32AB-4701-84F4-9A0C03AE1672}
 static const INTERFACE_ID IID_Fence =
@@ -117,13 +117,9 @@ struct IFenceMethods
 struct IFenceVtbl { IFenceMethods Fence; }
 struct IFence { IFenceVtbl* pVtbl; }
 
-FenceDesc* IFence_GetDesc(IFence* fence) {
-    return cast(const FenceDesc*)IDeviceObject_GetDesc(fence);
+const(FenceDesc)* IFence_GetDesc(IFence* fence) {
+    return cast(const(FenceDesc)*)IDeviceObject_GetDesc(cast(IDeviceObject*)fence);
 }
-
-//#    define IFence_GetCompletedValue(This) CALL_IFACE_METHOD(Fence, GetCompletedValue, This)
-//#    define IFence_Signal(This, ...)       CALL_IFACE_METHOD(Fence, Signal,            This, __VA_ARGS__)
-//#    define IFence_Wait(This, ...)         CALL_IFACE_METHOD(Fence, Wait,              This, __VA_ARGS__)
 
 ulong* IFence_GetCompletedValue(IFence* fence) {
     return fence.pVtbl.Fence.GetCompletedValue(fence);

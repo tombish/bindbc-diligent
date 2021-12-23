@@ -35,7 +35,7 @@
  
 module bindbc.diligent.graphics.renderdevice;
 
-import bindbc.diligent.graphics.buffer;
+public import bindbc.diligent.graphics.buffer;
 
 struct IRenderDeviceMethods
 {

@@ -39,6 +39,8 @@ module bindbc.diligent.graphics.vulkan.shaderbindingtablevk;
 import bindbc.diligent.graphics.shaderbindingtable;
 import bindbc.diligent.graphics.vulkan.devicecontextvk;
 
+import erupted;
+
 // {31ED9B4B-4FF4-44D8-AE71-12B5D8AF7F93}
 static const INTERFACE_ID IID_ShaderBindingTableVk =
     INTERFACE_ID(0x31ed9b4b, 0x4ff4, 0x44d8, [0xae, 0x71, 0x12, 0xb5, 0xd8, 0xaf, 0x7f, 0x93]);

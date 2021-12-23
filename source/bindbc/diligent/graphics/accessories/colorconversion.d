@@ -38,7 +38,7 @@ import std.math;
 // https://en.wikipedia.org/wiki/SRGB
 float LinearToSRGB(float x)
 {
-    return x <= 0.0031308 ? x * 12.92f : 1.055f * pow(x, 1.f / 2.4f) - 0.055f;
+    return x <= 0.0031308 ? x * 12.92f : 1.055f * pow(x, 1.0f / 2.4f) - 0.055f;
 }
 
 float SRGBToLinear(float x)
@@ -51,7 +51,7 @@ float SRGBToLinear(ubyte x);
 
 float FastLinearToSRGB(float x)
 {
-    return x < 0.0031308f ? 12.92f * x : 1.13005f * sqrtf(fabs(x - 0.00228f)) - 0.13448f * x + 0.005719f;
+    return x < 0.0031308f ? 12.92f * x : 1.13005f * sqrt(fabs(x - 0.00228f)) - 0.13448f * x + 0.005719f;
 }
 
 float FastSRGBToLinear(float x)

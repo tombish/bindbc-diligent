@@ -39,6 +39,8 @@ module bindbc.diligent.graphics.vulkan.pipelinestatevk;
 import bindbc.diligent.graphics.pipelinestate;
 import bindbc.diligent.graphics.vulkan.renderpassvk;
 
+import erupted;
+
 // {2FEA0868-0932-412A-9F0A-7CEA7E61B5E0}
 static const INTERFACE_ID IID_PipelineStateVk =
     INTERFACE_ID(0x2fea0868, 0x932, 0x412a, [0x9f, 0xa, 0x7c, 0xea, 0x7e, 0x61, 0xb5, 0xe0]);

@@ -36,8 +36,8 @@ module bindbc.diligent.graphics.enginefactory;
 /// \file
 /// Defines Diligent::IEngineFactory interface
 
-import bindbc.diligent.primitives.object;
-import bindbc.diligent.graphics.graphicstypes;
+public import bindbc.diligent.primitives.object;
+public import bindbc.diligent.graphics.graphicstypes;
 
 version(Android) {
     struct ANativeActivity;
@@ -55,7 +55,7 @@ struct IEngineFactoryMethods
 {
     extern(C) @nogc nothrow {
         /// Returns API info structure, see Diligent::APIInfo.
-        const APIInfo** GetAPIInfo(IEngineFactory*);
+        const(APIInfo)** GetAPIInfo(IEngineFactory*);
 
         /// Creates default shader source input stream factory
 
@@ -107,7 +107,7 @@ struct IEngineFactoryVtbl { IEngineFactoryMethods EngineFactory; }
 struct IEngineFactory { IEngineFactoryVtbl* pVtbl; }
 
 
-const APIInfo** IEngineFactory_GetAPIInfo(IEngineFactory* factory) {
+const(APIInfo)** IEngineFactory_GetAPIInfo(IEngineFactory* factory) {
     return factory.pVtbl.EngineFactory.GetAPIInfo(factory);
 }
 
@@ -119,6 +119,10 @@ void* IEngineFactory_EnumerateAdapters(IEngineFactory* factory, Version minVersi
     return factory.pVtbl.EngineFactory.EnumerateAdapters(factory, minVersion, numAdapters, adapters);
 }
 
-void* IEngineFactory_InitAndroidFileSystem(IEngineFactory* factory, ANativeActivity* nativeActivity, const(char)* nativeActivityClassName, AAssetManager* assetManager) {
-    return factory.pVtbl.EngineFactory.InitAndroidFileSystem(factory, nativeActivity, nativeActivityClassName, assetManager);
+version(Android) {
+
+    void* IEngineFactory_InitAndroidFileSystem(IEngineFactory* factory, ANativeActivity* nativeActivity, const(char)* nativeActivityClassName, AAssetManager* assetManager) {
+        return factory.pVtbl.EngineFactory.InitAndroidFileSystem(factory, nativeActivity, nativeActivityClassName, assetManager);
+    }
+
 }

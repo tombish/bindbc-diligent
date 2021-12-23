@@ -8,9 +8,21 @@ targetType "staticLibrary"
 targetPath "lib"
 targetName "BindBC_Diligent"
 
+configuration "linux" {
+    platforms "linux"
+    dependency "erupted" version="~>2.1.51+v1.2.201"
+    dependency "bindbc-opengl" version="~>1.0.0"
+    versions "GL_41" "GL_ARB"
+    excludedSourceFiles "source/bindbc/diligent/graphics/d3d11/*"
+    excludedSourceFiles "source/bindbc/diligent/graphics/d3d12/*"
+    excludedSourceFiles "source/bindbc/diligent/graphics/metal/*"
+    excludedSourceFiles "source/bindbc/diligent/graphics/loadenginedll.d"
+    excludedSourceFiles "source/bindbc/diligent/graphics/opengl/renderdevicegles.d"
+}
+
 configuration "windows" {
     platforms "Windows"
-    dependency "directx-d" version="~>0.14.0" 
+    dependency "directx-d" version="~>0.14.0"
 }
 
 configuration "android" {
