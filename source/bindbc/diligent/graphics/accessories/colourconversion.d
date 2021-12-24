@@ -31,7 +31,7 @@
  *  of the possibility of such damages.
  */
 
-module bindbc.diligent.graphics.accessories.colorconversion;
+module bindbc.diligent.graphics.accessories.colourconversion;
 
 import std.math;
 
